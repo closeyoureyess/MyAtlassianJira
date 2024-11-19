@@ -1,7 +1,9 @@
 package com.effectiveMobile.effectivemobile.config;
 
 import com.effectiveMobile.effectivemobile.constants.ConstantsClass;
+import com.effectiveMobile.effectivemobile.other.UserRoles;
 import com.effectiveMobile.effectivemobile.services.MyUserDetailService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,10 +27,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
  */
 @Configuration
 @EnableWebSecurity
+@Slf4j
 public class SecurityConfiguration {
 
     @Autowired
     private MyUserDetailService myUserDetailService;
+
     @Autowired
     private JwtAuthenticationFilter jwtAuthenticationFilter;
 
@@ -39,13 +43,15 @@ public class SecurityConfiguration {
      */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+        log.info("Метод securityFilterChain()");
         return httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(registry -> {
                     registry.requestMatchers("/entrance/**",
                             "/swagger-ui/**", "/v3/api-docs/**").permitAll();
-                    registry.requestMatchers("/task/**").hasRole(ConstantsClass.USERROLE);
-                    registry.requestMatchers("/task/delete/**").hasRole(ConstantsClass.ADMINROLE);
+                    registry.requestMatchers("/task/create", "/task/gen-info/**",
+                            "/task/update-tasks").hasRole(UserRoles.USER.getUserRoles());
+                    registry.requestMatchers("/task/**").hasRole(UserRoles.ADMIN.getUserRoles());
                     registry.anyRequest().authenticated(); // Любой запрос должен быть аутентифицирован
                 })
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
@@ -54,6 +60,7 @@ public class SecurityConfiguration {
 
     @Bean
     public UserDetailsService userDetailsService() {
+        log.info("Метод userDetailsService()");
         return myUserDetailService;
     }
 
@@ -63,6 +70,7 @@ public class SecurityConfiguration {
      */
     @Bean
     public AuthenticationManager authenticationManager(){
+        log.info("Метод authenticationManager()");
         return new ProviderManager(authenticationProvider());
     }
 
@@ -72,6 +80,7 @@ public class SecurityConfiguration {
      */
     @Bean
     public AuthenticationProvider authenticationProvider() {
+        log.info("Метод authenticationProvider()");
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
         provider.setUserDetailsService(myUserDetailService);
         provider.setPasswordEncoder(passwordEncoder());
@@ -85,6 +94,7 @@ public class SecurityConfiguration {
      */
     @Bean
     public PasswordEncoder passwordEncoder() {
+        log.info("Метод passwordEncoder()");
         return new BCryptPasswordEncoder();
     }
 

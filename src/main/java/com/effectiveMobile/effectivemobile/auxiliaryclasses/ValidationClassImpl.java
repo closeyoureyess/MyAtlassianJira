@@ -1,10 +1,8 @@
 package com.effectiveMobile.effectivemobile.auxiliaryclasses;
 
 import com.effectiveMobile.effectivemobile.constants.ConstantsClass;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -14,6 +12,7 @@ import java.util.regex.Pattern;
 @NoArgsConstructor
 @Getter
 @Setter
+@Slf4j
 public class ValidationClassImpl implements ValidationClass{
 
     private String validationString;
@@ -22,6 +21,7 @@ public class ValidationClassImpl implements ValidationClass{
 
     @Override
     public Optional<ValidationClassImpl> validEmailOrId(String line){
+        log.info("Метод validEmailOrId() " + line);
         boolean resultMatch;
 
         Pattern pattern = Pattern.compile(ConstantsClass.REGEX_ONLY_NUMBERS);

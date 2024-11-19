@@ -3,10 +3,10 @@ package com.effectiveMobile.effectivemobile.services;
 
 import com.effectiveMobile.effectivemobile.dto.CustomUsersDto;
 import com.effectiveMobile.effectivemobile.fabrics.ActionsFabric;
+import com.effectiveMobile.effectivemobile.other.UserRoles;
 import com.effectiveMobile.effectivemobile.repository.AuthorizationRepository;
 import com.effectiveMobile.effectivemobile.entities.CustomUsers;
-import com.effectiveMobile.effectivemobile.auxiliaryclasses.LoginForm;
-import com.effectiveMobile.effectivemobile.constants.ConstantsClass;
+import com.effectiveMobile.effectivemobile.auxiliaryclasses.RegistrationUsers;
 import com.effectiveMobile.effectivemobile.exeptions.DescriptionUserExeption;
 import com.effectiveMobile.effectivemobile.mapper.UserMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -47,6 +47,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public CustomUsersDto createUser(CustomUsersDto customUsersDto) {
+        log.info("Метод createUser() ");
         Optional<CustomUsers> optionalCustomUsers = actionsFabric
                 .createUserActions()
                 .searchUserEmailOrId(userMapper.convertDtoToUser(customUsersDto));
@@ -55,10 +56,11 @@ public class UserServiceImpl implements UserService {
             return userMapper.convertUserToDto(optionalCustomUsers.get());
         }
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        if (!ConstantsClass.ADMINROLE.equals(customUsersDto.getRole()) && !ConstantsClass.USERROLE.equals(customUsersDto.getRole())) {
-            customUsersDto.setRole(ConstantsClass.USERROLE);
+        if (UserRoles.ADMIN != customUsersDto.getRole() && UserRoles.USER != customUsersDto.getRole()) {
+            customUsersDto.setRole(UserRoles.USER);
         }
         CustomUsers customUsers = userMapper.convertDtoToUser(customUsersDto);
+        customUsers.setId(null);
         customUsers.setPasswordKey(passwordEncoder.encode(customUsers.getPasswordKey()));
         return userMapper.convertUserToDto(
                 authorizationRepository.save(customUsers)
@@ -67,15 +69,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public String authorizationUser(LoginForm loginForm) throws UsernameNotFoundException {
+    public String authorizationUser(RegistrationUsers registrationUsers) throws UsernameNotFoundException {
+        log.info("Метод authorizationUser() " + registrationUsers.getEmail());
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        loginForm.getEmail(), loginForm.getPasswordKey()
+                        registrationUsers.getEmail(), registrationUsers.getPasswordKey()
                 ));
         if (authentication.isAuthenticated()) {
-            return jwtService.generateToken(myUserDetailService.loadUserByUsername(loginForm.getEmail()));
+            return jwtService.generateToken(myUserDetailService.loadUserByUsername(registrationUsers.getEmail()));
         } else {
-            throw new UsernameNotFoundException(DescriptionUserExeption.USER_NOT_FOUND.getEnumDescription() + " " + loginForm.getEmail());
+            throw new UsernameNotFoundException(DescriptionUserExeption.USER_NOT_FOUND.getEnumDescription() + " " + registrationUsers.getEmail());
         }
     }
 

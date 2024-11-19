@@ -1,7 +1,6 @@
 package com.effectiveMobile.effectivemobile.auxiliaryclasses;
 
 import com.effectiveMobile.effectivemobile.dto.CustomUsersDto;
-import com.effectiveMobile.effectivemobile.entities.CustomUsers;
 import com.effectiveMobile.effectivemobile.entities.Tasks;
 
 /**

@@ -3,8 +3,6 @@ package com.effectiveMobile.effectivemobile.auxiliaryclasses;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
-import java.util.Objects;
-
 /**
  * <pre>
  *     Класс, используемый Spring Security для авторизации пользователя
@@ -15,10 +13,10 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
-@Schema(description = "Форма авторизации пользователя")
-public class LoginForm {
+@Schema(description = "Форма авторизации/регистрации пользователя")
+public class RegistrationUsers {
 
-    @Schema(description = "E-mail адрес пользователя", example = "example@example.com")
+    @Schema(description = "E-mail адрес пользователя", example = "example@gmail.com")
     private String email;
 
     @Schema(description = "Пароль пользователя", example = "12345")

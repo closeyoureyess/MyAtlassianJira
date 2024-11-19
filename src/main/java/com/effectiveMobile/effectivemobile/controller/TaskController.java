@@ -8,6 +8,7 @@ import com.effectiveMobile.effectivemobile.services.TaskService;
 import com.fasterxml.jackson.annotation.JsonView;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Min;
 import lombok.extern.slf4j.Slf4j;
@@ -35,11 +36,13 @@ public class TaskController {
 
     /**
      * Эндпоинд POST для создания задачи
+     *
      * @param tasksDto
-     * @throws MainException
      * @return {@link ResponseEntity<TasksDto>}
+     * @throws MainException
      */
     @Operation(summary = "Создание задачи", description = "Позволяет создать задачу")
+    @SecurityRequirement(name = "JWT")
     @PostMapping(value = "/task/create")
     @JsonView(Views.Public.class)
     public ResponseEntity<TasksDto> createTask(@RequestBody TasksDto tasksDto) throws MainException {
@@ -53,12 +56,14 @@ public class TaskController {
 
     /**
      * Эндпоинд GET для получения информации о задачах по автору
+     *
      * @param author
      * @param offset
      * @param limit
      * @return {@link ResponseEntity<List<TasksDto>>}
      */
     @Operation(summary = "Получить задачу по автору")
+    @SecurityRequirement(name = "JWT")
     @GetMapping("/task/gen-info/author/{author}")
     @JsonView(Views.Public.class)
     public ResponseEntity<List<TasksDto>> getTaskAuthor(
@@ -79,12 +84,14 @@ public class TaskController {
 
     /**
      * Эндпоинд GET для получения информации о задачах по исполнителю
+     *
      * @param executorEmail
      * @param offset
      * @param limit
      * @return {@link ResponseEntity<List<TasksDto>>}
      */
     @Operation(summary = "Получить задачу по исполнителю")
+    @SecurityRequirement(name = "JWT")
     @GetMapping("/task/gen-info/executor/{executorEmail}")
     @JsonView(Views.Public.class)
     public ResponseEntity<List<TasksDto>> getTaskExecutor(
@@ -105,15 +112,17 @@ public class TaskController {
 
     /**
      * Эндпоинд PUT для редактирования задач
+     *
      * @param tasksDto
      * @return {@link ResponseEntity<TasksDto>}
      * @throws MainException
      */
     @Operation(summary = "Отредактировать задачу", description = "Отредактировать задачу, в т.ч добавить комментарий")
+    @SecurityRequirement(name = "JWT")
     @PutMapping("/task/update-tasks")
     @JsonView(Views.Public.class)
     public ResponseEntity<TasksDto> editTasks(@RequestBody @Parameter(description = "Объект TasksDto с полями, требующими редактирования")
-                                                  TasksDto tasksDto) throws MainException {
+                                              TasksDto tasksDto) throws MainException {
         Optional<TasksDto> newTasksDto = taskService.changeTasks(tasksDto);
         if (newTasksDto.isPresent()) {
             return ResponseEntity.ok(newTasksDto.get());
@@ -123,13 +132,15 @@ public class TaskController {
 
     /**
      * Эндпоинд DELETE для удаления задач
+     *
      * @param idTasks
      * @return {@link ResponseEntity<String>}
      */
     @Operation(summary = "Удалить задачу")
+    @SecurityRequirement(name = "JWT")
     @DeleteMapping("/task/delete/{id}")
     public ResponseEntity<String> deleteCase(@PathVariable("id") @Parameter(description = "ID задачи")
-                                                 Integer idTasks) {
+                                             Integer idTasks) {
         log.info("Удаление задачи по id, метод DELETE" + idTasks);
         boolean resultDeleteTasks = taskService.deleteTasks(idTasks);
         if (resultDeleteTasks) {

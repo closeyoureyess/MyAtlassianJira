@@ -34,6 +34,7 @@ public class TaskMapperImpl implements TaskMapper {
     private ActionsFabric actionsFabric;
 
     public Tasks convertDtoToTasks(TasksDto tasksDto, Integer... method) throws ExecutorNotFoundExeption {
+        log.info("Метод convertDtoToTasks()");
         Tasks taskLocalObject = new Tasks();
         if (tasksDto != null) {
             taskLocalObject.setId(tasksDto.getId());
@@ -55,6 +56,7 @@ public class TaskMapperImpl implements TaskMapper {
     }
 
     public TasksDto convertTasksToDto(Tasks tasks) {
+        log.info("Метод convertTasksToDto()");
         TasksDto tasksDtoLocalObject = new TasksDto();
         if (tasks != null) {
             tasksDtoLocalObject.setId(tasks.getId());
@@ -70,6 +72,7 @@ public class TaskMapperImpl implements TaskMapper {
     }
 
     public List<TasksDto> transferListTasksToDto(List<Tasks> tasksList) {
+        log.info("Метод transferListTasksToDto()");
         List<TasksDto> tasksDtoList = new LinkedList<>();
         if (tasksList != null) {
             for (int i = 0; i < tasksList.size(); i++) {
@@ -84,6 +87,7 @@ public class TaskMapperImpl implements TaskMapper {
     }
 
     public Tasks compareTaskAndDto(TasksDto tasksDto, Tasks tasks) throws UsernameNotFoundException {
+        log.info("Метод compareTaskAndDto()");
         //author
         tasks = compareTaskAndDtoAuthor(tasksDto, tasks);
         //executor
@@ -107,6 +111,7 @@ public class TaskMapperImpl implements TaskMapper {
      * @param tasks
      */
     private Tasks compareTaskAndDtoAuthor(TasksDto tasksDto, Tasks tasks) {
+        log.info("Метод compareTaskAndDtoAuthor()");
         Tasks newTasks;
         if ((tasksDto.getTaskAuthor() != null && tasks.getTaskAuthor() != null) // Есть автор
                 && (!tasksDto.getTaskAuthor().getEmail().equals(tasks.getTaskAuthor().getEmail()) // Емейл не совпадает
@@ -138,6 +143,7 @@ public class TaskMapperImpl implements TaskMapper {
      * @param tasks
      */
     private Tasks compareTasksAndDtoExecutor(TasksDto tasksDto, Tasks tasks) {
+        log.info("Метод compareTasksAndDtoExecutor()");
         if (
                 (
                         ((tasksDto.getTaskExecutor() != null && tasks.getTaskExecutor() != null))
@@ -166,6 +172,7 @@ public class TaskMapperImpl implements TaskMapper {
      * @param tasks
      */
     private Tasks compareTasksAndDtoDescription(TasksDto tasksDto, Tasks tasks) {
+        log.info("Метод compareTasksAndDtoDescription()");
         if (tasksDto.getDescription() != null && !tasksDto.getDescription()
                 .equals(tasks.getDescription())) {
 
@@ -180,6 +187,7 @@ public class TaskMapperImpl implements TaskMapper {
      * @param tasks
      */
     private Tasks compareTasksAndDtoPriority(TasksDto tasksDto, Tasks tasks) {
+        log.info("Метод compareTasksAndDtoPriority()");
         if (/*tasksDto.getTaskPriority() != null && */!tasksDto.getTaskPriority()
                 .equals(tasks.getTaskPriority())) {
 
@@ -194,6 +202,7 @@ public class TaskMapperImpl implements TaskMapper {
      * @param tasks
      */
     private Tasks compareTasksAndDtoHeader(TasksDto tasksDto, Tasks tasks) {
+        log.info("Метод compareTasksAndDtoHeader()");
         if (/*tasksDto.getHeader() != null && */!tasksDto.getHeader().equals(tasks.getHeader())) {
 
             tasks.setHeader(tasksDto.getHeader());
@@ -207,6 +216,7 @@ public class TaskMapperImpl implements TaskMapper {
      * @param tasks
      */
     private Tasks compareTasksAndDtoStatus(TasksDto tasksDto, Tasks tasks) {
+        log.info("Метод compareTasksAndDtoStatus()");
         if ((tasks.getTaskExecutor().getEmail().equals(actionsFabric.createUserActions().getEmailCurrentUser()))
                 && (tasksDto.getTaskStatus() != null && !tasksDto.getTaskStatus().equals(tasks.getTaskStatus()))) {
 
@@ -221,6 +231,7 @@ public class TaskMapperImpl implements TaskMapper {
      * @param tasks
      */
     private Tasks compareTasksAndDtoNotes(TasksDto tasksDto, Tasks tasks) {
+        log.info("Метод compareTasksAndDtoNotes()");
         Optional<CustomUsers> optionalCurrentUser = actionsFabric.createUserActions().getCurrentUser();
         if ((tasksDto.getNotesDto() != null && tasks.getNotes() != null) && optionalCurrentUser.isPresent()) {
             String emailCurrentUser = optionalCurrentUser.get().getEmail();

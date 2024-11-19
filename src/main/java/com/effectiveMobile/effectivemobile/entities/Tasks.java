@@ -50,5 +50,4 @@ public class Tasks {
     @JoinColumn(name = "tasks_notes_id")
     private Notes notes;
 
-
 }

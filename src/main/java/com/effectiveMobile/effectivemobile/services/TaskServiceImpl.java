@@ -27,6 +27,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
+import static com.effectiveMobile.effectivemobile.constants.ConstantsClass.EMPTY;
+import static com.effectiveMobile.effectivemobile.constants.ConstantsClass.REGIME_OVERWRITING;
+
 @Service
 @Slf4j
 public class TaskServiceImpl implements TaskService {
@@ -46,6 +49,7 @@ public class TaskServiceImpl implements TaskService {
     @Override
     @Transactional
     public TasksDto createTasks(TasksDto tasksDto) throws UsernameNotFoundException, ExecutorNotFoundExeption {
+        log.info("Метод createTasks() " + tasksDto.getId());
         Optional<CustomUsers> optionalAuthorizedUser = actionsFabric.createUserActions().getCurrentUser();
         tasksDto.setTaskAuthor(mappersFabric.createUserMapper().convertUserToDto(optionalAuthorizedUser.get()));
         Tasks newTasks = mappersFabric.createTaskMapper().convertDtoToTasks(tasksDto);
@@ -54,7 +58,8 @@ public class TaskServiceImpl implements TaskService {
                 .checkFindUser(newTasks.getTaskExecutor(), newTasks, ConstantsClass.REGIME_RECORD);
         newTasks = actionsFabric
                 .createUserActions()
-                .checkFindUser(newTasks.getTaskAuthor(), newTasks, ConstantsClass.REGIME_OVERWRITING);
+                .checkFindUser(newTasks.getTaskAuthor(), newTasks, REGIME_OVERWRITING);
+        newTasks.setId(REGIME_OVERWRITING);
         tasksRepository.save(newTasks); // save to PostgreSQL
         return mappersFabric
                 .createTaskMapper()
@@ -64,6 +69,7 @@ public class TaskServiceImpl implements TaskService {
     @Override
     @Transactional
     public Optional<TasksDto> changeTasks(TasksDto tasksDto) throws ExecutorNotFoundExeption, NotEnoughRulesEntity {
+        log.info("Метод changeTasks() " + tasksDto.getId());
         Optional<Tasks> optionalTaskDatabase = Optional.empty();
         if (tasksDto.getId() != null) {
             optionalTaskDatabase = tasksRepository.findById(mappersFabric
@@ -97,10 +103,11 @@ public class TaskServiceImpl implements TaskService {
     @Override
     @Transactional
     public Optional<List<TasksDto>> getTasksOfAuthorOrExecutor(String authorOrExecutor, Integer offset, Integer limit, Integer flag) {
+        log.info("Метод getTasksOfAuthorOrExecutor() " + authorOrExecutor + EMPTY + flag);
         if (flag.equals(ConstantsClass.REGIME_RECORD)) {
             return Optional.of(receiveAllTasksAuthorOrExecutorDataBase(authorOrExecutor, offset, limit, ConstantsClass.REGIME_RECORD));
-        } else if (flag.equals(ConstantsClass.REGIME_OVERWRITING)) {
-            return Optional.of(receiveAllTasksAuthorOrExecutorDataBase(authorOrExecutor, offset, limit, ConstantsClass.REGIME_OVERWRITING));
+        } else if (flag.equals(REGIME_OVERWRITING)) {
+            return Optional.of(receiveAllTasksAuthorOrExecutorDataBase(authorOrExecutor, offset, limit, REGIME_OVERWRITING));
         }
         return Optional.empty();
     }
@@ -108,6 +115,7 @@ public class TaskServiceImpl implements TaskService {
     @Override
     @Transactional
     public boolean deleteTasks(Integer idTasks) {
+        log.info("Метод deleteTasks() " + idTasks );
         boolean resultDeleteTasks = tasksRepository.existsById(idTasks);
         if (resultDeleteTasks) {
             tasksRepository.deleteById(idTasks);
@@ -125,7 +133,9 @@ public class TaskServiceImpl implements TaskService {
      * @param flag
      * @return Список с задачами по заданному пользователю
      */
-    private List<TasksDto> receiveAllTasksAuthorOrExecutorDataBase(String authorOrExecutor, Integer offset, Integer limit, Integer flag) {
+    private List<TasksDto> receiveAllTasksAuthorOrExecutorDataBase(String authorOrExecutor, Integer offset, Integer limit,
+                                                                   Integer flag) {
+        log.info("Метод receiveAllTasksAuthorOrExecutorDataBase() " + authorOrExecutor + EMPTY + flag);
         ValidationClass validationClass = new ValidationClassImpl();
         List<Tasks> listAllTasks = new LinkedList<>();
 
@@ -165,9 +175,10 @@ public class TaskServiceImpl implements TaskService {
      * @return {@link Optional<Page<Tasks>>} Optional со страницей с задачами
      */
     private Optional<Page<Tasks>> methodFindAllTasksAuthorOrExecutor(Pageable pageble, Integer userId, Integer flag) {
+        log.info("Метод methodFindAllTasksAuthorOrExecutor() " + userId + EMPTY + flag);
         if (flag.equals(ConstantsClass.REGIME_RECORD)) {
             return Optional.of(tasksRepository.findAllByTaskAuthorId(userId, pageble));
-        } else if (flag.equals(ConstantsClass.REGIME_OVERWRITING)) {
+        } else if (flag.equals(REGIME_OVERWRITING)) {
             return Optional.of(tasksRepository.findAllByTaskExecutorId(userId, pageble));
         }
         return Optional.empty();
@@ -182,6 +193,7 @@ public class TaskServiceImpl implements TaskService {
      * @throws NotEnoughRulesEntity
      */
     private boolean checkPrivilegeTasks(TasksDto tasksDtoFromDB, TasksDto tasksDto) throws NotEnoughRulesEntity {
+        log.info("Метод checkPrivilegeTasks() " + tasksDto.getId() + EMPTY + tasksDtoFromDB.getId());
         CustomUsersDto userDtoAuthorTaskDB = tasksDtoFromDB.getTaskAuthor();
         CustomUsersDto userCurrentDtoExecutorTaskDB = tasksDto.getTaskExecutor();
         boolean availabilityRules = actionsFabric
@@ -205,6 +217,7 @@ public class TaskServiceImpl implements TaskService {
      * @throws NotEnoughRulesEntity
      */
     private boolean isFieldsTasksDtoIsNullOrNot(TasksDto tasksDto) throws NotEnoughRulesEntity {
+        log.info("Метод isFieldsTasksDtoIsNullOrNot() " + tasksDto.getId());
         if ((tasksDto.getNotesDto() == null
                 && tasksDto.getTaskPriority() == null
                 && tasksDto.getTaskAuthor() == null

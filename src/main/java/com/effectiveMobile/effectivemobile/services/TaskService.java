@@ -1,9 +1,7 @@
 package com.effectiveMobile.effectivemobile.services;
 
-import com.effectiveMobile.effectivemobile.exeptions.ExecutorNotFoundExeption;
 import com.effectiveMobile.effectivemobile.exeptions.MainException;
 import com.effectiveMobile.effectivemobile.dto.TasksDto;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.util.List;
 import java.util.Optional;

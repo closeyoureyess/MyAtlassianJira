@@ -14,6 +14,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
+import static com.effectiveMobile.effectivemobile.constants.ConstantsClass.EMPTY;
+
 @Component
 @Slf4j
 public class TasksActionsImpl implements TasksActions{
@@ -27,6 +29,7 @@ public class TasksActionsImpl implements TasksActions{
 
     @Override
     public boolean compareIntWithConstants(Integer objectInt, Integer constantsInt) {
+        log.info("Метод compareIntWithConstants()" + objectInt + EMPTY + constantsInt);
         if (constantsInt.equals(ConstantsClass.REGIME_RECORD) && objectInt.equals(constantsInt)) {
             return true;
         } else if (constantsInt.equals(ConstantsClass.REGIME_OVERWRITING) && objectInt.equals(constantsInt)) {
@@ -37,6 +40,7 @@ public class TasksActionsImpl implements TasksActions{
 
     @Override
     public boolean isPrivilegeTasks(CustomUsersDto customUsersDto) {
+        log.info("Метод isPrivilegeTasks()");
         Authentication loggedInUser = SecurityContextHolder.getContext().getAuthentication();
         Optional<CustomUsers> customUsers = authorizationRepository.findByEmail(loggedInUser.getName());
         String emailCurrentUser = customUsers.get().getEmail();

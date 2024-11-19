@@ -1,5 +1,6 @@
 package com.effectiveMobile.effectivemobile.dto;
 
+import com.effectiveMobile.effectivemobile.other.UserRoles;
 import com.effectiveMobile.effectivemobile.other.Views;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -23,8 +24,8 @@ public class CustomUsersDto implements Serializable {
     @Schema(description = "Уникальный идентификатор пользователя", example = "1")
     private Integer id;
 
-    /*@JsonView(Views.Internal.class)*/
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @JsonView(Views.Internal.class)
     @Schema(description = "Пароль пользователя", example = "12345")
     private String passwordKey;
 
@@ -35,6 +36,6 @@ public class CustomUsersDto implements Serializable {
     @NotBlank
     @JsonView(Views.Public.class)
     @Schema(description = "Роль пользователя", example = "USER")
-    private String role;
+    private UserRoles role;
 
 }

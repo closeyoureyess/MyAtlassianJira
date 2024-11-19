@@ -4,6 +4,7 @@ import com.effectiveMobile.effectivemobile.constants.ConstantsClass;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +22,7 @@ import java.util.concurrent.TimeUnit;
  * </pre>
  */
 @Service
+@Slf4j
 public class JwtService {
 
     private static final long VALIDTIME = TimeUnit.MINUTES.toMillis(20);
@@ -32,6 +34,7 @@ public class JwtService {
      * @return JWT-токен в виде строки
      */
     public String generateToken(UserDetails userDetails){
+        log.info("Метод generateToken()");
         Map<String, String> claimsMap = new HashMap<>();
         claimsMap.put("iss", "https://effective-mobile.ru/");
         return Jwts.builder()
@@ -49,6 +52,7 @@ public class JwtService {
      * @return секретный ключ
      */
     private SecretKey generateKey(){
+        log.info("Метод generateKey()");
         byte[] decodedKey = Base64.getDecoder().decode(ConstantsClass.SECRETKEY);
         return Keys.hmacShaKeyFor(decodedKey);
     }
@@ -60,6 +64,7 @@ public class JwtService {
      * @return email пользователя
      */
     public String extractEmailUser(String jwt){
+        log.info("Метод extractEmailUser()");
         Claims claims = getClaims(jwt);
         return claims.getSubject();
     }
@@ -71,6 +76,7 @@ public class JwtService {
      * @return объект Claims
      */
     private Claims getClaims(String jwt) {
+        log.info("Метод getClaims()");
         return Jwts.parser()
                 .verifyWith(generateKey())
                 .build()
@@ -85,6 +91,7 @@ public class JwtService {
      * @return true, если токен валиден; false в противном случае
      */
     public boolean isTokenValid(String jwt){
+        log.info("Метод isTokenValid()");
         Claims claims = getClaims(jwt);
         return claims.getExpiration().after(Date.from(Instant.now()));
     }

@@ -1,6 +1,6 @@
 package com.effectiveMobile.effectivemobile.services;
 
-import com.effectiveMobile.effectivemobile.auxiliaryclasses.LoginForm;
+import com.effectiveMobile.effectivemobile.auxiliaryclasses.RegistrationUsers;
 import com.effectiveMobile.effectivemobile.dto.CustomUsersDto;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
@@ -22,10 +22,10 @@ public interface UserService {
     /**
      * Авторизует пользователя и возвращает JWT-токен.
      *
-     * @param loginForm данные для входа
+     * @param registrationUsers данные для входа
      * @return JWT-токен
      * @throws UsernameNotFoundException если пользователь не найден
      */
-    String authorizationUser(LoginForm loginForm) throws UsernameNotFoundException;
+    String authorizationUser(RegistrationUsers registrationUsers) throws UsernameNotFoundException;
 
 }

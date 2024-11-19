@@ -1,5 +1,6 @@
 package com.effectiveMobile.effectivemobile.entities;
 
+import com.effectiveMobile.effectivemobile.other.UserRoles;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -33,7 +34,8 @@ public class CustomUsers {
     private String passwordKey;
 
     @Column(name = "role_user")
-    private String role;
+    @Enumerated(value = EnumType.STRING)
+    private UserRoles role;
 
     @OneToMany
     private List<Tasks> allTasks;
@@ -43,7 +45,7 @@ public class CustomUsers {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         CustomUsers that = (CustomUsers) o;
-        return Objects.equals(id, that.id) && Objects.equals(email, that.email) && Objects.equals(passwordKey, that.passwordKey) && Objects.equals(role, that.role) && Objects.equals(allTasks, that.allTasks);
+        return Objects.equals(id, that.id) && Objects.equals(email, that.email) && Objects.equals(passwordKey, that.passwordKey) && role == that.role && Objects.equals(allTasks, that.allTasks);
     }
 
     @Override

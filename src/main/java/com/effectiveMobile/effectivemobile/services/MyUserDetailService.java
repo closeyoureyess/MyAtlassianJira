@@ -1,7 +1,7 @@
 package com.effectiveMobile.effectivemobile.services;
 
-import com.effectiveMobile.effectivemobile.constants.ConstantsClass;
 import com.effectiveMobile.effectivemobile.exeptions.DescriptionUserExeption;
+import com.effectiveMobile.effectivemobile.other.UserRoles;
 import com.effectiveMobile.effectivemobile.repository.AuthorizationRepository;
 import com.effectiveMobile.effectivemobile.entities.CustomUsers;
 import lombok.extern.slf4j.Slf4j;
@@ -35,9 +35,9 @@ public class MyUserDetailService implements UserDetailsService {
      */
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        log.info("Метод loadUserByUsername()" + email);
+        log.info("Метод loadUserByUsername() " + email);
         Optional<CustomUsers> userFromDB = authorizationRepository.findByEmail(email);
-        if(userFromDB.isPresent()) {
+        if (userFromDB.isPresent()) {
             CustomUsers newCustomUsers = userFromDB.get();
             return User.builder()
                     .username(newCustomUsers.getEmail())
@@ -57,11 +57,11 @@ public class MyUserDetailService implements UserDetailsService {
      * @return роль пользователя
      */
     private String getRoles(CustomUsers customUsers) {
-        log.info("Метод getRoles()" + customUsers.getId());
+        log.info("Метод getRoles() " + customUsers.getId());
         if (customUsers.getRole() == null) {
-            return ConstantsClass.USERROLE;
+            return UserRoles.USER.getUserRoles();
         } else {
-            return customUsers.getRole();
+            return customUsers.getRole().getUserRoles();
         }
     }
 }

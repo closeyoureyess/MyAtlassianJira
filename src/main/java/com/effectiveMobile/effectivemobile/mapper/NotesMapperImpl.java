@@ -2,10 +2,12 @@ package com.effectiveMobile.effectivemobile.mapper;
 
 import com.effectiveMobile.effectivemobile.dto.NotesDto;
 import com.effectiveMobile.effectivemobile.entities.Notes;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
+@Slf4j
 public class NotesMapperImpl implements NotesMapper {
 
     @Autowired
@@ -13,6 +15,7 @@ public class NotesMapperImpl implements NotesMapper {
 
     @Override
     public Notes convertDtoToNotes(NotesDto notesDto) {
+        log.info("Метод convertDtoToNotes()");
         Notes localNotes = new Notes();
         if (notesDto != null) {
             localNotes.setId(notesDto.getId());
@@ -24,6 +27,7 @@ public class NotesMapperImpl implements NotesMapper {
 
     @Override
     public NotesDto convertNotesToDto(Notes notes) {
+        log.info("Метод convertNotesToDto()");
         NotesDto localNotesDto = new NotesDto();
         if (notes != null) {
             localNotesDto.setId(notes.getId());

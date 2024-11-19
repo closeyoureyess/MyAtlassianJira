@@ -5,6 +5,7 @@ import com.effectiveMobile.effectivemobile.exeptions.DescriptionUserExeption;
 import com.effectiveMobile.effectivemobile.repository.AuthorizationRepository;
 import com.effectiveMobile.effectivemobile.entities.CustomUsers;
 import com.effectiveMobile.effectivemobile.entities.Tasks;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Component;
 import java.util.Optional;
 
 @Component
+@Slf4j
 public class UserActionsImpl implements UserActions {
 
     @Autowired
@@ -23,6 +25,7 @@ public class UserActionsImpl implements UserActions {
 
     @Override
     public Tasks checkFindUser(CustomUsers customUsers, Tasks newTasks, Integer typeOperations) throws UsernameNotFoundException {
+        log.info("Метод checkFindUser() " + typeOperations);
         Optional<CustomUsers> optionalCustomUsers = searchUserEmailOrId(customUsers);
 
         if (optionalCustomUsers.isPresent() && (typeOperations.equals(ConstantsClass.REGIME_RECORD))) {
@@ -38,26 +41,26 @@ public class UserActionsImpl implements UserActions {
 
     @Override
     public Optional<CustomUsers> getCurrentUser() {
+        log.info("Метод getCurrentUser()");
         Authentication loggedInUser = SecurityContextHolder.getContext().getAuthentication();
         return authorizationRepository.findByEmail(loggedInUser.getName());
     }
 
     @Override
     public String getEmailCurrentUser(){
+        log.info("Метод getEmailCurrentUser()");
         return getCurrentUser().get().getEmail();
     }
 
     @Override
     public Optional<CustomUsers> searchUserEmailOrId(CustomUsers customUsers) throws UsernameNotFoundException {
+        log.info("Метод searchUserEmailOrId()");
         Optional<CustomUsers> optionalCustomUsers = Optional.empty();
         if (customUsers != null) {
             if (customUsers.getEmail() != null) {
                 optionalCustomUsers = authorizationRepository.findByEmail(customUsers.getEmail());
             } else if (customUsers.getId() != null) {
                 optionalCustomUsers = authorizationRepository.findById(customUsers.getId());
-            }
-            if (optionalCustomUsers.isEmpty()){
-                throw new UsernameNotFoundException(DescriptionUserExeption.USER_NOT_FOUND.getEnumDescription());
             }
         }
         return optionalCustomUsers;

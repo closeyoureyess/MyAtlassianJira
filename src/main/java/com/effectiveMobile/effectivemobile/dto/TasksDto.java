@@ -36,5 +36,6 @@ public class TasksDto implements Serializable {
     @Schema(description = "Статус задачи", example = "BACKLOG")
     private TaskStatusEnum taskStatus;
 
+    /*@Schema(description = "Комментарий к задаче", example = "Обсуждение")*/
     private NotesDto notesDto;
 }
