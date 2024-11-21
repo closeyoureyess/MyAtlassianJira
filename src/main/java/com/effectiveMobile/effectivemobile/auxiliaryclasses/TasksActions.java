@@ -14,15 +14,6 @@ import com.effectiveMobile.effectivemobile.exeptions.MainException;
 public interface TasksActions {
 
     /**
-     * Метод, сра
-     *
-     * @param objectInt
-     * @param constantsInt
-     * @return
-     *//*
-    boolean compareIntWithConstants(Integer objectInt, Integer constantsInt);*/
-
-    /**
      * Метод, сравнивающий, совпадает ли переданный пользователь с авторизованным
      *
      * @param customUsersDto

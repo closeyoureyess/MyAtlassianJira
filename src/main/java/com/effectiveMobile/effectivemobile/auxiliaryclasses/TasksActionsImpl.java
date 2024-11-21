@@ -47,17 +47,6 @@ public class TasksActionsImpl implements TasksActions {
     @Autowired
     private ActionsFabric actionsFabric;
 
-    /*@Override
-    public boolean compareIntWithConstants(Integer objectInt, Integer constantsInt) {
-        log.info("Метод compareIntWithConstants()" + objectInt + EMPTY_SPACE + constantsInt);
-        if (constantsInt.equals(ConstantsClass.ONE_FLAG) && objectInt.equals(constantsInt)) {
-            return true;
-        } else if (constantsInt.equals(ConstantsClass.ZERO_FLAG) && objectInt.equals(constantsInt)) {
-            return true;
-        }
-        return false;
-    }*/
-
     @Override
     public boolean isPrivilegeTasks(CustomUsersDto customUsersDto) {
         log.info("Метод isPrivilegeTasks()");
