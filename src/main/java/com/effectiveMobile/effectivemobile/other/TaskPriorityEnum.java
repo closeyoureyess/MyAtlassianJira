@@ -7,6 +7,7 @@ package com.effectiveMobile.effectivemobile.other;
  */
 public enum TaskPriorityEnum {
 
+    HIGHEST("Highest"),
     HIGH("High"),
     MEDIUM("Medium"),
     LOW("Low");

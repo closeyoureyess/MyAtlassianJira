@@ -1,6 +1,6 @@
 package com.effectiveMobile.effectivemobile.config;
 
-import com.effectiveMobile.effectivemobile.services.JwtService;
+import com.effectiveMobile.effectivemobile.services.JwtServiceImpl;
 import com.effectiveMobile.effectivemobile.services.MyUserDetailService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -28,7 +28,7 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Autowired
-    private JwtService jwtService;
+    private JwtServiceImpl jwtServiceImpl;
 
     @Autowired
     private MyUserDetailService myUserDetailService;
@@ -50,10 +50,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
         String jwt = authHeader.substring(7);
-        String username = jwtService.extractEmailUser(jwt);
+        String username = jwtServiceImpl.extractEmailUser(jwt);
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = myUserDetailService.loadUserByUsername(username);
-            if (userDetails != null && jwtService.isTokenValid(jwt)) {
+            if (userDetails != null && jwtServiceImpl.isTokenValid(jwt)) {
                 UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                         username,
                         userDetails.getPassword(),

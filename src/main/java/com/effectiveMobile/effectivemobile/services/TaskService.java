@@ -6,6 +6,11 @@ import com.effectiveMobile.effectivemobile.dto.TasksDto;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * <pre>
+ *     Интерфейс для работы с сущностью Tasks
+ * </pre>
+ */
 public interface TaskService {
 
     /**

@@ -24,7 +24,7 @@ public interface UserActions {
     Tasks checkFindUser(CustomUsers customUsers, Tasks newTasks, Integer typeOperations) throws UsernameNotFoundException;
 
     /**
-     * Метод для получения текущего пользователя
+     * Метод для получения текущего авторизованного пользователя
      * @return Возвращает текущего авторизованного пользователя из SecurityContextHolder
      */
     Optional<CustomUsers> getCurrentUser();

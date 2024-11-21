@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springdoc.api.ErrorMessage;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -30,7 +31,7 @@ import static com.effectiveMobile.effectivemobile.constants.ConstantsClass.LINE_
 public class HandlerExceptionController {
 
     @ExceptionHandler(ExecutorNotFoundExeption.class)
-    protected ResponseEntity<ErrorMessage> handleUserNameException(ExecutorNotFoundExeption e){
+    protected ResponseEntity<ErrorMessage> errorExecutorNotFoundExeption(ExecutorNotFoundExeption e){
         log.error("Возникла ошибка: " + e.getClass() + LINE_FEED + e.getMessage() + LINE_FEED + Arrays.toString(e.getStackTrace()));
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
@@ -38,7 +39,7 @@ public class HandlerExceptionController {
     }
 
     @ExceptionHandler(NotEnoughRulesEntity.class)
-    protected ResponseEntity<ErrorMessage> handleUserNameException(NotEnoughRulesEntity e){
+    protected ResponseEntity<ErrorMessage> errorNotEnoughRulesEntity(NotEnoughRulesEntity e){
         log.error("Возникла ошибка: " + e.getClass() + LINE_FEED + e.getMessage() + LINE_FEED + Arrays.toString(e.getStackTrace()));
         return ResponseEntity
                 .status(HttpStatus.FORBIDDEN)
@@ -46,7 +47,7 @@ public class HandlerExceptionController {
     }
 
     @ExceptionHandler(EntityNotFoundExeption.class)
-    protected ResponseEntity<ErrorMessage> handleUserNameException(EntityNotFoundExeption e){
+    protected ResponseEntity<ErrorMessage> errorEntityNotFoundExeption(EntityNotFoundExeption e){
         log.error("Возникла ошибка: " + e.getClass() + LINE_FEED + e.getMessage() + LINE_FEED + Arrays.toString(e.getStackTrace()));
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
@@ -54,7 +55,7 @@ public class HandlerExceptionController {
     }
 
     @ExceptionHandler(IOException.class)
-    protected ResponseEntity<ErrorMessage> handleUserNameException(IOException e){
+    protected ResponseEntity<ErrorMessage> errorIOException(IOException e){
         log.error("Возникла ошибка: " + e.getClass() + LINE_FEED + e.getMessage() + LINE_FEED + Arrays.toString(e.getStackTrace()));
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
@@ -62,7 +63,7 @@ public class HandlerExceptionController {
     }
 
     @ExceptionHandler(ServletException.class)
-    protected ResponseEntity<ErrorMessage> handleUserNameException(ServletException e){
+    protected ResponseEntity<ErrorMessage> errorServletException(ServletException e){
         log.error("Возникла ошибка: " + e.getClass() + LINE_FEED + e.getMessage() + LINE_FEED + Arrays.toString(e.getStackTrace()));
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
@@ -70,7 +71,7 @@ public class HandlerExceptionController {
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
-    protected ResponseEntity<ValidationErrorResponse> handleConstraintValidationException(ConstraintViolationException e) {
+    protected ResponseEntity<ValidationErrorResponse> errorConstraintViolationException(ConstraintViolationException e) {
         log.error("Возникла ошибка валидации: " + e.getMessage(), e);
         List<Violation> violations = e.getConstraintViolations().stream()
                 .map(violation -> new Violation(
@@ -85,7 +86,7 @@ public class HandlerExceptionController {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    protected ResponseEntity<ValidationErrorResponse> onMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+    protected ResponseEntity<ValidationErrorResponse> errorMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         final List<Violation> violations = e.getBindingResult().getFieldErrors().stream()
                 .map(error -> new Violation(error.getField(), error.getDefaultMessage()))
                 .collect(Collectors.toList());
@@ -96,7 +97,7 @@ public class HandlerExceptionController {
     }
 
     @ExceptionHandler(UsernameNotFoundException.class)
-    protected ResponseEntity<ErrorMessage> onMethodArgumentNotValidException(UsernameNotFoundException e) {
+    protected ResponseEntity<ErrorMessage> errorUsernameNotFoundException(UsernameNotFoundException e) {
         log.error("Возникла ошибка: " + e.getClass() + LINE_FEED + e.getMessage() + LINE_FEED + Arrays.toString(e.getStackTrace()));
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
@@ -104,10 +105,18 @@ public class HandlerExceptionController {
     }
 
     @ExceptionHandler(AccessDeniedException.class)
-    protected ResponseEntity<ErrorMessage> onMethodArgumentNotValidException(AccessDeniedException e) {
+    protected ResponseEntity<ErrorMessage> errorAccessDeniedException(AccessDeniedException e) {
         log.error("Возникла ошибка: " + e.getClass() + LINE_FEED + e.getMessage() + LINE_FEED + Arrays.toString(e.getStackTrace()));
         return ResponseEntity
                 .status(HttpStatus.FORBIDDEN)
+                .body(new ErrorMessage(e.getMessage()));
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    protected ResponseEntity<ErrorMessage> errorHttpMessageNotReadableException(HttpMessageNotReadableException e) {
+        log.error("Возникла ошибка: " + e.getClass() + LINE_FEED + e.getMessage() + LINE_FEED + Arrays.toString(e.getStackTrace()));
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
                 .body(new ErrorMessage(e.getMessage()));
     }
 }

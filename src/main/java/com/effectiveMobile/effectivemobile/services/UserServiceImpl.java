@@ -3,6 +3,8 @@ package com.effectiveMobile.effectivemobile.services;
 
 import com.effectiveMobile.effectivemobile.dto.CustomUsersDto;
 import com.effectiveMobile.effectivemobile.fabrics.ActionsFabric;
+import com.effectiveMobile.effectivemobile.fabrics.MappersFabric;
+import com.effectiveMobile.effectivemobile.fabrics.ServiceFabric;
 import com.effectiveMobile.effectivemobile.other.UserRoles;
 import com.effectiveMobile.effectivemobile.repository.AuthorizationRepository;
 import com.effectiveMobile.effectivemobile.entities.CustomUsers;
@@ -14,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -27,27 +30,25 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
 
     @Autowired
-    private AuthorizationRepository authorizationRepository;
+    private MappersFabric mappersFabric;
 
     @Autowired
-    private UserMapper userMapper;
-
-    @Autowired
-    private AuthenticationManager authenticationManager;
-
-    @Autowired
-    private JwtService jwtService;
-
-    @Autowired
-    private MyUserDetailService myUserDetailService;
+    private ServiceFabric serviceFabric;
 
     @Autowired
     private ActionsFabric actionsFabric;
+
+    @Autowired
+    private AuthorizationRepository authorizationRepository;
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
 
     @Override
     @Transactional
     public CustomUsersDto createUser(CustomUsersDto customUsersDto) {
         log.info("Метод createUser() ");
+        UserMapper userMapper = mappersFabric.createUserMapper();
         Optional<CustomUsers> optionalCustomUsers = actionsFabric
                 .createUserActions()
                 .searchUserEmailOrId(userMapper.convertDtoToUser(customUsersDto));
@@ -68,17 +69,21 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional
     public String authorizationUser(RegistrationUsers registrationUsers) throws UsernameNotFoundException {
         log.info("Метод authorizationUser() " + registrationUsers.getEmail());
+        String userEmail = registrationUsers.getEmail();
+        String passwordKey = registrationUsers.getPasswordKey();
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        registrationUsers.getEmail(), registrationUsers.getPasswordKey()
+                        userEmail, passwordKey
                 ));
         if (authentication.isAuthenticated()) {
-            return jwtService.generateToken(myUserDetailService.loadUserByUsername(registrationUsers.getEmail()));
+            UserDetails userDetails = serviceFabric.createUserDetailsService()
+                    .loadUserByUsername(userEmail);
+            return serviceFabric.createJwtService()
+                    .generateToken(userDetails);
         } else {
-            throw new UsernameNotFoundException(DescriptionUserExeption.USER_NOT_FOUND.getEnumDescription() + " " + registrationUsers.getEmail());
+            throw new UsernameNotFoundException(DescriptionUserExeption.USER_NOT_FOUND.getEnumDescription() + " " + userEmail);
         }
     }
 

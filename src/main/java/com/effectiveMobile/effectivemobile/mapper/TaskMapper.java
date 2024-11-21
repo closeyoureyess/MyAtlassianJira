@@ -1,15 +1,17 @@
 package com.effectiveMobile.effectivemobile.mapper;
 
+import com.effectiveMobile.effectivemobile.dto.NotesDto;
 import com.effectiveMobile.effectivemobile.exeptions.ExecutorNotFoundExeption;
 import com.effectiveMobile.effectivemobile.dto.TasksDto;
 import com.effectiveMobile.effectivemobile.entities.Tasks;
+import com.effectiveMobile.effectivemobile.exeptions.MainException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.util.List;
 
 /**
  * <pre>
- *     Маппер для {@link Tasks}
+ *     Маппер для {@link Tasks}, {@link TasksDto}
  * </pre>
  */
 public interface TaskMapper {

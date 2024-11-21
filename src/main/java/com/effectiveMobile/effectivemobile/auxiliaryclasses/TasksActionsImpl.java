@@ -2,7 +2,18 @@ package com.effectiveMobile.effectivemobile.auxiliaryclasses;
 
 import com.effectiveMobile.effectivemobile.constants.ConstantsClass;
 import com.effectiveMobile.effectivemobile.dto.CustomUsersDto;
-import com.effectiveMobile.effectivemobile.mapper.UserMapper;
+import com.effectiveMobile.effectivemobile.dto.DefaultSettingsDto;
+import com.effectiveMobile.effectivemobile.dto.TasksDto;
+import com.effectiveMobile.effectivemobile.entities.DefaultSettings;
+import com.effectiveMobile.effectivemobile.entities.Tasks;
+import com.effectiveMobile.effectivemobile.exeptions.IncorrectTypeParameterException;
+import com.effectiveMobile.effectivemobile.exeptions.MainException;
+import com.effectiveMobile.effectivemobile.fabrics.ActionsFabric;
+import com.effectiveMobile.effectivemobile.fabrics.MappersFabric;
+import com.effectiveMobile.effectivemobile.fabrics.ServiceFabric;
+import com.effectiveMobile.effectivemobile.other.DefaultSettingsFieldNameEnum;
+import com.effectiveMobile.effectivemobile.other.TaskPriorityEnum;
+import com.effectiveMobile.effectivemobile.other.TaskStatusEnum;
 import com.effectiveMobile.effectivemobile.repository.AuthorizationRepository;
 import com.effectiveMobile.effectivemobile.entities.CustomUsers;
 import com.effectiveMobile.effectivemobile.repository.TasksRepository;
@@ -14,29 +25,38 @@ import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
-import static com.effectiveMobile.effectivemobile.constants.ConstantsClass.EMPTY;
+import static com.effectiveMobile.effectivemobile.constants.ConstantsClass.EMPTY_SPACE;
+import static com.effectiveMobile.effectivemobile.exeptions.DescriptionUserExeption.INCORRECT_TYPE_PARAMETER;
 
 @Component
 @Slf4j
-public class TasksActionsImpl implements TasksActions{
+public class TasksActionsImpl implements TasksActions {
 
     @Autowired
     private AuthorizationRepository authorizationRepository;
+
     @Autowired
     private TasksRepository tasksRepository;
-    @Autowired
-    private UserMapper userMapper;
 
-    @Override
+    @Autowired
+    private MappersFabric mappersFabric;
+
+    @Autowired
+    private ServiceFabric serviceFabric;
+
+    @Autowired
+    private ActionsFabric actionsFabric;
+
+    /*@Override
     public boolean compareIntWithConstants(Integer objectInt, Integer constantsInt) {
-        log.info("Метод compareIntWithConstants()" + objectInt + EMPTY + constantsInt);
-        if (constantsInt.equals(ConstantsClass.REGIME_RECORD) && objectInt.equals(constantsInt)) {
+        log.info("Метод compareIntWithConstants()" + objectInt + EMPTY_SPACE + constantsInt);
+        if (constantsInt.equals(ConstantsClass.ONE_FLAG) && objectInt.equals(constantsInt)) {
             return true;
-        } else if (constantsInt.equals(ConstantsClass.REGIME_OVERWRITING) && objectInt.equals(constantsInt)) {
+        } else if (constantsInt.equals(ConstantsClass.ZERO_FLAG) && objectInt.equals(constantsInt)) {
             return true;
         }
         return false;
-    }
+    }*/
 
     @Override
     public boolean isPrivilegeTasks(CustomUsersDto customUsersDto) {
@@ -48,5 +68,27 @@ public class TasksActionsImpl implements TasksActions{
             return true;
         }
         return false;
+    }
+
+    @Override
+    public TasksDto fillTaskPriorityAndTaskStatusFields(TasksDto tasksDto) throws MainException {
+        DefaultSettingsActions defaultSettingsActions = actionsFabric.createDefaultSettingsActions();
+        if (tasksDto.getTaskPriority() == null) {
+            Optional<TaskStatusEnum> optionalTaskStatus = defaultSettingsActions
+                    .getDefaultValueFromTasksFields(DefaultSettingsFieldNameEnum.TASK_PRIORITY, TaskStatusEnum.BACKLOG);
+            if (optionalTaskStatus.isPresent()) {
+                TaskStatusEnum taskStatusEnum = optionalTaskStatus.get();
+                tasksDto.setTaskStatus(taskStatusEnum);
+            }
+        }
+        if (tasksDto.getTaskStatus() == null) {
+            Optional<TaskPriorityEnum> optionalTaskPriorityEnum = defaultSettingsActions
+                    .getDefaultValueFromTasksFields(DefaultSettingsFieldNameEnum.TASK_STATUS, TaskPriorityEnum.MEDIUM);
+            if (optionalTaskPriorityEnum.isPresent()) {
+                TaskPriorityEnum taskPriorityEnum = optionalTaskPriorityEnum.get();
+                tasksDto.setTaskPriority(taskPriorityEnum);
+            }
+        }
+        return tasksDto;
     }
 }

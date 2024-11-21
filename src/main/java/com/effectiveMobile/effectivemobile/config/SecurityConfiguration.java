@@ -51,7 +51,7 @@ public class SecurityConfiguration {
                             "/swagger-ui/**", "/v3/api-docs/**").permitAll();
                     registry.requestMatchers("/task/create", "/task/gen-info/**",
                             "/task/update-tasks").hasRole(UserRoles.USER.getUserRoles());
-                    registry.requestMatchers("/task/**").hasRole(UserRoles.ADMIN.getUserRoles());
+                    registry.requestMatchers("/task/**", "/defaultsettins/**").hasRole(UserRoles.ADMIN.getUserRoles());
                     registry.anyRequest().authenticated(); // Любой запрос должен быть аутентифицирован
                 })
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)

@@ -33,7 +33,7 @@ public class CustomUsersDto implements Serializable {
     @Schema(description = "E-mail пользователя", example = "example@gmail.com")
     private String email;
 
-    @NotBlank
+    @NotBlank(message = "Роль не может быть пустой")
     @JsonView(Views.Public.class)
     @Schema(description = "Роль пользователя", example = "USER")
     private UserRoles role;

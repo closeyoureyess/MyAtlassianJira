@@ -28,10 +28,10 @@ public class UserActionsImpl implements UserActions {
         log.info("Метод checkFindUser() " + typeOperations);
         Optional<CustomUsers> optionalCustomUsers = searchUserEmailOrId(customUsers);
 
-        if (optionalCustomUsers.isPresent() && (typeOperations.equals(ConstantsClass.REGIME_RECORD))) {
+        if (optionalCustomUsers.isPresent() && (typeOperations.equals(ConstantsClass.ONE_FLAG))) {
             newTasks.setTaskExecutor(optionalCustomUsers.get());
             return newTasks;
-        } else if (optionalCustomUsers.isPresent() && typeOperations.equals(ConstantsClass.REGIME_OVERWRITING)) {
+        } else if (optionalCustomUsers.isPresent() && typeOperations.equals(ConstantsClass.ZERO_FLAG)) {
             newTasks.setTaskAuthor(optionalCustomUsers.get());
             return newTasks;
         } else {

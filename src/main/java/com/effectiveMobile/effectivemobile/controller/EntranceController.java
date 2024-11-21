@@ -1,9 +1,7 @@
 package com.effectiveMobile.effectivemobile.controller;
 
 import com.effectiveMobile.effectivemobile.dto.CustomUsersDto;
-import com.effectiveMobile.effectivemobile.services.MyUserDetailService;
-import com.effectiveMobile.effectivemobile.services.UserService;
-import com.effectiveMobile.effectivemobile.services.JwtService;
+import com.effectiveMobile.effectivemobile.fabrics.ServiceFabric;
 import com.effectiveMobile.effectivemobile.auxiliaryclasses.RegistrationUsers;
 import com.effectiveMobile.effectivemobile.other.Views;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -33,16 +31,10 @@ import org.springframework.web.bind.annotation.RestController;
 public class EntranceController {
 
     @Autowired
-    private UserService userService;
+    private ServiceFabric serviceFabric;
 
     @Autowired
     private AuthenticationManager authenticationManager;
-
-    @Autowired
-    private JwtService jwtService;
-
-    @Autowired
-    private MyUserDetailService myUserDetailService;
 
     /**
      * Эндпоинт регистрации пользователя
@@ -55,7 +47,9 @@ public class EntranceController {
     @JsonView(Views.Internal.class)
     public ResponseEntity<CustomUsersDto> createUsers(@RequestBody @Parameter(description = "Пользователь") CustomUsersDto customUsersDto) {
         log.info("Метод регистрации, POST " + customUsersDto.getEmail());
-        CustomUsersDto customUsersDtoLocal = userService.createUser(customUsersDto);
+        CustomUsersDto customUsersDtoLocal = serviceFabric
+                .createUserService()
+                .createUser(customUsersDto);
         if (customUsersDtoLocal != null) {
             return ResponseEntity.ok(customUsersDtoLocal);
         }
@@ -74,7 +68,9 @@ public class EntranceController {
     public ResponseEntity<String> authorizationUser(@RequestBody @Parameter(description = "Форма авторизации") RegistrationUsers registrationUsers)
             throws UsernameNotFoundException {
         log.info("Метод авторизации, POST " + registrationUsers.getEmail());
-        String jwtToken = userService.authorizationUser(registrationUsers);
+        String jwtToken = serviceFabric
+                .createUserService()
+                .authorizationUser(registrationUsers);
         if (jwtToken != null) {
             return ResponseEntity.ok(jwtToken);
         }

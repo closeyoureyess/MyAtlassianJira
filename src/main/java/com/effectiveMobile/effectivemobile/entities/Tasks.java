@@ -5,6 +5,8 @@ import com.effectiveMobile.effectivemobile.other.TaskStatusEnum;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -46,8 +48,7 @@ public class Tasks {
     @Enumerated(EnumType.STRING)
     private TaskPriorityEnum taskPriority;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "tasks_notes_id")
-    private Notes notes;
+    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Notes> notes;
 
 }

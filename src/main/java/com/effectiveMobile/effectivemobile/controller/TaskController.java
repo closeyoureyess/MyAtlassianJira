@@ -3,6 +3,7 @@ package com.effectiveMobile.effectivemobile.controller;
 import com.effectiveMobile.effectivemobile.constants.ConstantsClass;
 import com.effectiveMobile.effectivemobile.exeptions.MainException;
 import com.effectiveMobile.effectivemobile.dto.TasksDto;
+import com.effectiveMobile.effectivemobile.fabrics.ServiceFabric;
 import com.effectiveMobile.effectivemobile.other.Views;
 import com.effectiveMobile.effectivemobile.services.TaskService;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -32,7 +33,7 @@ import java.util.Optional;
 public class TaskController {
 
     @Autowired
-    private TaskService taskService;
+    private ServiceFabric serviceFabric;
 
     /**
      * Эндпоинд POST для создания задачи
@@ -47,7 +48,7 @@ public class TaskController {
     @JsonView(Views.Public.class)
     public ResponseEntity<TasksDto> createTask(@RequestBody TasksDto tasksDto) throws MainException {
         log.info("Создание задачи, POST " + tasksDto.getHeader());
-        TasksDto localTasksDto = taskService.createTasks(tasksDto);
+        TasksDto localTasksDto = serviceFabric.createTaskService().createTasks(tasksDto);
         if (localTasksDto != null) {
             return ResponseEntity.ok(localTasksDto);
         }
@@ -74,8 +75,10 @@ public class TaskController {
                     example = "10") Integer limit
     ) {
         log.info("Получение задачи по автору, метод GET " + author);
-        Optional<List<TasksDto>> optionalAuthorsTasksDtoList = taskService.getTasksOfAuthorOrExecutor(author, offset, limit,
-                ConstantsClass.REGIME_RECORD);
+        Optional<List<TasksDto>> optionalAuthorsTasksDtoList = serviceFabric
+                .createTaskService()
+                .getTasksOfAuthorOrExecutor(author, offset, limit,
+                ConstantsClass.ONE_FLAG);
         if (optionalAuthorsTasksDtoList.isPresent()) {
             return ResponseEntity.ok(optionalAuthorsTasksDtoList.get());
         }
@@ -102,8 +105,9 @@ public class TaskController {
                     example = "10") Integer limit
     ) {
         log.info("Получение задачи по исполнителю, метод GET " + executorEmail);
-        Optional<List<TasksDto>> optionalExecutorTasksDtoList = taskService.getTasksOfAuthorOrExecutor(executorEmail, offset, limit,
-                ConstantsClass.REGIME_OVERWRITING);
+        Optional<List<TasksDto>> optionalExecutorTasksDtoList = serviceFabric
+                .createTaskService()
+                .getTasksOfAuthorOrExecutor(executorEmail, offset, limit, ConstantsClass.ZERO_FLAG);
         if (optionalExecutorTasksDtoList.isPresent()) {
             return ResponseEntity.ok(optionalExecutorTasksDtoList.get());
         }
@@ -123,7 +127,9 @@ public class TaskController {
     @JsonView(Views.Public.class)
     public ResponseEntity<TasksDto> editTasks(@RequestBody @Parameter(description = "Объект TasksDto с полями, требующими редактирования")
                                               TasksDto tasksDto) throws MainException {
-        Optional<TasksDto> newTasksDto = taskService.changeTasks(tasksDto);
+        Optional<TasksDto> newTasksDto = serviceFabric
+                .createTaskService()
+                .changeTasks(tasksDto);
         if (newTasksDto.isPresent()) {
             return ResponseEntity.ok(newTasksDto.get());
         }
@@ -139,10 +145,11 @@ public class TaskController {
     @Operation(summary = "Удалить задачу")
     @SecurityRequirement(name = "JWT")
     @DeleteMapping("/task/delete/{id}")
-    public ResponseEntity<String> deleteCase(@PathVariable("id") @Parameter(description = "ID задачи")
-                                             Integer idTasks) {
+    public ResponseEntity<String> deleteCase(@PathVariable("id") @Parameter(description = "ID задачи") Integer idTasks) {
         log.info("Удаление задачи по id, метод DELETE" + idTasks);
-        boolean resultDeleteTasks = taskService.deleteTasks(idTasks);
+        boolean resultDeleteTasks = serviceFabric
+                .createTaskService()
+                .deleteTasks(idTasks);
         if (resultDeleteTasks) {
             return ResponseEntity.ok(ConstantsClass.IS_DELETE);
         }

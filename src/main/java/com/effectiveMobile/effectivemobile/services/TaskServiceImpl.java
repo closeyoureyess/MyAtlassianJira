@@ -1,10 +1,14 @@
 package com.effectiveMobile.effectivemobile.services;
 
+import com.effectiveMobile.effectivemobile.auxiliaryclasses.*;
 import com.effectiveMobile.effectivemobile.dto.CustomUsersDto;
+import com.effectiveMobile.effectivemobile.exeptions.MainException;
+import com.effectiveMobile.effectivemobile.mapper.TaskMapper;
+import com.effectiveMobile.effectivemobile.other.DefaultSettingsFieldNameEnum;
+import com.effectiveMobile.effectivemobile.other.TaskPriorityEnum;
+import com.effectiveMobile.effectivemobile.other.TaskStatusEnum;
 import com.effectiveMobile.effectivemobile.repository.AuthorizationRepository;
 import com.effectiveMobile.effectivemobile.entities.CustomUsers;
-import com.effectiveMobile.effectivemobile.auxiliaryclasses.ValidationClass;
-import com.effectiveMobile.effectivemobile.auxiliaryclasses.ValidationClassImpl;
 import com.effectiveMobile.effectivemobile.constants.ConstantsClass;
 import com.effectiveMobile.effectivemobile.exeptions.DescriptionUserExeption;
 import com.effectiveMobile.effectivemobile.exeptions.ExecutorNotFoundExeption;
@@ -27,8 +31,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
-import static com.effectiveMobile.effectivemobile.constants.ConstantsClass.EMPTY;
-import static com.effectiveMobile.effectivemobile.constants.ConstantsClass.REGIME_OVERWRITING;
+import static com.effectiveMobile.effectivemobile.constants.ConstantsClass.EMPTY_SPACE;
+import static com.effectiveMobile.effectivemobile.constants.ConstantsClass.ZERO_FLAG;
 
 @Service
 @Slf4j
@@ -48,39 +52,40 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     @Transactional
-    public TasksDto createTasks(TasksDto tasksDto) throws UsernameNotFoundException, ExecutorNotFoundExeption {
-        log.info("Метод createTasks() " + tasksDto.getId());
-        Optional<CustomUsers> optionalAuthorizedUser = actionsFabric.createUserActions().getCurrentUser();
-        tasksDto.setTaskAuthor(mappersFabric.createUserMapper().convertUserToDto(optionalAuthorizedUser.get()));
-        Tasks newTasks = mappersFabric.createTaskMapper().convertDtoToTasks(tasksDto);
-        newTasks = actionsFabric
-                .createUserActions()
-                .checkFindUser(newTasks.getTaskExecutor(), newTasks, ConstantsClass.REGIME_RECORD);
-        newTasks = actionsFabric
-                .createUserActions()
-                .checkFindUser(newTasks.getTaskAuthor(), newTasks, REGIME_OVERWRITING);
-        newTasks.setId(REGIME_OVERWRITING);
+    public TasksDto createTasks(TasksDto tasksDto) throws UsernameNotFoundException, MainException {
+        log.info("Метод createTasks() " + tasksDto.getHeader());
+        UserActions userActions = actionsFabric.createUserActions();
+        TaskMapper taskMapper = mappersFabric.createTaskMapper();
+
+
+        Optional<CustomUsers> optionalAuthorizedUser = userActions.getCurrentUser();
+        tasksDto = actionsFabric.createTasksActions().fillTaskPriorityAndTaskStatusFields(tasksDto);
+        CustomUsers authorizedUser = optionalAuthorizedUser.get();
+        tasksDto.setTaskAuthor(mappersFabric.createUserMapper().convertUserToDto(authorizedUser));
+        Tasks newTasks = taskMapper.convertDtoToTasks(tasksDto);
+        newTasks = userActions
+                .checkFindUser(newTasks.getTaskExecutor(), newTasks, ConstantsClass.ONE_FLAG);
+        newTasks = userActions.checkFindUser(newTasks.getTaskAuthor(), newTasks, ZERO_FLAG);
+        newTasks.setId(ZERO_FLAG);
         tasksRepository.save(newTasks); // save to PostgreSQL
-        return mappersFabric
-                .createTaskMapper()
-                .convertTasksToDto(newTasks);
+        return taskMapper.convertTasksToDto(newTasks);
     }
 
     @Override
     @Transactional
-    public Optional<TasksDto> changeTasks(TasksDto tasksDto) throws ExecutorNotFoundExeption, NotEnoughRulesEntity {
+    public Optional<TasksDto> changeTasks(TasksDto tasksDto) throws MainException {
         log.info("Метод changeTasks() " + tasksDto.getId());
         Optional<Tasks> optionalTaskDatabase = Optional.empty();
+        TaskMapper taskMapper = mappersFabric.createTaskMapper();
+
+        tasksDto = actionsFabric.createTasksActions().fillTaskPriorityAndTaskStatusFields(tasksDto);
+
         if (tasksDto.getId() != null) {
-            optionalTaskDatabase = tasksRepository.findById(mappersFabric
-                    .createTaskMapper()
-                    .convertDtoToTasks(tasksDto)
-                    .getId());
+            optionalTaskDatabase = tasksRepository.findById(taskMapper.convertDtoToTasks(tasksDto).getId());
         }
         if (optionalTaskDatabase.isPresent()) {
-            TasksDto newTasksDto = mappersFabric
-                    .createTaskMapper()
-                    .convertTasksToDto(optionalTaskDatabase.get());
+            Tasks tasks = optionalTaskDatabase.get();
+            TasksDto newTasksDto = taskMapper.convertTasksToDto(tasks);
 
             boolean resultCheckPrivilege = checkPrivilegeTasks(newTasksDto, tasksDto);
             if (!resultCheckPrivilege) {
@@ -89,13 +94,9 @@ public class TaskServiceImpl implements TaskService {
             if (tasksDto.getTaskAuthor() == null) {
                 tasksDto.setTaskAuthor(newTasksDto.getTaskAuthor());
             }
-            Tasks newTasks = mappersFabric
-                    .createTaskMapper()
-                    .compareTaskAndDto(tasksDto, optionalTaskDatabase.get());
+            Tasks newTasks = taskMapper.compareTaskAndDto(tasksDto, optionalTaskDatabase.get());
             newTasks = tasksRepository.save(newTasks);
-            return Optional.of(mappersFabric
-                    .createTaskMapper()
-                    .convertTasksToDto(newTasks));
+            return Optional.of(taskMapper.convertTasksToDto(newTasks));
         }
         return Optional.empty();
     }
@@ -103,11 +104,11 @@ public class TaskServiceImpl implements TaskService {
     @Override
     @Transactional
     public Optional<List<TasksDto>> getTasksOfAuthorOrExecutor(String authorOrExecutor, Integer offset, Integer limit, Integer flag) {
-        log.info("Метод getTasksOfAuthorOrExecutor() " + authorOrExecutor + EMPTY + flag);
-        if (flag.equals(ConstantsClass.REGIME_RECORD)) {
-            return Optional.of(receiveAllTasksAuthorOrExecutorDataBase(authorOrExecutor, offset, limit, ConstantsClass.REGIME_RECORD));
-        } else if (flag.equals(REGIME_OVERWRITING)) {
-            return Optional.of(receiveAllTasksAuthorOrExecutorDataBase(authorOrExecutor, offset, limit, REGIME_OVERWRITING));
+        log.info("Метод getTasksOfAuthorOrExecutor() " + authorOrExecutor + EMPTY_SPACE + flag);
+        if (flag.equals(ConstantsClass.ONE_FLAG)) {
+            return Optional.of(receiveAllTasksAuthorOrExecutorDataBase(authorOrExecutor, offset, limit, ConstantsClass.ONE_FLAG));
+        } else if (flag.equals(ZERO_FLAG)) {
+            return Optional.of(receiveAllTasksAuthorOrExecutorDataBase(authorOrExecutor, offset, limit, ZERO_FLAG));
         }
         return Optional.empty();
     }
@@ -135,7 +136,7 @@ public class TaskServiceImpl implements TaskService {
      */
     private List<TasksDto> receiveAllTasksAuthorOrExecutorDataBase(String authorOrExecutor, Integer offset, Integer limit,
                                                                    Integer flag) {
-        log.info("Метод receiveAllTasksAuthorOrExecutorDataBase() " + authorOrExecutor + EMPTY + flag);
+        log.info("Метод receiveAllTasksAuthorOrExecutorDataBase() " + authorOrExecutor + EMPTY_SPACE + flag);
         ValidationClass validationClass = new ValidationClassImpl();
         List<Tasks> listAllTasks = new LinkedList<>();
 
@@ -175,10 +176,10 @@ public class TaskServiceImpl implements TaskService {
      * @return {@link Optional<Page<Tasks>>} Optional со страницей с задачами
      */
     private Optional<Page<Tasks>> methodFindAllTasksAuthorOrExecutor(Pageable pageble, Integer userId, Integer flag) {
-        log.info("Метод methodFindAllTasksAuthorOrExecutor() " + userId + EMPTY + flag);
-        if (flag.equals(ConstantsClass.REGIME_RECORD)) {
+        log.info("Метод methodFindAllTasksAuthorOrExecutor() " + userId + EMPTY_SPACE + flag);
+        if (flag.equals(ConstantsClass.ONE_FLAG)) {
             return Optional.of(tasksRepository.findAllByTaskAuthorId(userId, pageble));
-        } else if (flag.equals(REGIME_OVERWRITING)) {
+        } else if (flag.equals(ZERO_FLAG)) {
             return Optional.of(tasksRepository.findAllByTaskExecutorId(userId, pageble));
         }
         return Optional.empty();
@@ -189,20 +190,19 @@ public class TaskServiceImpl implements TaskService {
      *
      * @param tasksDtoFromDB
      * @param tasksDto
-     * @return
      * @throws NotEnoughRulesEntity
      */
     private boolean checkPrivilegeTasks(TasksDto tasksDtoFromDB, TasksDto tasksDto) throws NotEnoughRulesEntity {
-        log.info("Метод checkPrivilegeTasks() " + tasksDto.getId() + EMPTY + tasksDtoFromDB.getId());
+        log.info("Метод checkPrivilegeTasks() " + tasksDto.getId() + EMPTY_SPACE + tasksDtoFromDB.getId());
+        TasksActions tasksActions = actionsFabric.createTasksActions();
+
         CustomUsersDto userDtoAuthorTaskDB = tasksDtoFromDB.getTaskAuthor();
         CustomUsersDto userCurrentDtoExecutorTaskDB = tasksDto.getTaskExecutor();
-        boolean availabilityRules = actionsFabric
-                .createTasksActions()
-                .isPrivilegeTasks(userDtoAuthorTaskDB);
+        boolean availabilityRules = tasksActions.isPrivilegeTasks(userDtoAuthorTaskDB);
         if (availabilityRules) {
             return true;
         } else {
-            if (actionsFabric.createTasksActions().isPrivilegeTasks(userCurrentDtoExecutorTaskDB)) {
+            if (tasksActions.isPrivilegeTasks(userCurrentDtoExecutorTaskDB)) {
                 return isFieldsTasksDtoIsNullOrNot(tasksDto);
             } else {
                 return false;
@@ -232,4 +232,6 @@ public class TaskServiceImpl implements TaskService {
             throw new NotEnoughRulesEntity(DescriptionUserExeption.NOT_ENOUGH_RULES_EXECUTOR.getEnumDescription());
         }
     }
+
+
 }
