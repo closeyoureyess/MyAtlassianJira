@@ -38,6 +38,7 @@ public class SecurityConfiguration {
 
     /**
      * Метод, настраивающий цепочку фильтров безопасности приложения
+     *
      * @param httpSecurity
      * @throws Exception
      */
@@ -50,14 +51,20 @@ public class SecurityConfiguration {
                     registry.requestMatchers("/entrance/**",
                             "/swagger-ui/**", "/v3/api-docs/**").permitAll();
                     registry.requestMatchers("/task/create", "/task/gen-info/**",
-                            "/task/update-tasks").hasRole(UserRoles.USER.getUserRoles());
-                    registry.requestMatchers("/task/**", "/defaultsettins/**").hasRole(UserRoles.ADMIN.getUserRoles());
+                            "/task/update-tasks", "/notes/**").hasRole(UserRoles.USER.getUserRoles());
+                    registry.requestMatchers("/task/**", "/defaultsettins/**", "/notes/**")
+                            .hasRole(UserRoles.ADMIN.getUserRoles());
                     registry.anyRequest().authenticated(); // Любой запрос должен быть аутентифицирован
                 })
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 
+    /**
+     * Метод, создающий бин {@link UserDetailsService}
+     *
+     * @return {@link UserDetailsService}
+     */
     @Bean
     public UserDetailsService userDetailsService() {
         log.info("Метод userDetailsService()");
@@ -66,16 +73,18 @@ public class SecurityConfiguration {
 
     /**
      * Настраивает менеджер аутентификации с использованием указанного провайдера аутентификации.
+     *
      * @return настроенный {@link AuthenticationManager}
      */
     @Bean
-    public AuthenticationManager authenticationManager(){
+    public AuthenticationManager authenticationManager() {
         log.info("Метод authenticationManager()");
         return new ProviderManager(authenticationProvider());
     }
 
     /**
      * Определяет провайдер аутентификации с использованием DAO и шифрования паролей.
+     *
      * @return настроенный {@link AuthenticationProvider}
      */
     @Bean
@@ -90,6 +99,7 @@ public class SecurityConfiguration {
 
     /**
      * Определяет механизм шифрования паролей с использованием BCrypt.
+     *
      * @return экземпляр {@link PasswordEncoder}
      */
     @Bean

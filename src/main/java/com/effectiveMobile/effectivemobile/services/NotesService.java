@@ -1,6 +1,7 @@
 package com.effectiveMobile.effectivemobile.services;
 
 import com.effectiveMobile.effectivemobile.dto.NotesDto;
+import com.effectiveMobile.effectivemobile.exeptions.MainException;
 
 /**
  * <pre>
@@ -9,6 +10,6 @@ import com.effectiveMobile.effectivemobile.dto.NotesDto;
  */
 public interface NotesService {
 
-    NotesDto createNotes (NotesDto notesDto);
+    NotesDto createNotes (NotesDto notesDto) throws MainException;
 
 }

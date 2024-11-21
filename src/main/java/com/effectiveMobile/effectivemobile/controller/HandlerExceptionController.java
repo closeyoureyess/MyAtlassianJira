@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.effectiveMobile.effectivemobile.constants.ConstantsClass.LINE_FEED;
+import static com.effectiveMobile.effectivemobile.exeptions.DescriptionUserExeption.GENERATION_ERROR;
 
 /**
  * <pre>
@@ -32,15 +33,16 @@ public class HandlerExceptionController {
 
     @ExceptionHandler(ExecutorNotFoundExeption.class)
     protected ResponseEntity<ErrorMessage> errorExecutorNotFoundExeption(ExecutorNotFoundExeption e){
-        log.error("Возникла ошибка: " + e.getClass() + LINE_FEED + e.getMessage() + LINE_FEED + Arrays.toString(e.getStackTrace()));
+        log.error(GENERATION_ERROR.getEnumDescription() + e.getClass() + LINE_FEED + e.getMessage() + LINE_FEED +
+                Arrays.toString(e.getStackTrace()));
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
                 .body(new ErrorMessage(e.getMessage()));
     }
 
-    @ExceptionHandler(NotEnoughRulesEntity.class)
-    protected ResponseEntity<ErrorMessage> errorNotEnoughRulesEntity(NotEnoughRulesEntity e){
-        log.error("Возникла ошибка: " + e.getClass() + LINE_FEED + e.getMessage() + LINE_FEED + Arrays.toString(e.getStackTrace()));
+    @ExceptionHandler(NotEnoughRulesForEntity.class)
+    protected ResponseEntity<ErrorMessage> errorNotEnoughRulesEntity(NotEnoughRulesForEntity e){
+        log.error(GENERATION_ERROR.getEnumDescription() + e.getClass() + LINE_FEED + e.getMessage() + LINE_FEED + Arrays.toString(e.getStackTrace()));
         return ResponseEntity
                 .status(HttpStatus.FORBIDDEN)
                 .body(new ErrorMessage(e.getMessage()));
@@ -48,7 +50,7 @@ public class HandlerExceptionController {
 
     @ExceptionHandler(EntityNotFoundExeption.class)
     protected ResponseEntity<ErrorMessage> errorEntityNotFoundExeption(EntityNotFoundExeption e){
-        log.error("Возникла ошибка: " + e.getClass() + LINE_FEED + e.getMessage() + LINE_FEED + Arrays.toString(e.getStackTrace()));
+        log.error(GENERATION_ERROR.getEnumDescription() + e.getClass() + LINE_FEED + e.getMessage() + LINE_FEED + Arrays.toString(e.getStackTrace()));
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
                 .body(new ErrorMessage(e.getMessage()));
@@ -56,7 +58,7 @@ public class HandlerExceptionController {
 
     @ExceptionHandler(IOException.class)
     protected ResponseEntity<ErrorMessage> errorIOException(IOException e){
-        log.error("Возникла ошибка: " + e.getClass() + LINE_FEED + e.getMessage() + LINE_FEED + Arrays.toString(e.getStackTrace()));
+        log.error(GENERATION_ERROR.getEnumDescription() + e.getClass() + LINE_FEED + e.getMessage() + LINE_FEED + Arrays.toString(e.getStackTrace()));
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(new ErrorMessage(e.getMessage()));
@@ -64,7 +66,7 @@ public class HandlerExceptionController {
 
     @ExceptionHandler(ServletException.class)
     protected ResponseEntity<ErrorMessage> errorServletException(ServletException e){
-        log.error("Возникла ошибка: " + e.getClass() + LINE_FEED + e.getMessage() + LINE_FEED + Arrays.toString(e.getStackTrace()));
+        log.error(GENERATION_ERROR.getEnumDescription() + e.getClass() + LINE_FEED + e.getMessage() + LINE_FEED + Arrays.toString(e.getStackTrace()));
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(new ErrorMessage(e.getMessage()));
@@ -87,18 +89,21 @@ public class HandlerExceptionController {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     protected ResponseEntity<ValidationErrorResponse> errorMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+        log.error(GENERATION_ERROR.getEnumDescription() + e.getClass() + LINE_FEED + e.getMessage() + LINE_FEED +
+                Arrays.toString(e.getStackTrace()));
         final List<Violation> violations = e.getBindingResult().getFieldErrors().stream()
                 .map(error -> new Violation(error.getField(), error.getDefaultMessage()))
                 .collect(Collectors.toList());
         ValidationErrorResponse errorResponse = new ValidationErrorResponse(violations);
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
-                .body(errorResponse);
+                .body(errorResponse); //
     }
 
     @ExceptionHandler(UsernameNotFoundException.class)
     protected ResponseEntity<ErrorMessage> errorUsernameNotFoundException(UsernameNotFoundException e) {
-        log.error("Возникла ошибка: " + e.getClass() + LINE_FEED + e.getMessage() + LINE_FEED + Arrays.toString(e.getStackTrace()));
+        log.error(GENERATION_ERROR.getEnumDescription() + e.getClass() + LINE_FEED + e.getMessage() + LINE_FEED +
+                Arrays.toString(e.getStackTrace()));
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
                 .body(new ErrorMessage(e.getMessage()));
@@ -106,7 +111,8 @@ public class HandlerExceptionController {
 
     @ExceptionHandler(AccessDeniedException.class)
     protected ResponseEntity<ErrorMessage> errorAccessDeniedException(AccessDeniedException e) {
-        log.error("Возникла ошибка: " + e.getClass() + LINE_FEED + e.getMessage() + LINE_FEED + Arrays.toString(e.getStackTrace()));
+        log.error(GENERATION_ERROR.getEnumDescription() + e.getClass() + LINE_FEED + e.getMessage() + LINE_FEED +
+                Arrays.toString(e.getStackTrace()));
         return ResponseEntity
                 .status(HttpStatus.FORBIDDEN)
                 .body(new ErrorMessage(e.getMessage()));
@@ -114,7 +120,26 @@ public class HandlerExceptionController {
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     protected ResponseEntity<ErrorMessage> errorHttpMessageNotReadableException(HttpMessageNotReadableException e) {
-        log.error("Возникла ошибка: " + e.getClass() + LINE_FEED + e.getMessage() + LINE_FEED + Arrays.toString(e.getStackTrace()));
+        log.error(GENERATION_ERROR.getEnumDescription() + e.getClass() + LINE_FEED + e.getMessage() + LINE_FEED +
+                Arrays.toString(e.getStackTrace()));
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorMessage(e.getMessage()));
+    }
+
+    @ExceptionHandler(EntityNotBeNull.class)
+    protected ResponseEntity<ErrorMessage> errorEntityNotBeNull(EntityNotBeNull e) {
+        log.error(GENERATION_ERROR.getEnumDescription() + e.getClass() + LINE_FEED + e.getMessage() + LINE_FEED +
+                Arrays.toString(e.getStackTrace()));
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorMessage(e.getMessage()));
+    }
+
+    @ExceptionHandler(FieldNotBeNull.class)
+    protected ResponseEntity<ErrorMessage> errorFieldNotBeNull(FieldNotBeNull e) {
+        log.error(GENERATION_ERROR.getEnumDescription() + e.getClass() + LINE_FEED + e.getMessage() + LINE_FEED +
+                Arrays.toString(e.getStackTrace()));
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(new ErrorMessage(e.getMessage()));

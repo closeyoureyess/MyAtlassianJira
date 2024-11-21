@@ -1,6 +1,5 @@
 package com.effectiveMobile.effectivemobile.dto;
 
-import com.effectiveMobile.effectivemobile.entities.Notes;
 import com.effectiveMobile.effectivemobile.other.TaskPriorityEnum;
 import com.effectiveMobile.effectivemobile.other.TaskStatusEnum;
 import com.effectiveMobile.effectivemobile.other.Views;
@@ -11,7 +10,6 @@ import lombok.*;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.Objects;
 
 
 @Getter

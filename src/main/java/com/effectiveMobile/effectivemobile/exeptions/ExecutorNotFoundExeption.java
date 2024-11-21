@@ -10,4 +10,8 @@ public class ExecutorNotFoundExeption extends MainException{
     public ExecutorNotFoundExeption(String message){
         super(message);
     }
+
+    public ExecutorNotFoundExeption(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

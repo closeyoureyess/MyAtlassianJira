@@ -1,13 +1,11 @@
 package com.effectiveMobile.effectivemobile.dto;
 
-import com.effectiveMobile.effectivemobile.entities.Tasks;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import org.springframework.validation.annotation.Validated;
 
 import java.io.Serializable;
-import java.util.Objects;
 
 @Getter
 @Setter
@@ -27,6 +25,7 @@ public class NotesDto implements Serializable {
     @NotBlank(message = "Комментарий не может быть пуст")
     private String comments;
 
+    @Schema(description = "Комментируемая задача", example = "Задача, для которой оставляется комментарий")
     private TasksDto task;
 
 }

@@ -6,4 +6,7 @@ public class MainException extends Exception{
         super(message);
     }
 
+    public MainException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

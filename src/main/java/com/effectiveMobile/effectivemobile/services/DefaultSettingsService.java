@@ -12,7 +12,19 @@ import java.util.Optional;
  */
 public interface DefaultSettingsService {
 
+    /**
+     * Метод, позволяющий отредактировать значения по умолчанию для нужных полей
+     *
+     * @param defaultSettingsDto
+     * @return {@link Optional<DefaultSettingsDto>} с отредактированными настройками по умолчанию для полей
+     */
     Optional<DefaultSettingsDto> changeDefaultSettings(DefaultSettingsDto defaultSettingsDto);
 
+    /**
+     * Метод, позволяющий получить выставленное значение по умолчанию для определенного поля
+     *
+     * @param fieldName - поле, для которого нужно получить значение по умолчанию
+     * @return {@link Optional<DefaultSettingsDto>} выставленное значение по умолчанию для поля
+     */
     Optional<DefaultSettingsDto> getDefaultSettings(DefaultSettingsFieldNameEnum fieldName);
 }

@@ -5,9 +5,13 @@ package com.effectiveMobile.effectivemobile.exeptions;
  *     Ошибка, сообщающая о том, что для работы с сущностью недостаточно прав
  * </pre>
  */
-public class NotEnoughRulesEntity extends MainException {
+public class NotEnoughRulesForEntity extends MainException {
 
-    public NotEnoughRulesEntity(String message){
+    public NotEnoughRulesForEntity(String message){
         super(message);
+    }
+
+    public NotEnoughRulesForEntity(String message, Throwable cause) {
+        super(message, cause);
     }
 }

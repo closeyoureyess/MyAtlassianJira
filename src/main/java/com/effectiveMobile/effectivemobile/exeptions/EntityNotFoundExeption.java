@@ -11,4 +11,8 @@ public class EntityNotFoundExeption extends MainException{
         super(message);
     }
 
+    public EntityNotFoundExeption(String message, Throwable cause) {
+        super(message, cause);
+    }
+
 }

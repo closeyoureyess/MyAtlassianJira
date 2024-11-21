@@ -15,6 +15,7 @@ public interface UserActions {
 
     /**
      * Метод для указания {@link CustomUsers} автора/исполнителя задачи
+     *
      * @param customUsers
      * @param newTasks
      * @param typeOperations
@@ -25,18 +26,21 @@ public interface UserActions {
 
     /**
      * Метод для получения текущего авторизованного пользователя
+     *
      * @return Возвращает текущего авторизованного пользователя из SecurityContextHolder
      */
     Optional<CustomUsers> getCurrentUser();
 
     /**
      * Метод для получения емейла текущего пользователя
+     *
      * @return Возвращает емейл текущего авторизованного пользователя
      */
     String getEmailCurrentUser();
 
     /**
      * Метод для поиска пользователя в БД по id или e-mail-адресу
+     *
      * @param customUsers
      * @return Возвращает найденного в БД пользователя {@link CustomUsers}
      * @throws UsernameNotFoundException

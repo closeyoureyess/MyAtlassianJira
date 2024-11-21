@@ -7,6 +7,7 @@ import com.effectiveMobile.effectivemobile.fabrics.ServiceFabric;
 import com.effectiveMobile.effectivemobile.other.Views;
 import com.effectiveMobile.effectivemobile.services.NotesService;
 import com.fasterxml.jackson.annotation.JsonView;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -19,6 +20,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * <pre>
+ *     Контроллер, обрабатывающий все эксепшены, котоыре могут быть выброшены в процессе работы приложения
+ * </pre>
+ */
 @Tag(name = "Комментарии", description = "Позволяет создать комментарий для задачи")
 @RestController
 @RequestMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -32,7 +38,7 @@ public class NotesController {
     @SecurityRequirement(name = "JWT")
     @PostMapping(value = "/notes/create")
     @JsonView(Views.Public.class)
-    public ResponseEntity<NotesDto> createTask(@RequestBody NotesDto notesDto) {
+    public ResponseEntity<NotesDto> createNotes(@RequestBody NotesDto notesDto) throws MainException {
         log.info("Создание комментария, POST " + notesDto.getComments());
         NotesDto localNotesDto = serviceFabric.createNotesService().createNotes(notesDto);
         if (localNotesDto != null) {

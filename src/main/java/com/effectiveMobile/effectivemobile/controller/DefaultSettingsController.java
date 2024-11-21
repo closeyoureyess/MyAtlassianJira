@@ -17,6 +17,11 @@ import java.util.Optional;
 
 import static com.effectiveMobile.effectivemobile.constants.ConstantsClass.EMPTY_SPACE;
 
+/**
+ * <pre>
+ *     Контроллер редактирования настроек по умолчанию
+ * </pre>
+ */
 @Tag(name = "Настройки по умолчанию", description = "Позволяет отредактировать настройки по умолчанию")
 @RestController
 @RequestMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)

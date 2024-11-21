@@ -4,15 +4,12 @@ import com.effectiveMobile.effectivemobile.auxiliaryclasses.*;
 import com.effectiveMobile.effectivemobile.dto.CustomUsersDto;
 import com.effectiveMobile.effectivemobile.exeptions.MainException;
 import com.effectiveMobile.effectivemobile.mapper.TaskMapper;
-import com.effectiveMobile.effectivemobile.other.DefaultSettingsFieldNameEnum;
-import com.effectiveMobile.effectivemobile.other.TaskPriorityEnum;
-import com.effectiveMobile.effectivemobile.other.TaskStatusEnum;
+import com.effectiveMobile.effectivemobile.other.UserRoles;
 import com.effectiveMobile.effectivemobile.repository.AuthorizationRepository;
 import com.effectiveMobile.effectivemobile.entities.CustomUsers;
 import com.effectiveMobile.effectivemobile.constants.ConstantsClass;
 import com.effectiveMobile.effectivemobile.exeptions.DescriptionUserExeption;
-import com.effectiveMobile.effectivemobile.exeptions.ExecutorNotFoundExeption;
-import com.effectiveMobile.effectivemobile.exeptions.NotEnoughRulesEntity;
+import com.effectiveMobile.effectivemobile.exeptions.NotEnoughRulesForEntity;
 import com.effectiveMobile.effectivemobile.fabrics.ActionsFabric;
 import com.effectiveMobile.effectivemobile.fabrics.MappersFabric;
 import com.effectiveMobile.effectivemobile.dto.TasksDto;
@@ -33,6 +30,8 @@ import java.util.Optional;
 
 import static com.effectiveMobile.effectivemobile.constants.ConstantsClass.EMPTY_SPACE;
 import static com.effectiveMobile.effectivemobile.constants.ConstantsClass.ZERO_FLAG;
+import static com.effectiveMobile.effectivemobile.exeptions.DescriptionUserExeption.GENERATION_ERROR;
+import static com.effectiveMobile.effectivemobile.exeptions.DescriptionUserExeption.NOT_ENOUGH_RULES_MUST_BE_EXECUTOR;
 
 @Service
 @Slf4j
@@ -57,9 +56,8 @@ public class TaskServiceImpl implements TaskService {
         UserActions userActions = actionsFabric.createUserActions();
         TaskMapper taskMapper = mappersFabric.createTaskMapper();
 
-
-        Optional<CustomUsers> optionalAuthorizedUser = userActions.getCurrentUser();
         tasksDto = actionsFabric.createTasksActions().fillTaskPriorityAndTaskStatusFields(tasksDto);
+        Optional<CustomUsers> optionalAuthorizedUser = userActions.getCurrentUser();
         CustomUsers authorizedUser = optionalAuthorizedUser.get();
         tasksDto.setTaskAuthor(mappersFabric.createUserMapper().convertUserToDto(authorizedUser));
         Tasks newTasks = taskMapper.convertDtoToTasks(tasksDto);
@@ -73,28 +71,23 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     @Transactional
-    public Optional<TasksDto> changeTasks(TasksDto tasksDto) throws MainException {
-        log.info("Метод changeTasks() " + tasksDto.getId());
+    public Optional<TasksDto> changeTasks(TasksDto tasksDtoFromJson) throws MainException {
+        log.info("Метод changeTasks() " + tasksDtoFromJson.getId());
         Optional<Tasks> optionalTaskDatabase = Optional.empty();
         TaskMapper taskMapper = mappersFabric.createTaskMapper();
 
-        tasksDto = actionsFabric.createTasksActions().fillTaskPriorityAndTaskStatusFields(tasksDto);
-
-        if (tasksDto.getId() != null) {
-            optionalTaskDatabase = tasksRepository.findById(taskMapper.convertDtoToTasks(tasksDto).getId());
+        if (tasksDtoFromJson.getId() != null) {
+            optionalTaskDatabase = tasksRepository.findById(taskMapper.convertDtoToTasks(tasksDtoFromJson).getId());
         }
         if (optionalTaskDatabase.isPresent()) {
             Tasks tasks = optionalTaskDatabase.get();
-            TasksDto newTasksDto = taskMapper.convertTasksToDto(tasks);
+            TasksDto newTasksDtoFromDB = taskMapper.convertTasksToDto(tasks);
 
-            boolean resultCheckPrivilege = checkPrivilegeTasks(newTasksDto, tasksDto);
+            boolean resultCheckPrivilege = checkPrivilegeTasks(newTasksDtoFromDB, tasksDtoFromJson);
             if (!resultCheckPrivilege) {
                 return Optional.empty();
             }
-            if (tasksDto.getTaskAuthor() == null) {
-                tasksDto.setTaskAuthor(newTasksDto.getTaskAuthor());
-            }
-            Tasks newTasks = taskMapper.compareTaskAndDto(tasksDto, optionalTaskDatabase.get());
+            Tasks newTasks = taskMapper.compareTaskAndDto(tasksDtoFromJson, optionalTaskDatabase.get());
             newTasks = tasksRepository.save(newTasks);
             return Optional.of(taskMapper.convertTasksToDto(newTasks));
         }
@@ -186,27 +179,25 @@ public class TaskServiceImpl implements TaskService {
     }
 
     /**
-     * Метод, проверяющий наличие прав на редактирование задачи
+     * Метод, проверяющий существование указыванных автором/исполнителем задачи юзеров
      *
      * @param tasksDtoFromDB
      * @param tasksDto
-     * @throws NotEnoughRulesEntity
+     * @throws NotEnoughRulesForEntity
      */
-    private boolean checkPrivilegeTasks(TasksDto tasksDtoFromDB, TasksDto tasksDto) throws NotEnoughRulesEntity {
+    private boolean checkPrivilegeTasks(TasksDto tasksDtoFromDB, TasksDto tasksDto) throws NotEnoughRulesForEntity {
         log.info("Метод checkPrivilegeTasks() " + tasksDto.getId() + EMPTY_SPACE + tasksDtoFromDB.getId());
         TasksActions tasksActions = actionsFabric.createTasksActions();
 
-        CustomUsersDto userDtoAuthorTaskDB = tasksDtoFromDB.getTaskAuthor();
+        CustomUsersDto userDtoAuthorTaskDB = tasksDtoFromDB.getTaskExecutor();
         CustomUsersDto userCurrentDtoExecutorTaskDB = tasksDto.getTaskExecutor();
         boolean availabilityRules = tasksActions.isPrivilegeTasks(userDtoAuthorTaskDB);
         if (availabilityRules) {
             return true;
         } else {
-            if (tasksActions.isPrivilegeTasks(userCurrentDtoExecutorTaskDB)) {
-                return isFieldsTasksDtoIsNullOrNot(tasksDto);
-            } else {
-                return false;
-            }
+            return false;
+           /* throw new NotEnoughRulesForEntity(GENERATION_ERROR.getEnumDescription(),
+                    new NotEnoughRulesForEntity(NOT_ENOUGH_RULES_MUST_BE_EXECUTOR.getEnumDescription()));*/
         }
     }
 
@@ -214,9 +205,9 @@ public class TaskServiceImpl implements TaskService {
      * Метод, проверяющий поля {@link TasksDto} на null
      *
      * @param tasksDto
-     * @throws NotEnoughRulesEntity
+     * @throws NotEnoughRulesForEntity
      */
-    private boolean isFieldsTasksDtoIsNullOrNot(TasksDto tasksDto) throws NotEnoughRulesEntity {
+    private boolean isFieldsTasksDtoIsNullOrNot(TasksDto tasksDto) throws NotEnoughRulesForEntity {
         log.info("Метод isFieldsTasksDtoIsNullOrNot() " + tasksDto.getId());
         if ((tasksDto.getNotesDto() == null
                 && tasksDto.getTaskPriority() == null
@@ -229,7 +220,7 @@ public class TaskServiceImpl implements TaskService {
         ) {
             return true;
         } else {
-            throw new NotEnoughRulesEntity(DescriptionUserExeption.NOT_ENOUGH_RULES_EXECUTOR.getEnumDescription());
+            throw new NotEnoughRulesForEntity(DescriptionUserExeption.NOT_ENOUGH_RULES_EXECUTOR.getEnumDescription());
         }
     }
 

@@ -1,5 +1,6 @@
 package com.effectiveMobile.effectivemobile.mapper;
 
+import com.effectiveMobile.effectivemobile.entities.CustomUsers;
 import com.effectiveMobile.effectivemobile.fabrics.MappersFabric;
 import com.effectiveMobile.effectivemobile.other.TaskPriorityEnum;
 import com.effectiveMobile.effectivemobile.repository.AuthorizationRepository;
@@ -166,10 +167,12 @@ public class TaskMapperImpl implements TaskMapper {
 
                         || (tasksDto.getTaskExecutor() != null && tasks.getTaskExecutor() == null) // 2
         ) {
-
+            CustomUsers customUsers = mappersFabric
+                    .createUserMapper()
+                    .convertDtoToUser(tasksDto.getTaskExecutor());
             Tasks newTasks = actionsFabric
                     .createUserActions()
-                    .checkFindUser(mappersFabric.createUserMapper().convertDtoToUser(tasksDto.getTaskExecutor()), tasks, ConstantsClass.ONE_FLAG);
+                    .checkFindUser(customUsers, tasks, ConstantsClass.ONE_FLAG);
             if (newTasks != null) {
                 tasks.setTaskExecutor(newTasks.getTaskExecutor());
             }
