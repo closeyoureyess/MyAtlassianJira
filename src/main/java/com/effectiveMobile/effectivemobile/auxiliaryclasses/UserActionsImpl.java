@@ -10,10 +10,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
+import java.util.Collection;
 import java.util.Optional;
 
 @Component
@@ -22,6 +24,7 @@ public class UserActionsImpl implements UserActions {
 
     @Autowired
     private AuthorizationRepository authorizationRepository;
+
     @Autowired
     private TasksActions tasksActions;
 
@@ -46,8 +49,16 @@ public class UserActionsImpl implements UserActions {
     public Optional<CustomUsers> getCurrentUser() {
         log.info("Метод getCurrentUser()");
         Authentication loggedInUser = SecurityContextHolder.getContext().getAuthentication();
-        loggedInUser.getAuthorities()
         return authorizationRepository.findByEmail(loggedInUser.getName());
+    }
+
+    @Override
+    public Optional<String> getRoleCurrentAuthorizedUser(String roleToMatch) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return authentication.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .filter(authority -> authority.equals(roleToMatch))
+                .findFirst();
     }
 
     @Override

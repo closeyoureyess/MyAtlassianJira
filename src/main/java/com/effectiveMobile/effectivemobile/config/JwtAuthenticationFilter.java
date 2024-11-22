@@ -1,5 +1,8 @@
 package com.effectiveMobile.effectivemobile.config;
 
+import com.effectiveMobile.effectivemobile.fabrics.ActionsFabric;
+import com.effectiveMobile.effectivemobile.fabrics.ServiceFabric;
+import com.effectiveMobile.effectivemobile.services.JwtService;
 import com.effectiveMobile.effectivemobile.services.JwtServiceImpl;
 import com.effectiveMobile.effectivemobile.services.MyUserDetailService;
 import jakarta.servlet.FilterChain;
@@ -28,10 +31,7 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Autowired
-    private JwtServiceImpl jwtServiceImpl;
-
-    @Autowired
-    private MyUserDetailService myUserDetailService;
+    private ServiceFabric serviceFabric;
 
     /**
      * Метод, фильтрующий входящие запросы для проверки наличия и валидности JWT-токена
@@ -44,16 +44,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         log.info("Метод doFilterInternal()");
+        JwtService jwtService = serviceFabric.createJwtService();
         String authHeader = request.getHeader("Authorization");
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }
         String jwt = authHeader.substring(7);
-        String username = jwtServiceImpl.extractEmailUser(jwt);
+        String username = jwtService.extractEmailUser(jwt);
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = myUserDetailService.loadUserByUsername(username);
-            if (userDetails != null && jwtServiceImpl.isTokenValid(jwt)) {
+            UserDetails userDetails = serviceFabric.createUserDetailsService().loadUserByUsername(username);
+            if (userDetails != null && jwtService.isTokenValid(jwt)) {
                 UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                         username,
                         userDetails.getPassword(),

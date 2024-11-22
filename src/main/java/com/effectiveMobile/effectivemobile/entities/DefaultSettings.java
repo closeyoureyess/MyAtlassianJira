@@ -16,7 +16,7 @@ import lombok.Setter;
  * </pre>
  */
 @Entity
-@Table(name = "user_settings")
+@Table(name = "default_settings")
 @Getter
 @Setter
 @NoArgsConstructor

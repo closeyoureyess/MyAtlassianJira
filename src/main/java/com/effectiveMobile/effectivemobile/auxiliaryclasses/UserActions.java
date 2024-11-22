@@ -25,11 +25,18 @@ public interface UserActions {
     Tasks checkFindUser(CustomUsers customUsers, Tasks newTasks, Integer typeOperations) throws UsernameNotFoundException;
 
     /**
-     * Метод для получения текущего авторизованного пользователя
+     * Метод для получения объекта CustomersUsers по емейлу текущего авторизрванного пользователя
      *
-     * @return Возвращает текущего авторизованного пользователя из SecurityContextHolder
+     * @return Возвращает CustomersUsers из БД по e-mail текущего авторизованного пользователя
      */
     Optional<CustomUsers> getCurrentUser();
+
+    /**
+     * Метод, позволяющий узнать роль текущего авторизованного пользователя без запроса в БД
+     *
+     * @return {@link String} роль текущего авторизованного пользователя
+     */
+    Optional<String> getRoleCurrentAuthorizedUser(String roleToMatch);
 
     /**
      * Метод для получения емейла текущего пользователя
