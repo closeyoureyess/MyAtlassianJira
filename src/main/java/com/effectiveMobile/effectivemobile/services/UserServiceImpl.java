@@ -8,7 +8,7 @@ import com.effectiveMobile.effectivemobile.fabrics.ServiceFabric;
 import com.effectiveMobile.effectivemobile.other.UserRoles;
 import com.effectiveMobile.effectivemobile.repository.AuthorizationRepository;
 import com.effectiveMobile.effectivemobile.entities.CustomUsers;
-import com.effectiveMobile.effectivemobile.auxiliaryclasses.RegistrationUsers;
+import com.effectiveMobile.effectivemobile.dto.RegistrationUsers;
 import com.effectiveMobile.effectivemobile.exeptions.DescriptionUserExeption;
 import com.effectiveMobile.effectivemobile.mapper.UserMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +18,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -32,6 +33,10 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private MappersFabric mappersFabric;
+
+    @Autowired
+    @Qualifier("myUserDetailService")
+    private UserDetailsService userDetailsService;
 
     @Autowired
     private ServiceFabric serviceFabric;
@@ -79,10 +84,8 @@ public class UserServiceImpl implements UserService {
                         userEmail, passwordKey
                 ));
         if (authentication.isAuthenticated()) {
-            UserDetails userDetails = serviceFabric.createUserDetailsService()
-                    .loadUserByUsername(userEmail);
-            return serviceFabric.createJwtService()
-                    .generateToken(userDetails);
+            UserDetails userDetails = userDetailsService.loadUserByUsername(userEmail);
+            return serviceFabric.createJwtService().generateToken(userDetails);
         } else {
             throw new UsernameNotFoundException(DescriptionUserExeption.USER_NOT_FOUND.getEnumDescription() + " " + userEmail);
         }

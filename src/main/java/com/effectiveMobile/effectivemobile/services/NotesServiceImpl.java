@@ -8,6 +8,7 @@ import com.effectiveMobile.effectivemobile.entities.Tasks;
 import com.effectiveMobile.effectivemobile.exeptions.EntityNotBeNull;
 import com.effectiveMobile.effectivemobile.exeptions.EntityNotFoundExeption;
 import com.effectiveMobile.effectivemobile.exeptions.FieldNotBeNull;
+import com.effectiveMobile.effectivemobile.fabrics.ActionsFabric;
 import com.effectiveMobile.effectivemobile.fabrics.MappersFabric;
 import com.effectiveMobile.effectivemobile.mapper.NotesMapper;
 import com.effectiveMobile.effectivemobile.repository.NotesRepository;
@@ -19,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
+import static com.effectiveMobile.effectivemobile.constants.ConstantsClass.ZERO_FLAG;
 import static com.effectiveMobile.effectivemobile.exeptions.DescriptionUserExeption.*;
 
 @Service
@@ -32,7 +34,7 @@ public class NotesServiceImpl implements NotesService{
     private NotesRepository notesRepository;
 
     @Autowired
-    private UserActions userActions;
+    private ActionsFabric actionsFabric;
 
     @Autowired
     private TasksRepository tasksRepository;
@@ -48,22 +50,20 @@ public class NotesServiceImpl implements NotesService{
                 Integer taskId = notesDto.getTask().getId();
                 optionalTasks = tasksRepository.findById(taskId);
             } else {
-                throw new FieldNotBeNull(GENERATION_ERROR.getEnumDescription(),
-                        new FieldNotBeNull(ID_TASKS_NOT_BE_NULL.getEnumDescription()));
+                throw new FieldNotBeNull(ID_TASKS_NOT_BE_NULL.getEnumDescription());
             }
         } else {
-            throw new EntityNotBeNull(GENERATION_ERROR.getEnumDescription(),
-                    new EntityNotBeNull(TASKS_ENTITY_NOT_BE_NULL.getEnumDescription()));
+            throw new EntityNotBeNull(TASKS_ENTITY_NOT_BE_NULL.getEnumDescription());
         }
         if (optionalTasks.isEmpty()) {
-            throw new EntityNotFoundExeption(GENERATION_ERROR.getEnumDescription(),
-                    new EntityNotFoundExeption(TASKS_ENTITY_NOT_FOUND.getEnumDescription()));
+            throw new EntityNotFoundExeption(TASKS_ENTITY_NOT_FOUND.getEnumDescription());
         }
         Tasks tasks = optionalTasks.get();
 
-        Optional<CustomUsers> optionalAuthorizedUser = userActions.getCurrentUser();
+        Optional<CustomUsers> optionalAuthorizedUser = actionsFabric.createUserActions().getCurrentUser();
         CustomUsers authorizedUser = optionalAuthorizedUser.get();
         Notes notes = notesMapper.convertDtoToNotes(notesDto);
+        notes.setId(ZERO_FLAG);
         notes.setUsers(authorizedUser);
         notes.setTask(tasks);
         notes = notesRepository.save(notes);

@@ -1,11 +1,38 @@
 package com.effectiveMobile.effectivemobile.fabrics;
 
 import com.effectiveMobile.effectivemobile.mapper.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-
 @Component
+@RequiredArgsConstructor
+public class MappersFabricImpl implements MappersFabric {
+
+    private final NotesMapper notesMapper;
+    private final TaskMapper taskMapper;
+    private final UserMapper userMapper;
+    private final DefaultSettingsMapper defaultSettingsMapper;
+
+    @Override
+    public NotesMapper createNotesMapper() {
+        return notesMapper;
+    }
+
+    @Override
+    public TaskMapper createTaskMapper() {
+        return taskMapper;
+    }
+
+    @Override
+    public UserMapper createUserMapper() {
+        return userMapper;
+    }
+
+    @Override
+    public DefaultSettingsMapper createDefaultSettingsMapper() {
+        return defaultSettingsMapper;
+    }
+}
+/*@Component
 public class MappersFabricImpl implements MappersFabric{
 
     @Autowired
@@ -31,4 +58,4 @@ public class MappersFabricImpl implements MappersFabric{
     public DefaultSettingsMapper createDefaultSettingsMapper() {
         return applicationContext.getBean(DefaultSettingsMapper.class);
     }
-}
+}*/

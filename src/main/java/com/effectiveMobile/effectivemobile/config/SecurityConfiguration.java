@@ -1,8 +1,7 @@
 package com.effectiveMobile.effectivemobile.config;
 
-import com.effectiveMobile.effectivemobile.constants.ConstantsClass;
+import com.effectiveMobile.effectivemobile.fabrics.ServiceFabric;
 import com.effectiveMobile.effectivemobile.other.UserRoles;
-import com.effectiveMobile.effectivemobile.services.MyUserDetailService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -31,7 +30,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfiguration {
 
     @Autowired
-    private MyUserDetailService myUserDetailService;
+    private UserDetailsService userDetailsService;
 
     @Autowired
     private JwtAuthenticationFilter jwtAuthenticationFilter;
@@ -50,10 +49,9 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(registry -> {
                     registry.requestMatchers("/entrance/**",
                             "/swagger-ui/**", "/v3/api-docs/**").permitAll();
-                    registry.requestMatchers("/task/create", "/task/gen-info/**",
-                            "/task/update-tasks", "/notes/**").hasRole(UserRoles.USER.getUserRoles());
-                    registry.requestMatchers("/task/**", "/defaultsettins/**", "/notes/**")
-                            .hasRole(UserRoles.ADMIN.getUserRoles());
+                    registry.requestMatchers("/task/create", "/task/update-tasks",
+                            "/defaultsettins/**", "/notes/create").hasRole(UserRoles.ADMIN.getUserRoles());
+                    registry.requestMatchers("/task/update-tasks", "/notes/create").hasRole(UserRoles.USER.getUserRoles());
                     registry.anyRequest().authenticated(); // Любой запрос должен быть аутентифицирован
                 })
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
@@ -68,7 +66,7 @@ public class SecurityConfiguration {
     @Bean
     public UserDetailsService userDetailsService() {
         log.info("Метод userDetailsService()");
-        return myUserDetailService;
+        return userDetailsService;
     }
 
     /**
@@ -91,7 +89,7 @@ public class SecurityConfiguration {
     public AuthenticationProvider authenticationProvider() {
         log.info("Метод authenticationProvider()");
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setUserDetailsService(myUserDetailService);
+        provider.setUserDetailsService(userDetailsService);
         provider.setPasswordEncoder(passwordEncoder());
         return provider;
 

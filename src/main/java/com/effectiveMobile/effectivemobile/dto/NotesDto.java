@@ -1,5 +1,6 @@
 package com.effectiveMobile.effectivemobile.dto;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
@@ -14,6 +15,7 @@ import java.io.Serializable;
 @EqualsAndHashCode
 @Schema(description = "Сущность комментарий")
 @Validated
+@JsonFilter("NotesDtoFilter")
 public class NotesDto implements Serializable {
 
     @Schema(description = "Уникальный идентификатор комментария", example = "1")
@@ -25,7 +27,7 @@ public class NotesDto implements Serializable {
     @NotBlank(message = "Комментарий не может быть пуст")
     private String comments;
 
-    @Schema(description = "Комментируемая задача", example = "Задача, для которой оставляется комментарий")
+    @Schema(description = "Комментируемая задача")
     private TasksDto task;
 
 }

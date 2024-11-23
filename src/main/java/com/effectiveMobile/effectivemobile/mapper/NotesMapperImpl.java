@@ -15,7 +15,7 @@ import java.util.List;
 public class NotesMapperImpl implements NotesMapper {
 
     @Autowired
-    private MappersFabric mappersFabric;
+    private UserMapper userMapper;
 
     @Override
     public Notes convertDtoToNotes(NotesDto notesDto) {
@@ -24,7 +24,7 @@ public class NotesMapperImpl implements NotesMapper {
         if (notesDto != null) {
             localNotes.setId(notesDto.getId());
             localNotes.setComments(notesDto.getComments());
-            localNotes.setUsers(mappersFabric.createUserMapper().convertDtoToUser(notesDto.getUsersDto()));
+            localNotes.setUsers(userMapper.convertDtoToUser(notesDto.getUsersDto()));
         }
         return localNotes;
     }
@@ -32,11 +32,16 @@ public class NotesMapperImpl implements NotesMapper {
     @Override
     public NotesDto convertNotesToDto(Notes notes) {
         log.info("Метод convertNotesToDto()");
+        if(userMapper == null) {
+            userMapper = new UserMapperImpl();
+        }
+        TaskMapper taskMapper = new TaskMapperImpl();
         NotesDto localNotesDto = new NotesDto();
         if (notes != null) {
             localNotesDto.setId(notes.getId());
             localNotesDto.setComments(notes.getComments());
-            localNotesDto.setUsersDto(mappersFabric.createUserMapper().convertUserToDto(notes.getUsers()));
+            localNotesDto.setUsersDto(userMapper.convertUserToDto(notes.getUsers()));
+            localNotesDto.setTask(taskMapper.convertTasksToDto(notes.getTask()));
         }
         return localNotesDto;
     }
@@ -44,10 +49,13 @@ public class NotesMapperImpl implements NotesMapper {
     @Override
     public List<NotesDto> transferListNotesToDto(List<Notes> notesList) {
         log.info("Метод transferListNotesToDto()");
+        if (userMapper == null) {
+            userMapper = new UserMapperImpl();
+        }
         List<NotesDto> notesDtoList = new LinkedList<>();
         if (notesList != null) {
             for (int i = 0; i < notesList.size(); i++) {
-                notesDtoList.add(new NotesDto(notesList.get(i).getId(), mappersFabric.createUserMapper()
+                notesDtoList.add(new NotesDto(notesList.get(i).getId(), userMapper
                         .convertUserToDto(notesList.get(i).getUsers()),
                         notesList.get(i).getComments(), null));
             }
@@ -62,7 +70,7 @@ public class NotesMapperImpl implements NotesMapper {
         if (notesDtoList != null) {
             for (int i = 0; i < notesDtoList.size(); i++) {
                 notesList.add(new Notes(notesDtoList.get(i).getId(),
-                        mappersFabric.createUserMapper().convertDtoToUser(notesDtoList.get(i).getUsersDto()),
+                        userMapper.convertDtoToUser(notesDtoList.get(i).getUsersDto()),
                         notesDtoList.get(i).getComments(), null));
             }
         }

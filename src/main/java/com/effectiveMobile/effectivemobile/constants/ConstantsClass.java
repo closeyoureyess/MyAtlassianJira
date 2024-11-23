@@ -17,6 +17,23 @@ public class ConstantsClass {
     public static final String IS_DELETE = "Сущность была удалена";
     public static final String REGEX_ONLY_NUMBERS = "^-?\\d+$";
     public static final String REGEX_EMAIL = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
+
+    //DefaultSettings Controller
+    public static final String PUT_CHANGE_DEFAULTSETTINGS = "PutChangeDefaultSettings";
+
+    //Entrance Controller
+    public static final String POST_CREATE_USER = "PostCreateUser";
+    public static final String POST_AUTHORIZATION_USER = "PostAuthorizationUser";
+
+    //Notes Controller
+    public static final String POST_CREATE_NOTES = "PostCreateNotes";
+
+    //Tasks Controller
+    public static final String POST_CREATE_TASKS = "PostCreateTasks";
+    public static final String GET_TASKAUTHOR_TASKS = "GetGetTaskAuthor";
+    public static final String GET_TASKEXECUTOR_TASKS = "GetGetTaskExecutor";
+    public static final String PUT_EDIT_TASKS = "PutEditTask";
+    public static final String DELETE_TASKS = "DeleteTask";
     public static final Integer ONE_FLAG = 1;
     public static final Integer ZERO_FLAG = 0;
 }

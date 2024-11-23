@@ -14,12 +14,14 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+import static com.effectiveMobile.effectivemobile.constants.ConstantsClass.EMPTY_SPACE;
+
 /**
  * <pre>
  *     Сервис для загрузки деталей пользователя для аутентификации.
  * </pre>
  */
-@Service
+@Service(value = "myUserDetailService")
 @Slf4j
 public class MyUserDetailService implements UserDetailsService {
 
@@ -45,7 +47,8 @@ public class MyUserDetailService implements UserDetailsService {
                     .roles(getRoles(newCustomUsers))
                     .build();
         } else {
-            throw new UsernameNotFoundException(DescriptionUserExeption.USER_NOT_FOUND.getEnumDescription() + " " + userFromDB.get().getEmail());
+            throw new UsernameNotFoundException(DescriptionUserExeption.USER_NOT_FOUND.getEnumDescription() +
+                    EMPTY_SPACE + userFromDB.get().getEmail());
         }
 
     }
@@ -59,8 +62,10 @@ public class MyUserDetailService implements UserDetailsService {
     private String getRoles(CustomUsers customUsers) {
         log.info("Метод getRoles() " + customUsers.getId());
         if (customUsers.getRole() == null) {
+            log.info("Метод getRoles(), customUsers.getRole() == null " + customUsers.getId());
             return UserRoles.USER.getUserRoles();
         } else {
+            log.info("Метод getRoles(), ветка else " + customUsers.getId());
             return customUsers.getRole().getUserRoles();
         }
     }

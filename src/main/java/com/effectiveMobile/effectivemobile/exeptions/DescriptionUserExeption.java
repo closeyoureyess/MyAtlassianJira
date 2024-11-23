@@ -8,7 +8,7 @@ package com.effectiveMobile.effectivemobile.exeptions;
 public enum DescriptionUserExeption {
 
     GENERATION_ERROR("Возникла ошибка в системе: "),
-    ID_TASKS_NOT_BE_NULL("Передаваемый идентификатор задачи не может быть null"),
+    ID_TASKS_NOT_BE_NULL("Возникла ошибка в системе: Передаваемый идентификатор задачи не может быть null"),
     TASKS_ENTITY_NOT_BE_NULL("Передаваемый объект задача не может быть null"),
     USER_NOT_FOUND("Пользователь не найден. Попробуйте ещё раз"),
     EXECUTOR_NOT_SPECIFIED("Произошла ошибка из-за отсутствующего исполнителя у задачи. Попробуйте ещё раз."),

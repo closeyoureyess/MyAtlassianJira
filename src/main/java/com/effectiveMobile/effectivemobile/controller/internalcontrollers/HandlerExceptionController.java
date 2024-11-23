@@ -1,4 +1,4 @@
-package com.effectiveMobile.effectivemobile.controller;
+package com.effectiveMobile.effectivemobile.controller.internalcontrollers;
 
 import com.effectiveMobile.effectivemobile.exeptions.*;
 import jakarta.servlet.ServletException;

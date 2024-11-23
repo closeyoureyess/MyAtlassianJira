@@ -5,10 +5,11 @@ import com.effectiveMobile.effectivemobile.exeptions.MainException;
 import com.effectiveMobile.effectivemobile.dto.TasksDto;
 import com.effectiveMobile.effectivemobile.fabrics.ServiceFabric;
 import com.effectiveMobile.effectivemobile.other.Views;
-import com.effectiveMobile.effectivemobile.services.TaskService;
 import com.fasterxml.jackson.annotation.JsonView;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Min;
@@ -42,10 +43,23 @@ public class TaskController {
      * @return {@link ResponseEntity<TasksDto>}
      * @throws MainException
      */
-    @Operation(summary = "Создание задачи", description = "Позволяет создать задачу")
+    @Operation(summary = "Создание задачи", description = "Позволяет создать задачу", responses = {})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "403", description = "Не авторизован/Недостаточно прав"),
+            @ApiResponse(responseCode = "404", description = "У задачи отсутствует исполнитель")
+    })
+    /*@io.swagger.v3.oas.annotations.parameters.RequestBody(
+            description = "Пример тела запроса для создания задачи",
+            content = @Content(
+                    mediaType = "application/json",
+                    examples = @ExampleObject(
+                            name = "Создание задачи",
+                            value = SWAGGER_POST_CREATE_TASK_REQBODY
+                    )
+            )
+    )*/
     @SecurityRequirement(name = "JWT")
     @PostMapping(value = "/task/create")
-    @JsonView(Views.Public.class)
     public ResponseEntity<TasksDto> createTask(@RequestBody TasksDto tasksDto) throws MainException {
         log.info("Создание задачи, POST " + tasksDto.getHeader());
         TasksDto localTasksDto = serviceFabric.createTaskService().createTasks(tasksDto);
@@ -64,11 +78,13 @@ public class TaskController {
      * @return {@link ResponseEntity<List<TasksDto>>}
      */
     @Operation(summary = "Получить задачу по автору")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "403", description = "Не авторизован/Недостаточно прав"),
+    })
     @SecurityRequirement(name = "JWT")
-    @GetMapping("/task/gen-info/author/{author}")
-    @JsonView(Views.Public.class)
+    @GetMapping(value = "/task/gen-info/author/{author}", consumes = MediaType.ALL_VALUE)
     public ResponseEntity<List<TasksDto>> getTaskAuthor(
-            @PathVariable("author") @Parameter(description = "Автор задачи", example = "Иван") String author,
+            @PathVariable("author") @Parameter(description = "Автор задачи", example = "example@gmail.com") String author,
             @RequestParam(value = "offset", defaultValue = "0") @Min(0) @Parameter(description = "Номер страницы", example = "0")
             Integer offset,
             @RequestParam(value = "limit", defaultValue = "10") @Min(10) @Parameter(description = "Количество сущностей на странице",
@@ -78,7 +94,7 @@ public class TaskController {
         Optional<List<TasksDto>> optionalAuthorsTasksDtoList = serviceFabric
                 .createTaskService()
                 .getTasksOfAuthorOrExecutor(author, offset, limit,
-                ConstantsClass.ONE_FLAG);
+                        ConstantsClass.ONE_FLAG);
         if (optionalAuthorsTasksDtoList.isPresent()) {
             return ResponseEntity.ok(optionalAuthorsTasksDtoList.get());
         }
@@ -94,9 +110,11 @@ public class TaskController {
      * @return {@link ResponseEntity<List<TasksDto>>}
      */
     @Operation(summary = "Получить задачу по исполнителю")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "403", description = "Не авторизован/Недостаточно прав"),
+    })
     @SecurityRequirement(name = "JWT")
     @GetMapping("/task/gen-info/executor/{executorEmail}")
-    @JsonView(Views.Public.class)
     public ResponseEntity<List<TasksDto>> getTaskExecutor(
             @PathVariable("executorEmail") @Parameter(description = "Исполнитель задачи") String executorEmail,
             @RequestParam(value = "offset", defaultValue = "0") @Min(0) @Parameter(description = "Номер страницы", example = "0")
@@ -122,9 +140,13 @@ public class TaskController {
      * @throws MainException
      */
     @Operation(summary = "Отредактировать задачу", description = "Отредактировать задачу, в т.ч добавить комментарий")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "403", description = "Для редактирования недостаточно прав на сущность/" +
+                    "Не авторизован/Недостаточно прав"),
+            @ApiResponse(responseCode = "404", description = "У задачи отсутствует исполнитель")
+    })
     @SecurityRequirement(name = "JWT")
     @PutMapping("/task/update-tasks")
-    @JsonView(Views.Public.class)
     public ResponseEntity<TasksDto> editTasks(@RequestBody @Parameter(description = "Объект TasksDto с полями, требующими редактирования")
                                               TasksDto tasksDto) throws MainException {
         Optional<TasksDto> newTasksDto = serviceFabric
@@ -143,9 +165,12 @@ public class TaskController {
      * @return {@link ResponseEntity<String>}
      */
     @Operation(summary = "Удалить задачу")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "403", description = "Не авторизован/Недостаточно прав"),
+    })
     @SecurityRequirement(name = "JWT")
     @DeleteMapping("/task/delete/{id}")
-    public ResponseEntity<String> deleteCase(@PathVariable("id") @Parameter(description = "ID задачи") Integer idTasks) {
+    public ResponseEntity<String> deleteTasks(@PathVariable("id") @Parameter(description = "ID задачи") Integer idTasks) {
         log.info("Удаление задачи по id, метод DELETE" + idTasks);
         boolean resultDeleteTasks = serviceFabric
                 .createTaskService()

@@ -2,11 +2,14 @@ package com.effectiveMobile.effectivemobile.controller;
 
 import com.effectiveMobile.effectivemobile.dto.CustomUsersDto;
 import com.effectiveMobile.effectivemobile.fabrics.ServiceFabric;
-import com.effectiveMobile.effectivemobile.auxiliaryclasses.RegistrationUsers;
+import com.effectiveMobile.effectivemobile.dto.RegistrationUsers;
 import com.effectiveMobile.effectivemobile.other.Views;
+import com.effectiveMobile.effectivemobile.services.UserService;
 import com.fasterxml.jackson.annotation.JsonView;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +34,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class EntranceController {
 
     @Autowired
-    private ServiceFabric serviceFabric;
+    private UserService userService;
 
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -43,12 +46,13 @@ public class EntranceController {
      * @return {@link ResponseEntity<CustomUsersDto>}
      */
     @Operation(summary = "Регистрация пользователя", description = "Позволяет зарегистрировать нового пользователя")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "403", description = "Не авторизован"),
+    })
     @PostMapping(value = "/entrance/registration", produces = MediaType.APPLICATION_JSON_VALUE)
-    @JsonView(Views.Internal.class)
-    public ResponseEntity<CustomUsersDto> createUsers(@RequestBody @Parameter(description = "Пользователь") CustomUsersDto customUsersDto) {
+    public ResponseEntity<CustomUsersDto> createUser(@RequestBody @Parameter(description = "Пользователь") CustomUsersDto customUsersDto) {
         log.info("Метод регистрации, POST " + customUsersDto.getEmail());
-        CustomUsersDto customUsersDtoLocal = serviceFabric
-                .createUserService()
+        CustomUsersDto customUsersDtoLocal = userService
                 .createUser(customUsersDto);
         if (customUsersDtoLocal != null) {
             return ResponseEntity.ok(customUsersDtoLocal);
@@ -64,12 +68,15 @@ public class EntranceController {
      * @throws UsernameNotFoundException
      */
     @Operation(summary = "Авторизация пользователя", description = "Позволяет пользователю авторизоваться в системе")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "403", description = "Не авторизован"),
+            @ApiResponse(responseCode = "404", description = "Пользователь не найден")
+    })
     @PostMapping(value = "/entrance/authorization", produces = MediaType.TEXT_PLAIN_VALUE)
     public ResponseEntity<String> authorizationUser(@RequestBody @Parameter(description = "Форма авторизации") RegistrationUsers registrationUsers)
             throws UsernameNotFoundException {
         log.info("Метод авторизации, POST " + registrationUsers.getEmail());
-        String jwtToken = serviceFabric
-                .createUserService()
+        String jwtToken = userService
                 .authorizationUser(registrationUsers);
         if (jwtToken != null) {
             return ResponseEntity.ok(jwtToken);

@@ -2,12 +2,48 @@ package com.effectiveMobile.effectivemobile.fabrics;
 
 import com.effectiveMobile.effectivemobile.auxiliaryclasses.UserActions;
 import com.effectiveMobile.effectivemobile.services.*;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 
 @Component
+@RequiredArgsConstructor
+public class ServiceFabricImpl implements ServiceFabric {
+
+    private final JwtService jwtService;
+    private final TaskService taskService;
+    private final MyUserDetailService myUserDetailService; // Предполагается, что это класс, реализующий UserDetailsService
+    private final NotesService notesService;
+    private final DefaultSettingsService defaultSettingsService;
+
+    @Override
+    public JwtService createJwtService() {
+        return jwtService;
+    }
+
+    @Override
+    public TaskService createTaskService() {
+        return taskService;
+    }
+
+    @Override
+    public UserDetailsService createUserDetailsService() {
+        return myUserDetailService;
+    }
+
+    @Override
+    public NotesService createNotesService() {
+        return notesService;
+    }
+
+    @Override
+    public DefaultSettingsService createDefaultSettingsService() {
+        return defaultSettingsService;
+    }
+}
+/*@Component
 public class ServiceFabricImpl implements ServiceFabric{
 
     @Autowired
@@ -42,4 +78,4 @@ public class ServiceFabricImpl implements ServiceFabric{
     public DefaultSettingsService createDefaultSettingsService() {
         return applicationContext.getBean(DefaultSettingsService.class);
     }
-}
+}*/

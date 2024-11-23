@@ -7,6 +7,6 @@ import java.util.Optional;
 
 public interface DefaultSettingsActions {
 
-    <T> Optional<T> getDefaultValueFromTasksFields(DefaultSettingsFieldNameEnum fieldName, T fieldValue) throws MainException;
+    <T> Optional<T> getDefaultValueFromTasksFields(DefaultSettingsFieldNameEnum fieldName, T fieldValue);
 
 }

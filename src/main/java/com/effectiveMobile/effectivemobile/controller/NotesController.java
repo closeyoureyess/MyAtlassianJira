@@ -1,14 +1,14 @@
 package com.effectiveMobile.effectivemobile.controller;
 
+import com.effectiveMobile.effectivemobile.annotations.FilterResponse;
 import com.effectiveMobile.effectivemobile.dto.NotesDto;
-import com.effectiveMobile.effectivemobile.dto.TasksDto;
 import com.effectiveMobile.effectivemobile.exeptions.MainException;
 import com.effectiveMobile.effectivemobile.fabrics.ServiceFabric;
-import com.effectiveMobile.effectivemobile.other.Views;
-import com.effectiveMobile.effectivemobile.services.NotesService;
-import com.fasterxml.jackson.annotation.JsonView;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +19,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Locale;
+
+import static com.effectiveMobile.effectivemobile.constants.ConstantsClass.*;
 
 /**
  * <pre>
@@ -35,9 +39,20 @@ public class NotesController {
     private ServiceFabric serviceFabric;
 
     @Operation(summary = "Создание комментария", description = "Позволяет создать комментарий и привязать его к задаче")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Комментарий успешно создан", content = @Content(examples = @ExampleObject(value = "\"{\\n  \\\"id\\\": 1,\\n  \\\"usersDto\\\": {\\n    \\\"id\\\": 2,\\n    \\\"email\\\": \\\"example2@gmail.com\\\"\\n  },\\n  \\\"comments\\\": \\\"Обсуждение\\\",\\n  \\\"task\\\": {\\n    \\\"id\\\": 1\\n  }\\n}\""))),
+            @ApiResponse(responseCode = "400", description = "Передаваемый идентификатор задачи является null/Передаваемый объект Tasks является null", content = @Content),
+            @ApiResponse(responseCode = "403", description = "Не авторизован/Недостаточно прав", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Задача по заданному идентификатору не найдена", content = @Content)
+    })
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(
+            description = "Пример тела запроса для создания задачи",
+            content = @Content(
+                    mediaType = "application/json",
+                    examples = @ExampleObject(name = "Создание задачи", value = "\"{\\n  \\\"id\\\": 1,\\n \\\"comments\\\": \\\"Обсуждение\\\",\\n  \\\"task\\\": {\\n    \\\"id\\\": 1\\n  }\\n}\"")))
+    @FilterResponse(filterName = POST_CREATE_NOTES)
     @SecurityRequirement(name = "JWT")
     @PostMapping(value = "/notes/create")
-    @JsonView(Views.Public.class)
     public ResponseEntity<NotesDto> createNotes(@RequestBody NotesDto notesDto) throws MainException {
         log.info("Создание комментария, POST " + notesDto.getComments());
         NotesDto localNotesDto = serviceFabric.createNotesService().createNotes(notesDto);
@@ -46,5 +61,4 @@ public class NotesController {
         }
         return ResponseEntity.badRequest().build();
     }
-
 }

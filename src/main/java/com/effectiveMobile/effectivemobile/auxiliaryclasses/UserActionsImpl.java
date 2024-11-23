@@ -7,7 +7,6 @@ import com.effectiveMobile.effectivemobile.entities.CustomUsers;
 import com.effectiveMobile.effectivemobile.entities.Tasks;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -15,7 +14,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
-import java.util.Collection;
 import java.util.Optional;
 
 @Component
@@ -44,7 +42,6 @@ public class UserActionsImpl implements UserActions {
         }
     }
 
-    @Cacheable(value = "customUsers", key = "#customUsers.email")
     @Override
     public Optional<CustomUsers> getCurrentUser() {
         log.info("Метод getCurrentUser()");

@@ -11,7 +11,6 @@ import static com.effectiveMobile.effectivemobile.constants.ConstantsClass.EMPTY
 @Slf4j
 public class DefaultSettingsMapperImpl implements DefaultSettingsMapper {
 
-
     @Override
     public DefaultSettings convertDtoToDefaultSettings(DefaultSettingsDto defaultSettingsDto) {
         log.info("Метод convertDtoToDefaultSettings()");

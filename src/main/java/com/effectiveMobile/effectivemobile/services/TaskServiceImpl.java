@@ -49,21 +49,20 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     @Transactional
-    public TasksDto createTasks(TasksDto tasksDto) throws UsernameNotFoundException, MainException {
+    public TasksDto createTasks(TasksDto tasksDto) throws MainException {
         log.info("Метод createTasks() " + tasksDto.getHeader());
         UserActions userActions = actionsFabric.createUserActions();
         TaskMapper taskMapper = mappersFabric.createTaskMapper();
 
-        tasksDto = actionsFabric.createTasksActions().fillTaskPriorityAndTaskStatusFields(tasksDto);
-        Optional<CustomUsers> optionalAuthorizedUser = userActions.getCurrentUser();
-        CustomUsers authorizedUser = optionalAuthorizedUser.get();
-        tasksDto.setTaskAuthor(mappersFabric.createUserMapper().convertUserToDto(authorizedUser));
+        /*tasksDto = actionsFabric.createTasksActions().fillTaskPriorityAndTaskStatusFields(tasksDto);*/
+        tasksDto = assignAuthorTask(userActions, tasksDto);
         Tasks newTasks = taskMapper.convertDtoToTasks(tasksDto);
         newTasks = userActions
                 .checkFindUser(newTasks.getTaskExecutor(), newTasks, ConstantsClass.ONE_FLAG);
-        newTasks = userActions.checkFindUser(newTasks.getTaskAuthor(), newTasks, ZERO_FLAG);
+        newTasks = userActions
+                .checkFindUser(newTasks.getTaskAuthor(), newTasks, ZERO_FLAG);
         newTasks.setId(ZERO_FLAG);
-        tasksRepository.save(newTasks); // save to PostgreSQL
+        newTasks = tasksRepository.save(newTasks); // save to PostgreSQL
         return taskMapper.convertTasksToDto(newTasks);
     }
 
@@ -84,7 +83,9 @@ public class TaskServiceImpl implements TaskService {
             boolean resultCheckPrivilege = isExecutorOfTaskOrNot(newTasksDtoFromDB);
             if (!resultCheckPrivilege) {
                 String adminRole = UserRoles.ADMIN.getUserRoles();
-                Optional<String> roleCurrentAuthorizedUser = actionsFabric.createUserActions().getRoleCurrentAuthorizedUser(adminRole);
+                Optional<String> roleCurrentAuthorizedUser = actionsFabric
+                        .createUserActions()
+                        .getRoleCurrentAuthorizedUser(adminRole);
                 if (roleCurrentAuthorizedUser.isEmpty() || !roleCurrentAuthorizedUser.get().equals(adminRole)) {
                     throw new NotEnoughRulesForEntity(GENERATION_ERROR.getEnumDescription(),
                             new NotEnoughRulesForEntity(NOT_ENOUGH_RULES_MUST_BE_ADMIN.getEnumDescription()));
@@ -220,10 +221,15 @@ public class TaskServiceImpl implements TaskService {
         ) {
             return true;
         } else {
-            throw new NotEnoughRulesForEntity(GENERATION_ERROR.getEnumDescription(),
-                    new NotEnoughRulesForEntity(NOT_ENOUGH_RULES_MUST_BE_EXECUTOR.getEnumDescription()));
+            throw new NotEnoughRulesForEntity(NOT_ENOUGH_RULES_MUST_BE_EXECUTOR.getEnumDescription());
         }
     }
 
+    private TasksDto assignAuthorTask(UserActions userActions, TasksDto tasksDto) {
+        Optional<CustomUsers> optionalAuthorizedUser = userActions.getCurrentUser();
+        CustomUsers authorizedUser = optionalAuthorizedUser.get();
+        tasksDto.setTaskAuthor(mappersFabric.createUserMapper().convertUserToDto(authorizedUser));
+        return tasksDto;
+    }
 
 }

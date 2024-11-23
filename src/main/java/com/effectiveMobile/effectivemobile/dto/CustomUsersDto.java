@@ -2,6 +2,7 @@ package com.effectiveMobile.effectivemobile.dto;
 
 import com.effectiveMobile.effectivemobile.other.UserRoles;
 import com.effectiveMobile.effectivemobile.other.Views;
+import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -18,23 +19,20 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Validated
 @EqualsAndHashCode
+@JsonFilter("CustomUsersDtoFilter")
 public class CustomUsersDto implements Serializable {
 
-    @JsonView(Views.Public.class)
     @Schema(description = "Уникальный идентификатор пользователя", example = "1")
     private Integer id;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @JsonView(Views.Internal.class)
     @Schema(description = "Пароль пользователя", example = "12345")
     private String passwordKey;
 
-    @JsonView(Views.Public.class)
     @Schema(description = "E-mail пользователя", example = "example@gmail.com")
     private String email;
 
     @NotBlank(message = "Роль не может быть пустой")
-    @JsonView(Views.Public.class)
     @Schema(description = "Роль пользователя", example = "USER")
     private UserRoles role;
 

@@ -25,13 +25,6 @@ public interface ServiceFabric {
     TaskService createTaskService();
 
     /**
-     * Фабричный метод для получения {@link UserService}
-     *
-     * @return интерфейс UserService, который имплементируется UserServiceImpl.class
-     */
-    UserService createUserService();
-
-    /**
      * Фабричный метод для получения {@link UserDetailsService}
      *
      * @return интерфейс UserDetailsService, который имплементируется MyUserDetailServiceImpl.class

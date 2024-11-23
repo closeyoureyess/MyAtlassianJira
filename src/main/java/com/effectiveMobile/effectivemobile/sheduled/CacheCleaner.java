@@ -19,7 +19,7 @@ public class CacheCleaner {
      * Метод, очищающий кэш
      */
     // Очистка нескольких кэшей
-    @CacheEvict(value = {"customUsers", "defaultSettingsCache"}, allEntries = true)
+    @CacheEvict(value = "defaultSettingsCache", allEntries = true)
     @Scheduled(fixedRate = 3600000)
     public void clearCache() {
         log.info("Кэши очищен");

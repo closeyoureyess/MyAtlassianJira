@@ -1,4 +1,4 @@
-package com.effectiveMobile.effectivemobile.auxiliaryclasses;
+package com.effectiveMobile.effectivemobile.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;

@@ -34,8 +34,7 @@ public class DefaultSettingsController {
     @Operation(summary = "Отредактировать настройки по умолчанию для задач",
             description = "Позволяет отредактировать настройки по умолчанию для задач")
     @SecurityRequirement(name = "JWT")
-    @PutMapping(value = "/defaultsettins/update-settings")
-    @JsonView(Views.Public.class)
+    @PutMapping(value = "/defaultsettings/update-settings")
     public ResponseEntity<DefaultSettingsDto> changeDefaultSettings(@RequestBody DefaultSettingsDto defaultSettingsDto) {
         log.info("Создание комментария, POST " + defaultSettingsDto.getDefaultTaskPriority() + EMPTY_SPACE +
                 defaultSettingsDto.getDefaultTaskStatus());
