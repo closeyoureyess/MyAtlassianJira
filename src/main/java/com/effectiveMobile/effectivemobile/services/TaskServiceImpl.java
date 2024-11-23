@@ -86,9 +86,10 @@ public class TaskServiceImpl implements TaskService {
                 Optional<String> roleCurrentAuthorizedUser = actionsFabric
                         .createUserActions()
                         .getRoleCurrentAuthorizedUser(adminRole);
+                log.info("РООООЛЬ" +  roleCurrentAuthorizedUser.map(String::valueOf).orElse("ПУСТО")
+                );
                 if (roleCurrentAuthorizedUser.isEmpty() || !roleCurrentAuthorizedUser.get().equals(adminRole)) {
-                    throw new NotEnoughRulesForEntity(GENERATION_ERROR.getEnumDescription(),
-                            new NotEnoughRulesForEntity(NOT_ENOUGH_RULES_MUST_BE_ADMIN.getEnumDescription()));
+                    throw new NotEnoughRulesForEntity(NOT_ENOUGH_RULES_MUST_BE_ADMIN.getEnumDescription());
                 }
             }
             Tasks newTasks = taskMapper.compareTaskAndDto(tasksDtoFromJson, optionalTaskDatabase.get());
@@ -198,6 +199,7 @@ public class TaskServiceImpl implements TaskService {
             fieldsAllowedForEditing(tasksDtoFromDB);
             return true;
         } else {
+            log.info("Метод isExecutorOfTaskOrNot() " + tasksDtoFromDB.getId() + " availabilityRules - false");
             return false;
         }
     }

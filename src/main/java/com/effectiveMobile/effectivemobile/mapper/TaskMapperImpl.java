@@ -36,7 +36,6 @@ public class TaskMapperImpl implements TaskMapper {
     @Autowired
     private ActionsFabric actionsFabric;
 
-
     @Override
     public Tasks convertDtoToTasks(TasksDto tasksDto, Integer... method) throws ExecutorNotFoundExeption {
         log.info("Метод convertDtoToTasks()");
@@ -68,9 +67,11 @@ public class TaskMapperImpl implements TaskMapper {
     public TasksDto convertTasksToDto(Tasks tasks) {
         log.info("Метод convertTasksToDto()");
         if (userMapper == null) {
+            log.info("TaskMapperImpl.userMapper == null");
             userMapper = new UserMapperImpl();
         }
         if (notesMapper == null) {
+            log.info("TaskMapperImpl.notesMapper == null");
             notesMapper = new NotesMapperImpl();
         }
         TasksDto tasksDtoLocalObject = new TasksDto();
@@ -164,13 +165,24 @@ public class TaskMapperImpl implements TaskMapper {
      */
     private Tasks compareTasksAndDtoExecutor(TasksDto tasksDto, Tasks tasks) {
         log.info("Метод compareTasksAndDtoExecutor()");
+        boolean taskExecutorDtoAndIdEntityNotNull = tasksDto.getTaskExecutor() != null && tasks.getTaskExecutor() != null;
         if (
                 (
-                        ((tasksDto.getTaskExecutor() != null && tasks.getTaskExecutor() != null)) // a
+                        taskExecutorDtoAndIdEntityNotNull // a
                                 &&
-                                (!tasksDto.getTaskExecutor().getEmail().equals(tasks.getTaskExecutor().getEmail()) // 1
-                                        ||
-                                        !tasksDto.getTaskExecutor().getId().equals(tasks.getTaskExecutor().getId())) // b
+                                (
+                                   (  tasksDto.getTaskExecutor().getEmail() != null && tasks.getTaskExecutor().getEmail() != null
+                                           &&
+                                    !tasksDto.getTaskExecutor().getEmail().equals(tasks.getTaskExecutor().getEmail())
+                                   ) // 1
+
+                                                ||
+
+                                    ( tasksDto.getTaskExecutor().getId() != null && tasks.getTaskExecutor().getId() != null
+                                            &&
+                                    !tasksDto.getTaskExecutor().getId().equals(tasks.getTaskExecutor().getId())
+                                    )
+                                ) // b
                 )
 
                         || (tasksDto.getTaskExecutor() != null && tasks.getTaskExecutor() == null) // 2

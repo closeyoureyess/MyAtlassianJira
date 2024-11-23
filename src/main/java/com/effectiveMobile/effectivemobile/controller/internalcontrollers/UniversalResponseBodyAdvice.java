@@ -23,24 +23,98 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
-import static com.effectiveMobile.effectivemobile.constants.ConstantsClass.POST_CREATE_NOTES;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static com.effectiveMobile.effectivemobile.constants.ConstantsClass.*;
 
 @ControllerAdvice(assignableTypes = {NotesController.class, TaskController.class})
 @Slf4j
 public class UniversalResponseBodyAdvice implements ResponseBodyAdvice<Object> {
+
+    private final String customUsersDtoFilter = "CustomUsersDtoFilter";
+    private final String notesDtoFilter = "NotesDtoFilter";
+    private final String tasksDtoFilter = "TasksDtoFilter";
+
     @Override
     public boolean supports(MethodParameter returnType, Class<? extends HttpMessageConverter<?>> converterType) {
         log.info("@ControllerAdvice класса UniversalResponseBodyAdvice, метод supports");
         ResolvableType resolvableType = ResolvableType.forMethodParameter(returnType);
-        if (    resolvableType != null
-                && resolvableType.getRawClass() != null
-                && resolvableType.hasGenerics()
-                && ResponseEntity.class.isAssignableFrom(resolvableType.getRawClass()
-        )) {
-            Class<?> innerType = resolvableType.getGeneric(0).resolve();
-            if (innerType != null) {
-                return NotesDto.class.isAssignableFrom(innerType) ||
-                        TasksDto.class.isAssignableFrom(innerType);
+
+        // Проверяем, что тип не null
+        if (resolvableType == null) {
+            return false;
+        }
+
+        Class<?> rawClass = resolvableType.getRawClass();
+
+        // Проверяем, что это ResponseEntity
+        if (rawClass == null || !ResponseEntity.class.isAssignableFrom(rawClass)) {
+            return false;
+        }
+
+        // Извлекаем внутренний тип T из ResponseEntity<T>
+        ResolvableType innerType = resolvableType.getGeneric(0);
+        if (innerType == null) {
+            return false;
+        }
+
+        Class<?> resolvedClass = innerType.resolve();
+        if (resolvedClass == null) {
+            return false;
+        }
+
+        // Проверяем, является ли T непосредственно NotesDto или TasksDto
+        if (isSupportedDto(resolvedClass)) {
+            return true;
+        }
+
+        // Если T - коллекция, проверяем тип элементов
+        if (isSupportedCollection(resolvedClass, innerType)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Проверяет, явлется ли классом c тем возвращаемым Dto, который обрабатывается.
+     */
+    private boolean isSupportedDto(Class<?> clazz) {
+        return NotesDto.class.isAssignableFrom(clazz) || TasksDto.class.isAssignableFrom(clazz);
+    }
+
+    /**
+     * Проверяет, является ли класс коллекцией с поддерживаемыми элементами.
+     */
+    private boolean isSupportedCollection(Class<?> clazz, ResolvableType innerType) {
+        if (!Collection.class.isAssignableFrom(clazz)) {
+            return false;
+        }
+
+        ResolvableType elementType = innerType.getGeneric(0);
+        if (elementType == null) {
+            return false;
+        }
+
+        Class<?> elementClass = elementType.resolve();
+        if (elementClass == null) {
+            return false;
+        }
+
+        return NotesDto.class.isAssignableFrom(elementClass) || TasksDto.class.isAssignableFrom(elementClass);
+    }
+
+    private boolean resolvableTypeGetGenericBlock(ResolvableType innerType) {
+        ResolvableType elementType = innerType.getGeneric(0); // E в Collection<E>
+        if (elementType != null) {
+            Class<?> elementClass = elementType.resolve();
+            if (elementClass != null &&
+                    (NotesDto.class.isAssignableFrom(elementClass) ||
+                            TasksDto.class.isAssignableFrom(elementClass))) {
+                return true;
             }
         }
         return false;
@@ -49,13 +123,14 @@ public class UniversalResponseBodyAdvice implements ResponseBodyAdvice<Object> {
     @Override
     public Object beforeBodyWrite(Object body, MethodParameter returnType, MediaType selectedContentType,
                                   Class<? extends HttpMessageConverter<?>> selectedConverterType,
-                                  org.springframework.http.server.ServerHttpRequest request,
-                                  org.springframework.http.server.ServerHttpResponse response) {
+                                  ServerHttpRequest request,
+                                  ServerHttpResponse response) {
         log.info("Метод beforeBodyWrite() класса UniversalResponseBodyAdvice");
 
         // Проверяем, является ли тело ответа экземпляром NotesDto
-        if (!(body instanceof NotesDto)) {
-            log.info("Тело ответа не является экземпляром NotesDto, метод beforeBodyWrite() класса UniversalResponseBodyAdvice");
+        if (!(body instanceof NotesDto) && !(body instanceof TasksDto) && !(body instanceof List<?>)) {
+            log.info("Тело ответа не является экземпляром NotesDto/TasksDto/List, метод beforeBodyWrite() " +
+                    "класса UniversalResponseBodyAdvice");
             return body;
         }
 
@@ -89,26 +164,53 @@ public class UniversalResponseBodyAdvice implements ResponseBodyAdvice<Object> {
 
         String filterName = filterResponse.filterName();
         MappingJacksonValue mapping = new MappingJacksonValue(body);
+        SimpleBeanPropertyFilter notesFilter;
+        SimpleBeanPropertyFilter taskFilter = null;
+        SimpleBeanPropertyFilter customDtoFilter = null;
+        FilterProvider filters = null;
 
         if (filterName.equals(POST_CREATE_NOTES)) {
             log.info("Значение: " + POST_CREATE_NOTES + " Эндпоинт POST Notes, метод сreateNotes(), метод beforeBodyWrite() " +
                     "класса UniversalResponseBodyAdvice");
             // Определяем, какие поля включать в NotesDto
-            SimpleBeanPropertyFilter notesFilter = SimpleBeanPropertyFilter.filterOutAllExcept("id", "usersDto",
+            notesFilter = SimpleBeanPropertyFilter.filterOutAllExcept("usersDto",
                     "comments", "task");
 
             // Определяем, какие поля включать в TasksDto
-            SimpleBeanPropertyFilter taskFilter = SimpleBeanPropertyFilter.filterOutAllExcept("id");
+            taskFilter = SimpleBeanPropertyFilter.filterOutAllExcept("id");
 
             // Определяем, какие поля включать в CustomDto
-            SimpleBeanPropertyFilter customDtoFilter = SimpleBeanPropertyFilter.filterOutAllExcept("id", "email");
+            customDtoFilter = SimpleBeanPropertyFilter.filterOutAllExcept("id", "email");
 
             // Создаём провайдер фильтров
-            FilterProvider filters = new SimpleFilterProvider()
-                    .addFilter("CustomUsersDtoFilter", customDtoFilter)
-                    .addFilter("NotesDtoFilter", notesFilter)
-                    .addFilter("TasksDtoFilter", taskFilter);
+            filters = new SimpleFilterProvider()
+                    .addFilter(customUsersDtoFilter, customDtoFilter)
+                    .addFilter(notesDtoFilter, notesFilter)
+                    .addFilter(tasksDtoFilter, taskFilter);
+        } else if (filterName.equals(POST_CREATE_TASKS)) {
+            log.info("Значение: " + POST_CREATE_TASKS + " Эндпоинт POST Tasks /task/create, метод сreateTask(), метод beforeBodyWrite() " +
+                    "класса UniversalResponseBodyAdvice");
+            taskFilter = SimpleBeanPropertyFilter.filterOutAllExcept("id", "header", "taskAuthor", "taskExecutor",
+                    "description", "taskPriority", "taskStatus");
+            customDtoFilter = SimpleBeanPropertyFilter.filterOutAllExcept("id", "email");
+            filters = new SimpleFilterProvider()
+                    .addFilter(customUsersDtoFilter, customDtoFilter)
+                    .addFilter(tasksDtoFilter, taskFilter);
+        } else if (filterName.equals(GET_TASKAUTHOR_TASKS)) {
+            log.info("Значение: " + GET_TASKAUTHOR_TASKS + " Эндпоинт GET Tasks /task/gen-info/author, метод сreateTask(), " +
+                    "метод beforeBodyWrite() класса UniversalResponseBodyAdvice");
+            notesFilter = SimpleBeanPropertyFilter.filterOutAllExcept("id", "usersDto",
+                    "comments");
+            taskFilter = SimpleBeanPropertyFilter.filterOutAllExcept("id", "header", "taskAuthor", "taskExecutor",
+                    "description", "taskPriority", "taskStatus", "notesDto");
+            customDtoFilter = SimpleBeanPropertyFilter.filterOutAllExcept("id", "email");
+            filters = new SimpleFilterProvider()
+                    .addFilter(customUsersDtoFilter, customDtoFilter)
+                    .addFilter(notesDtoFilter, notesFilter)
+                    .addFilter(tasksDtoFilter, taskFilter);
+        }
 
+        if (filters != null) {
             mapping.setFilters(filters);
         }
         return mapping;

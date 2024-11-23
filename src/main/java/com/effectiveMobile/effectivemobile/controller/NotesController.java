@@ -46,10 +46,8 @@ public class NotesController {
             @ApiResponse(responseCode = "404", description = "Задача по заданному идентификатору не найдена", content = @Content)
     })
     @io.swagger.v3.oas.annotations.parameters.RequestBody(
-            description = "Пример тела запроса для создания задачи",
-            content = @Content(
-                    mediaType = "application/json",
-                    examples = @ExampleObject(name = "Создание задачи", value = "\"{\\n  \\\"id\\\": 1,\\n \\\"comments\\\": \\\"Обсуждение\\\",\\n  \\\"task\\\": {\\n    \\\"id\\\": 1\\n  }\\n}\"")))
+            description = "Пример тела запроса для создания комментария",
+            content = @Content(mediaType = "application/json", examples = @ExampleObject(name = "Создание комментария", value = "\"{\\n  \\\"id\\\": 1,\\n \\\"comments\\\": \\\"Обсуждение\\\",\\n  \\\"task\\\": {\\n    \\\"id\\\": 1\\n  }\\n}\"")))
     @FilterResponse(filterName = POST_CREATE_NOTES)
     @SecurityRequirement(name = "JWT")
     @PostMapping(value = "/notes/create")

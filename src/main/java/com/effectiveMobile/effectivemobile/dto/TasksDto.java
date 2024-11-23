@@ -30,7 +30,6 @@ public class TasksDto implements Serializable {
     @Schema(description = "Заголовок задачи", example = "Тестовая задача")
     private String header;
 
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private CustomUsersDto taskAuthor;
 
     private CustomUsersDto taskExecutor;
@@ -45,6 +44,5 @@ public class TasksDto implements Serializable {
     private TaskStatusEnum taskStatus;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    @Schema(hidden = true)
     private List<NotesDto> notesDto;
 }

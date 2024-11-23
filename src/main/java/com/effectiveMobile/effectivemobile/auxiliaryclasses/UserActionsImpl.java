@@ -52,9 +52,10 @@ public class UserActionsImpl implements UserActions {
     @Override
     public Optional<String> getRoleCurrentAuthorizedUser(String roleToMatch) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        log.info("Метод getRoleCurrentAuthorizedUser()" );
         return authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
-                .filter(authority -> authority.equals(roleToMatch))
+                .filter(authority -> { log.info(authority); return authority.equals(roleToMatch); })
                 .findFirst();
     }
 
