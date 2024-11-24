@@ -2,11 +2,9 @@ package com.effectiveMobile.effectivemobile.controller;
 
 import com.effectiveMobile.effectivemobile.annotations.FilterResponse;
 import com.effectiveMobile.effectivemobile.constants.ConstantsClass;
-import com.effectiveMobile.effectivemobile.exeptions.MainException;
 import com.effectiveMobile.effectivemobile.dto.TasksDto;
+import com.effectiveMobile.effectivemobile.exeptions.MainException;
 import com.effectiveMobile.effectivemobile.fabrics.ServiceFabric;
-import com.effectiveMobile.effectivemobile.other.Views;
-import com.fasterxml.jackson.annotation.JsonView;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -51,6 +49,7 @@ public class TaskController {
     @Operation(summary = "Создание задачи", description = "Позволяет создать задачу", responses = {})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Задача успешно создана", content = @Content(examples = @ExampleObject(value = "\"{\\n  \\\"id\\\": 1,\\n  \\\"header\\\": \\\"Тестовая задача\\\",\\n  \\\"taskAuthor\\\": {\\n    \\\"id\\\": 1,\\n    \\\"email\\\": \\\"author@example.com\\\"\\n  },\\n  \\\"taskExecutor\\\": {\\n    \\\"id\\\": 2,\\n    \\\"email\\\": \\\"executor@example.com\\\"\\n  },\\n  \\\"description\\\": \\\"Тестовое описание задачи\\\",\\n  \\\"taskPriority\\\": \\\"MEDIUM\\\",\\n  \\\"taskStatus\\\": \\\"BACKLOG\\\"\\n}\""))),
+            @ApiResponse(responseCode = "400", description = "Не удалось создать задачу", content = @Content),
             @ApiResponse(responseCode = "403", description = "Не авторизован/Недостаточно прав", content = @Content),
             @ApiResponse(responseCode = "404", description = "У задачи отсутствует исполнитель", content = @Content)
     })
@@ -78,6 +77,7 @@ public class TaskController {
     @Operation(summary = "Получить задачу по автору")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Возвращены задачи с комментариями по автору"),
+            @ApiResponse(responseCode = "400", description = "Не удалось получить информацию о задачах", content = @Content),
             @ApiResponse(responseCode = "403", description = "Не авторизован/Недостаточно прав", content = @Content),
     })
     @FilterResponse(filterName = GET_TASKAUTHOR_TASKS)
@@ -112,6 +112,7 @@ public class TaskController {
     @Operation(summary = "Получить задачу по исполнителю")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Возвращены задачи с комментариями по исполнителю"),
+            @ApiResponse(responseCode = "400", description = "Не удалось получить информацию о задачах", content = @Content),
             @ApiResponse(responseCode = "403", description = "Не авторизован/Недостаточно прав", content = @Content),
     })
     @FilterResponse(filterName = GET_TASKEXECUTOR_TASKS)
@@ -137,16 +138,19 @@ public class TaskController {
     /**
      * Эндпоинд PUT для редактирования задач
      *
-     * @param tasksDto
+     * @param tasksDto объект {@link TasksDto}
      * @return {@link ResponseEntity<TasksDto>}
      * @throws MainException
      */
     @Operation(summary = "Отредактировать задачу", description = "Отредактировать задачу, в т.ч добавить комментарий")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "403", description = "Для редактирования недостаточно прав на сущность/" +
-                    "Не авторизован/Недостаточно прав", content = @Content),
+            @ApiResponse(responseCode = "200", description = "Задача успешно отредактирована", content = @Content(examples = @ExampleObject(value = "\"{\\n  \\\"id\\\": 1,\\n  \\\"header\\\": \\\"Тестовая задача\\\",\\n  \\\"taskAuthor\\\": {\\n    \\\"id\\\": 1,\\n    \\\"email\\\": \\\"example@gmail.com\\\"\\n  },\\n  \\\"taskExecutor\\\": {\\n    \\\"id\\\": 1,\\n    \\\"email\\\": \\\"example@gmail.com\\\"\\n  },\\n  \\\"description\\\": \\\"Тестовое описание задачи\\\",\\n  \\\"taskPriority\\\": \\\"MEDIUM\\\",\\n  \\\"taskStatus\\\": \\\"BACKLOG\\\",\\n  \\\"notesDto\\\": [\\n    {\\n      \\\"id\\\": 1,\\n      \\\"header\\\": \\\"Тестовая задача\\\",\\n      \\\"taskAuthor\\\": {\\n        \\\"id\\\": 1,\\n        \\\"email\\\": \\\"example@gmail.com\\\"\\n      }\\n    }\\n  ]\\n}\""))),
+            @ApiResponse(responseCode = "403", description = "Для редактирования недостаточно прав на сущность/Не авторизован/Недостаточно прав", content = @Content),
+            @ApiResponse(responseCode = "400", description = "Не удалось отредактировать задачу", content = @Content),
             @ApiResponse(responseCode = "404", description = "У задачи отсутствует исполнитель", content = @Content)
     })
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Пример тела запроса для редактирования задачи", content = @Content(mediaType = "application/json", examples = @ExampleObject(name = "Редактирование задачи", value = "\"{\\n  \\\"id\\\": 1,\\n  \\\"header\\\": \\\"Тестовая задача\\\",\\n  \\\"taskAuthor\\\": {\\n    \\\"id\\\": 1,\\n    \\\"email\\\": \\\"example@gmail.com\\\"\\n  },\\n  \\\"taskExecutor\\\": {\\n    \\\"id\\\": 1,\\n    \\\"email\\\": \\\"example@gmail.com\\\"\\n  },\\n  \\\"description\\\": \\\"Тестовое описание задачи\\\",\\n  \\\"taskPriority\\\": \\\"MEDIUM\\\",\\n  \\\"taskStatus\\\": \\\"BACKLOG\\\"\\n}\"")))
+    @FilterResponse(filterName = PUT_EDIT_TASKS)
     @SecurityRequirement(name = "JWT")
     @PutMapping("/task/update-tasks")
     public ResponseEntity<TasksDto> editTasks(@RequestBody @Parameter(description = "Объект TasksDto с полями, требующими редактирования")
@@ -168,6 +172,7 @@ public class TaskController {
      */
     @Operation(summary = "Удалить задачу")
     @ApiResponses(value = {
+            @ApiResponse(responseCode = "400", description = "Не удалось произвести удаление задачи", content = @Content),
             @ApiResponse(responseCode = "403", description = "Не авторизован/Недостаточно прав"),
     })
     @SecurityRequirement(name = "JWT")

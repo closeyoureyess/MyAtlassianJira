@@ -8,6 +8,8 @@ import com.effectiveMobile.effectivemobile.services.UserService;
 import com.fasterxml.jackson.annotation.JsonView;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -47,7 +49,7 @@ public class EntranceController {
      */
     @Operation(summary = "Регистрация пользователя", description = "Позволяет зарегистрировать нового пользователя")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "403", description = "Не авторизован"),
+            @ApiResponse(responseCode = "200", description = "Пользователь зарегистрирован"),
     })
     @PostMapping(value = "/entrance/registration", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CustomUsersDto> createUser(@RequestBody @Parameter(description = "Пользователь") CustomUsersDto customUsersDto) {
@@ -69,8 +71,9 @@ public class EntranceController {
      */
     @Operation(summary = "Авторизация пользователя", description = "Позволяет пользователю авторизоваться в системе")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "403", description = "Не авторизован"),
-            @ApiResponse(responseCode = "404", description = "Пользователь не найден")
+            @ApiResponse(responseCode = "200", description = "Пользователь авторизован"),
+            @ApiResponse(responseCode = "403", description = "Не авторизован", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Пользователь не найден", content = @Content)
     })
     @PostMapping(value = "/entrance/authorization", produces = MediaType.TEXT_PLAIN_VALUE)
     public ResponseEntity<String> authorizationUser(@RequestBody @Parameter(description = "Форма авторизации") RegistrationUsers registrationUsers)

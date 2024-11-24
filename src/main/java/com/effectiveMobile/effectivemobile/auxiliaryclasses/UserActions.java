@@ -1,7 +1,9 @@
 package com.effectiveMobile.effectivemobile.auxiliaryclasses;
 
+import com.effectiveMobile.effectivemobile.dto.CustomUsersDto;
 import com.effectiveMobile.effectivemobile.entities.CustomUsers;
 import com.effectiveMobile.effectivemobile.entities.Tasks;
+import com.effectiveMobile.effectivemobile.exeptions.RoleNotFoundException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.util.Optional;
@@ -53,4 +55,20 @@ public interface UserActions {
      * @throws UsernameNotFoundException
      */
     Optional<CustomUsers> searchUserEmailOrId(CustomUsers customUsers) throws UsernameNotFoundException;
+
+    /**
+     * Метод, сравнивающий, совпадает ли переданный пользователь с авторизованным
+     *
+     * @param customUsersDto
+     */
+    boolean comparisonEmailTasksFromDBAndEmailCurrentAuthUser(CustomUsersDto customUsersDto);
+
+    /**
+     * Метод, позволяющий сравнить роль авторизованного пользователя с переданной в метод
+     *
+     * @param roleToMatch
+     * @return Возвращает true, если роль текущего авторизованного пользователя соответствует переданной, если наоборот - false
+     * @throws RoleNotFoundException
+     */
+    boolean currentUserAdminOrUserRole(String roleToMatch) throws RoleNotFoundException;
 }

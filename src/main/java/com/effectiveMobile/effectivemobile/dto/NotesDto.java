@@ -21,7 +21,7 @@ public class NotesDto implements Serializable {
     @Schema(description = "Уникальный идентификатор комментария", example = "1")
     private int id;
 
-    private CustomUsersDto usersDto;
+    private CustomUsersDto notesAuthor;
 
     @Schema(description = "Комментарий", example = "Обсуждение")
     @NotBlank(message = "Комментарий не может быть пуст")

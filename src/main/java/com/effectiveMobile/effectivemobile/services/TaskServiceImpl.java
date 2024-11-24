@@ -3,6 +3,7 @@ package com.effectiveMobile.effectivemobile.services;
 import com.effectiveMobile.effectivemobile.auxiliaryclasses.*;
 import com.effectiveMobile.effectivemobile.dto.CustomUsersDto;
 import com.effectiveMobile.effectivemobile.exeptions.MainException;
+import com.effectiveMobile.effectivemobile.exeptions.RoleNotFoundException;
 import com.effectiveMobile.effectivemobile.mapper.TaskMapper;
 import com.effectiveMobile.effectivemobile.other.UserRoles;
 import com.effectiveMobile.effectivemobile.repository.AuthorizationRepository;
@@ -19,7 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -80,17 +80,9 @@ public class TaskServiceImpl implements TaskService {
             Tasks tasks = optionalTaskDatabase.get();
             TasksDto newTasksDtoFromDB = taskMapper.convertTasksToDto(tasks);
 
-            boolean resultCheckPrivilege = isExecutorOfTaskOrNot(newTasksDtoFromDB);
+            boolean resultCheckPrivilege = checkingRightsToEditTask(newTasksDtoFromDB, tasksDtoFromJson);
             if (!resultCheckPrivilege) {
-                String adminRole = UserRoles.ADMIN.getUserRoles();
-                Optional<String> roleCurrentAuthorizedUser = actionsFabric
-                        .createUserActions()
-                        .getRoleCurrentAuthorizedUser(adminRole);
-                log.info("РООООЛЬ" +  roleCurrentAuthorizedUser.map(String::valueOf).orElse("ПУСТО")
-                );
-                if (roleCurrentAuthorizedUser.isEmpty() || !roleCurrentAuthorizedUser.get().equals(adminRole)) {
-                    throw new NotEnoughRulesForEntity(NOT_ENOUGH_RULES_MUST_BE_ADMIN.getEnumDescription());
-                }
+                return Optional.empty();
             }
             Tasks newTasks = taskMapper.compareTaskAndDto(tasksDtoFromJson, optionalTaskDatabase.get());
             newTasks = tasksRepository.save(newTasks);
@@ -114,7 +106,7 @@ public class TaskServiceImpl implements TaskService {
     @Override
     @Transactional
     public boolean deleteTasks(Integer idTasks) {
-        log.info("Метод deleteTasks() " + idTasks );
+        log.info("Метод deleteTasks() " + idTasks);
         boolean resultDeleteTasks = tasksRepository.existsById(idTasks);
         if (resultDeleteTasks) {
             tasksRepository.deleteById(idTasks);
@@ -184,24 +176,51 @@ public class TaskServiceImpl implements TaskService {
     }
 
     /**
-     * Метод, проверяющий, является ли пользователь исполнителем задачи
+     * Метод, определяющий, может ли пользователь редактировать задачу или нет
      *
      * @param tasksDtoFromDB
      * @throws NotEnoughRulesForEntity
      */
-    private boolean isExecutorOfTaskOrNot(TasksDto tasksDtoFromDB) throws NotEnoughRulesForEntity {
+    private boolean checkingRightsToEditTask(TasksDto tasksDtoFromDB, TasksDto tasksDtoFromJson) throws NotEnoughRulesForEntity, RoleNotFoundException {
         log.info("Метод isExecutorOfTaskOrNot() " + tasksDtoFromDB.getId());
-        TasksActions tasksActions = actionsFabric.createTasksActions();
+        UserActions userActions = actionsFabric.createUserActions();
 
         CustomUsersDto userDtoAuthorTaskDB = tasksDtoFromDB.getTaskExecutor();
-        boolean availabilityRules = tasksActions.isPrivilegeTasks(userDtoAuthorTaskDB);
-        if (availabilityRules) {
+        boolean resultEmailsEqual = userActions.comparisonEmailTasksFromDBAndEmailCurrentAuthUser(userDtoAuthorTaskDB);
+        boolean resultHaveAdminRoleOrNot = userActions.currentUserAdminOrUserRole(UserRoles.ADMIN.getUserRoles()); // Check является ли администратором
+        if (resultHaveAdminRoleOrNot) { // Является администратором
+            return true;
+        }
+        if (resultEmailsEqual) { // Не является администратором, емейлы исп-ля и авторизованного польз-ля равны
+            boolean resultHaveUserRoleOrNot = userActions.currentUserAdminOrUserRole(UserRoles.USER.getUserRoles());
+            if (resultHaveUserRoleOrNot) {
+                log.error("Метод isExecutorOfTaskOrNot(), выброшен NotEnoughRulesForEntity");
+                return actionsFabric
+                        .createTasksActions()
+                        .fieldsTasksAllowedForEditing(tasksDtoFromDB);
+            }
+        }
+        if (!resultEmailsEqual) { // Не является администратором, емейлы исп-ля и авторизованного польз-ля не равны
+            log.error("Метод isExecutorOfTaskOrNot(), выброшен NotEnoughRulesForEntity");
+            throw new NotEnoughRulesForEntity(NOT_ENOUGH_RULES_MUST_BE_ADMIN.getEnumDescription());
+        }
+        return false;
+        /*String adminRole = UserRoles.ADMIN.getUserRoles();
+        Optional<String> roleCurrentAuthorizedUser = actionsFabric
+                .createUserActions()
+                .getRoleCurrentAuthorizedUser(adminRole);
+        log.info("РООООЛЬ" + roleCurrentAuthorizedUser.map(String::valueOf).orElse("ПУСТО")
+        );
+        if (roleCurrentAuthorizedUser.isEmpty() || !roleCurrentAuthorizedUser.get().equals(adminRole)) {
+            throw new NotEnoughRulesForEntity(NOT_ENOUGH_RULES_MUST_BE_ADMIN.getEnumDescription());
+        }*/
+        /*if (availabilityRules) {
             fieldsAllowedForEditing(tasksDtoFromDB);
             return true;
         } else {
             log.info("Метод isExecutorOfTaskOrNot() " + tasksDtoFromDB.getId() + " availabilityRules - false");
             return false;
-        }
+        }*/
     }
 
     /**
@@ -211,18 +230,23 @@ public class TaskServiceImpl implements TaskService {
      * @throws NotEnoughRulesForEntity
      */
     private boolean fieldsAllowedForEditing(TasksDto tasksDto) throws NotEnoughRulesForEntity {
-        log.info("Метод fieldsAllowedForEditing() " + tasksDto.getId());
-        if ((tasksDto.getNotesDto() == null
-                && tasksDto.getTaskPriority() == null
-                && tasksDto.getTaskAuthor() == null
-                && tasksDto.getTaskExecutor() == null
-                && tasksDto.getDescription() == null
-                && tasksDto.getHeader() == null)
-                ||
-                (tasksDto.getId() != null && tasksDto.getTaskStatus() != null)
+        log.info("Метод fieldsAllowedForEditing()");
+        if (tasksDto != null &&
+          (
+            (tasksDto.getNotesDto() == null
+             && tasksDto.getTaskPriority() == null
+             && tasksDto.getTaskAuthor() == null
+             && tasksDto.getTaskExecutor() == null
+             && tasksDto.getDescription() == null
+             && tasksDto.getHeader() == null)
+                &&
+             (tasksDto.getId() != null && tasksDto.getTaskStatus() != null)
+          )
         ) {
+            log.info("Метод fieldsAllowedForEditing(), редактирование разрешено");
             return true;
         } else {
+            log.info("Метод fieldsAllowedForEditing(), выброшен NotEnoughRulesForEntity");
             throw new NotEnoughRulesForEntity(NOT_ENOUGH_RULES_MUST_BE_EXECUTOR.getEnumDescription());
         }
     }

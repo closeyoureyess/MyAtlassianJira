@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.springframework.boot.jackson.JsonMixin;
 
@@ -35,6 +36,8 @@ public class TasksDto implements Serializable {
     private CustomUsersDto taskExecutor;
 
     @Schema(description = "Описание задачи", example = "Тестовое описание задачи")
+    @Size(min = 3, message = "Длина строки не должна быть меньше трех символов")
+    @Size(max = 3500, message = "Длина строки не должна превышать 3500 символов.")
     private String description;
 
     @Schema(description = "Приоритет по задаче", example = "MEDIUM")

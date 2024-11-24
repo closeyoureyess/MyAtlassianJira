@@ -24,7 +24,7 @@ public class NotesMapperImpl implements NotesMapper {
         if (notesDto != null) {
             localNotes.setId(notesDto.getId());
             localNotes.setComments(notesDto.getComments());
-            localNotes.setUsers(userMapper.convertDtoToUser(notesDto.getUsersDto()));
+            localNotes.setUsers(userMapper.convertDtoToUser(notesDto.getNotesAuthor()));
         }
         return localNotes;
     }
@@ -40,7 +40,7 @@ public class NotesMapperImpl implements NotesMapper {
         if (notes != null) {
             localNotesDto.setId(notes.getId());
             localNotesDto.setComments(notes.getComments());
-            localNotesDto.setUsersDto(userMapper.convertUserToDto(notes.getUsers()));
+            localNotesDto.setNotesAuthor(userMapper.convertUserToDto(notes.getUsers()));
             localNotesDto.setTask(taskMapper.convertTasksToDto(notes.getTask()));
         }
         return localNotesDto;
@@ -70,7 +70,7 @@ public class NotesMapperImpl implements NotesMapper {
         if (notesDtoList != null) {
             for (int i = 0; i < notesDtoList.size(); i++) {
                 notesList.add(new Notes(notesDtoList.get(i).getId(),
-                        userMapper.convertDtoToUser(notesDtoList.get(i).getUsersDto()),
+                        userMapper.convertDtoToUser(notesDtoList.get(i).getNotesAuthor()),
                         notesDtoList.get(i).getComments(), null));
             }
         }

@@ -134,25 +134,31 @@ public class TaskMapperImpl implements TaskMapper {
      */
     private Tasks compareTaskAndDtoAuthor(TasksDto tasksDto, Tasks tasks) {
         log.info("Метод compareTaskAndDtoAuthor()");
-        Tasks newTasks;
-        if ((tasksDto.getTaskAuthor() != null && tasks.getTaskAuthor() != null) // Есть автор
-                && (!tasksDto.getTaskAuthor().getEmail().equals(tasks.getTaskAuthor().getEmail()) // Емейл не совпадает
-                ||
-                !tasksDto.getTaskAuthor().getId().equals(tasks.getTaskAuthor().getId()))) { // ID не совпадает
+        Tasks newTasks = null;
+        boolean tasksDtoGetTaskAuthorNotNull = tasksDto.getTaskAuthor() != null && tasks.getTaskAuthor() != null;
+        if ( (tasksDtoGetTaskAuthorNotNull) // Есть автор
+                &&
+              (
+                ( tasksDto.getTaskAuthor().getEmail() != null && tasks.getTaskAuthor().getEmail() != null &&
+                        !tasksDto.getTaskAuthor().getEmail().equals(tasks.getTaskAuthor().getEmail()) )
+                        // Емейл не совпадает
+                    ||
+
+                ( tasksDto.getTaskAuthor().getId() != null && tasks.getTaskAuthor().getId() != null &&
+                        !tasksDto.getTaskAuthor().getId().equals(tasks.getTaskAuthor().getId()) )
+              )
+        ) { // ID не совпадает
 
             newTasks = actionsFabric.createUserActions()
                     .checkFindUser(userMapper.convertDtoToUser(tasksDto.getTaskAuthor()), tasks, ConstantsClass.ZERO_FLAG);
-            if (newTasks != null) {
-                tasks.setTaskAuthor(newTasks.getTaskAuthor());
-            }
         } else if ((tasksDto.getTaskAuthor() != null && tasks.getTaskAuthor() == null)
                 && (tasksDto.getTaskAuthor().getId() != null || tasksDto.getTaskAuthor().getEmail() != null)) {
 
             newTasks = actionsFabric.createUserActions()
                     .checkFindUser(userMapper.convertDtoToUser(tasksDto.getTaskAuthor()), tasks, ConstantsClass.ZERO_FLAG);
-            if (newTasks != null) {
-                tasks.setTaskAuthor(newTasks.getTaskAuthor());
-            }
+        }
+        if (newTasks != null) {
+            tasks.setTaskAuthor(newTasks.getTaskAuthor());
         }
         return tasks;
     }
@@ -252,8 +258,7 @@ public class TaskMapperImpl implements TaskMapper {
      */
     private Tasks compareTasksAndDtoStatus(TasksDto tasksDto, Tasks tasks) {
         log.info("Метод compareTasksAndDtoStatus()");
-        if ((tasks.getTaskExecutor().getEmail().equals(actionsFabric.createUserActions().getEmailCurrentUser()))
-                && (tasksDto.getTaskStatus() != null && !tasksDto.getTaskStatus().equals(tasks.getTaskStatus()))) {
+        if ((tasksDto.getTaskStatus() != null && !tasksDto.getTaskStatus().equals(tasks.getTaskStatus()))) {
 
             tasks.setTaskStatus(tasksDto.getTaskStatus());
         }

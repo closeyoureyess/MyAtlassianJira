@@ -144,4 +144,13 @@ public class HandlerExceptionController {
                 .status(HttpStatus.BAD_REQUEST)
                 .body(new ErrorMessage(e.getMessage()));
     }
+
+    @ExceptionHandler(RoleNotFoundException.class)
+    protected ResponseEntity<ErrorMessage> errorFieldNotBeNull(RoleNotFoundException e) {
+        log.error(GENERATION_ERROR.getEnumDescription() + e.getClass() + LINE_FEED + e.getMessage() + LINE_FEED +
+                Arrays.toString(e.getStackTrace()));
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(new ErrorMessage(e.getMessage()));
+    }
 }

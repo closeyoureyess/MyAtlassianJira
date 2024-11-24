@@ -24,19 +24,13 @@ import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static com.effectiveMobile.effectivemobile.constants.ConstantsClass.*;
 
 @ControllerAdvice(assignableTypes = {NotesController.class, TaskController.class})
 @Slf4j
 public class UniversalResponseBodyAdvice implements ResponseBodyAdvice<Object> {
-
-    private final String customUsersDtoFilter = "CustomUsersDtoFilter";
-    private final String notesDtoFilter = "NotesDtoFilter";
-    private final String tasksDtoFilter = "TasksDtoFilter";
 
     @Override
     public boolean supports(MethodParameter returnType, Class<? extends HttpMessageConverter<?>> converterType) {
@@ -126,6 +120,9 @@ public class UniversalResponseBodyAdvice implements ResponseBodyAdvice<Object> {
                                   ServerHttpRequest request,
                                   ServerHttpResponse response) {
         log.info("Метод beforeBodyWrite() класса UniversalResponseBodyAdvice");
+        String customUsersDtoFilter = "CustomUsersDtoFilter";
+        String notesDtoFilter = "NotesDtoFilter";
+        String tasksDtoFilter = "TasksDtoFilter";
 
         // Проверяем, является ли тело ответа экземпляром NotesDto
         if (!(body instanceof NotesDto) && !(body instanceof TasksDto) && !(body instanceof List<?>)) {
@@ -165,50 +162,89 @@ public class UniversalResponseBodyAdvice implements ResponseBodyAdvice<Object> {
         String filterName = filterResponse.filterName();
         MappingJacksonValue mapping = new MappingJacksonValue(body);
         SimpleBeanPropertyFilter notesFilter;
-        SimpleBeanPropertyFilter taskFilter = null;
-        SimpleBeanPropertyFilter customDtoFilter = null;
-        FilterProvider filters = null;
+        SimpleBeanPropertyFilter taskFilter;
+        SimpleBeanPropertyFilter customDtoFilter;
 
-        if (filterName.equals(POST_CREATE_NOTES)) {
-            log.info("Значение: " + POST_CREATE_NOTES + " Эндпоинт POST Notes, метод сreateNotes(), метод beforeBodyWrite() " +
-                    "класса UniversalResponseBodyAdvice");
-            // Определяем, какие поля включать в NotesDto
-            notesFilter = SimpleBeanPropertyFilter.filterOutAllExcept("usersDto",
-                    "comments", "task");
+        FilterProvider filters = switch (filterName) {
+            case POST_CREATE_NOTES -> {
+                log.info("Значение: " + POST_CREATE_NOTES + " Эндпоинт POST Notes, метод сreateNotes(), метод beforeBodyWrite() " +
+                        "класса UniversalResponseBodyAdvice");
+                // Определяем, какие поля включать в NotesDto
+                notesFilter = SimpleBeanPropertyFilter.filterOutAllExcept(NOTES_AUTHOR_FIELD_NAME,
+                        "comments", "task");
 
-            // Определяем, какие поля включать в TasksDto
-            taskFilter = SimpleBeanPropertyFilter.filterOutAllExcept("id");
+                // Определяем, какие поля включать в TasksDto
+                taskFilter = SimpleBeanPropertyFilter.filterOutAllExcept(USUAL_ID_FIELD_NAME);
 
-            // Определяем, какие поля включать в CustomDto
-            customDtoFilter = SimpleBeanPropertyFilter.filterOutAllExcept("id", "email");
+                // Определяем, какие поля включать в CustomDto
+                customDtoFilter = SimpleBeanPropertyFilter.filterOutAllExcept(USUAL_ID_FIELD_NAME, USER_EMAIL_FIELD_NAME);
 
-            // Создаём провайдер фильтров
-            filters = new SimpleFilterProvider()
-                    .addFilter(customUsersDtoFilter, customDtoFilter)
-                    .addFilter(notesDtoFilter, notesFilter)
-                    .addFilter(tasksDtoFilter, taskFilter);
-        } else if (filterName.equals(POST_CREATE_TASKS)) {
-            log.info("Значение: " + POST_CREATE_TASKS + " Эндпоинт POST Tasks /task/create, метод сreateTask(), метод beforeBodyWrite() " +
-                    "класса UniversalResponseBodyAdvice");
-            taskFilter = SimpleBeanPropertyFilter.filterOutAllExcept("id", "header", "taskAuthor", "taskExecutor",
-                    "description", "taskPriority", "taskStatus");
-            customDtoFilter = SimpleBeanPropertyFilter.filterOutAllExcept("id", "email");
-            filters = new SimpleFilterProvider()
-                    .addFilter(customUsersDtoFilter, customDtoFilter)
-                    .addFilter(tasksDtoFilter, taskFilter);
-        } else if (filterName.equals(GET_TASKAUTHOR_TASKS)) {
-            log.info("Значение: " + GET_TASKAUTHOR_TASKS + " Эндпоинт GET Tasks /task/gen-info/author, метод сreateTask(), " +
-                    "метод beforeBodyWrite() класса UniversalResponseBodyAdvice");
-            notesFilter = SimpleBeanPropertyFilter.filterOutAllExcept("id", "usersDto",
-                    "comments");
-            taskFilter = SimpleBeanPropertyFilter.filterOutAllExcept("id", "header", "taskAuthor", "taskExecutor",
-                    "description", "taskPriority", "taskStatus", "notesDto");
-            customDtoFilter = SimpleBeanPropertyFilter.filterOutAllExcept("id", "email");
-            filters = new SimpleFilterProvider()
-                    .addFilter(customUsersDtoFilter, customDtoFilter)
-                    .addFilter(notesDtoFilter, notesFilter)
-                    .addFilter(tasksDtoFilter, taskFilter);
-        }
+                // Создаём провайдер фильтров
+                filters = new SimpleFilterProvider()
+                        .addFilter(customUsersDtoFilter, customDtoFilter)
+                        .addFilter(notesDtoFilter, notesFilter)
+                        .addFilter(tasksDtoFilter, taskFilter);
+                yield filters;
+            }
+            case POST_CREATE_TASKS -> {
+                log.info("Значение: " + POST_CREATE_TASKS + " Эндпоинт POST Tasks /task/create, метод сreateTask(), метод beforeBodyWrite() " +
+                        "класса UniversalResponseBodyAdvice");
+                taskFilter = SimpleBeanPropertyFilter.filterOutAllExcept(USUAL_ID_FIELD_NAME, TASK_HEADER_FIELD_NAME,
+                        TASK_AUTHOR_FIELD_NAME, TASK_EXECUTOR_FIELD_NAME, TASK_DESCRIPTION_FIELD_NAME, TASK_PRIORITY_FIELD_NAME,
+                        TASK_STATUS_FIELD_NAME);
+                customDtoFilter = SimpleBeanPropertyFilter.filterOutAllExcept(USUAL_ID_FIELD_NAME, USER_EMAIL_FIELD_NAME);
+                filters = new SimpleFilterProvider()
+                        .addFilter(customUsersDtoFilter, customDtoFilter)
+                        .addFilter(tasksDtoFilter, taskFilter);
+                yield filters;
+            }
+            case GET_TASKAUTHOR_TASKS -> {
+                log.info("Значение: " + GET_TASKAUTHOR_TASKS + " Эндпоинт GET Tasks /task/gen-info/author, метод getTaskExecutor(), " +
+                        "метод beforeBodyWrite() класса UniversalResponseBodyAdvice");
+                notesFilter = SimpleBeanPropertyFilter.filterOutAllExcept(USUAL_ID_FIELD_NAME, NOTES_AUTHOR_FIELD_NAME,
+                        NOTES_COMMENTS_FIELD_NAME);
+                taskFilter = SimpleBeanPropertyFilter.filterOutAllExcept(USUAL_ID_FIELD_NAME, TASK_HEADER_FIELD_NAME,
+                        TASK_AUTHOR_FIELD_NAME, TASK_EXECUTOR_FIELD_NAME, TASK_DESCRIPTION_FIELD_NAME, TASK_PRIORITY_FIELD_NAME,
+                        TASK_STATUS_FIELD_NAME, TASK_NOTES_FIELD_NAME);
+                customDtoFilter = SimpleBeanPropertyFilter.filterOutAllExcept(USUAL_ID_FIELD_NAME, USER_EMAIL_FIELD_NAME);
+                filters = new SimpleFilterProvider()
+                        .addFilter(customUsersDtoFilter, customDtoFilter)
+                        .addFilter(notesDtoFilter, notesFilter)
+                        .addFilter(tasksDtoFilter, taskFilter);
+                yield filters;
+            }
+            case GET_TASKEXECUTOR_TASKS -> {
+                log.info("Значение: " + GET_TASKEXECUTOR_TASKS + " Эндпоинт GET Tasks /task/gen-info/executor/, метод editTasks(), " +
+                        "метод beforeBodyWrite() класса UniversalResponseBodyAdvice");
+                notesFilter = SimpleBeanPropertyFilter.filterOutAllExcept(USUAL_ID_FIELD_NAME, NOTES_AUTHOR_FIELD_NAME,
+                        NOTES_COMMENTS_FIELD_NAME);
+                taskFilter = SimpleBeanPropertyFilter.filterOutAllExcept(USUAL_ID_FIELD_NAME, TASK_HEADER_FIELD_NAME,
+                        TASK_AUTHOR_FIELD_NAME, TASK_EXECUTOR_FIELD_NAME, TASK_DESCRIPTION_FIELD_NAME, TASK_PRIORITY_FIELD_NAME,
+                        TASK_STATUS_FIELD_NAME, TASK_NOTES_FIELD_NAME);
+                customDtoFilter = SimpleBeanPropertyFilter.filterOutAllExcept(USUAL_ID_FIELD_NAME, USER_EMAIL_FIELD_NAME);
+                filters = new SimpleFilterProvider()
+                        .addFilter(customUsersDtoFilter, customDtoFilter)
+                        .addFilter(notesDtoFilter, notesFilter)
+                        .addFilter(tasksDtoFilter, taskFilter);
+                yield filters;
+            }
+            case PUT_EDIT_TASKS -> {
+                log.info("Значение: " + PUT_EDIT_TASKS + " Эндпоинт PUT Tasks /task/update-tasks, метод editTasks(), " +
+                        "метод beforeBodyWrite() класса UniversalResponseBodyAdvice");
+                notesFilter = SimpleBeanPropertyFilter.filterOutAllExcept(USUAL_ID_FIELD_NAME, NOTES_AUTHOR_FIELD_NAME,
+                        NOTES_COMMENTS_FIELD_NAME);
+                taskFilter = SimpleBeanPropertyFilter.filterOutAllExcept(USUAL_ID_FIELD_NAME, TASK_HEADER_FIELD_NAME,
+                        TASK_AUTHOR_FIELD_NAME, TASK_EXECUTOR_FIELD_NAME, TASK_DESCRIPTION_FIELD_NAME, TASK_PRIORITY_FIELD_NAME,
+                        TASK_STATUS_FIELD_NAME, TASK_NOTES_FIELD_NAME);
+                customDtoFilter = SimpleBeanPropertyFilter.filterOutAllExcept(USUAL_ID_FIELD_NAME, USER_EMAIL_FIELD_NAME);
+                filters = new SimpleFilterProvider()
+                        .addFilter(customUsersDtoFilter, customDtoFilter)
+                        .addFilter(notesDtoFilter, notesFilter)
+                        .addFilter(tasksDtoFilter, taskFilter);
+                yield filters;
+            }
+            default -> null;
+        };
 
         if (filters != null) {
             mapping.setFilters(filters);
