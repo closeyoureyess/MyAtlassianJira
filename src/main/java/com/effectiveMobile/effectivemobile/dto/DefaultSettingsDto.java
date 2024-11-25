@@ -18,6 +18,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
+@Builder
 @Schema(description = "Сущность настроек по умолчанию")
 @Validated
 public class DefaultSettingsDto implements Serializable {

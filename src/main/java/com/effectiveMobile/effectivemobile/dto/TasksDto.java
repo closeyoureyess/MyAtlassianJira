@@ -20,6 +20,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
+@Builder
 @Schema(description = "Сущность задача")
 @JsonFilter("TasksDtoFilter")
 @Validated
