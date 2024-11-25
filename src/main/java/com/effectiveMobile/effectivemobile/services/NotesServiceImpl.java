@@ -12,6 +12,7 @@ import com.effectiveMobile.effectivemobile.fabrics.MappersFabric;
 import com.effectiveMobile.effectivemobile.mapper.NotesMapper;
 import com.effectiveMobile.effectivemobile.repository.NotesRepository;
 import com.effectiveMobile.effectivemobile.repository.TasksRepository;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,7 @@ import java.util.Optional;
 import static com.effectiveMobile.effectivemobile.exeptions.DescriptionUserExeption.*;
 
 @Service
+@Setter
 @Slf4j
 public class NotesServiceImpl implements NotesService{
 

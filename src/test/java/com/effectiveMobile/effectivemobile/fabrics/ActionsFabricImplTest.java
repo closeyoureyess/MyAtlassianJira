@@ -3,12 +3,11 @@ package com.effectiveMobile.effectivemobile.fabrics;
 import com.effectiveMobile.effectivemobile.auxiliaryclasses.DefaultSettingsActions;
 import com.effectiveMobile.effectivemobile.auxiliaryclasses.TasksActions;
 import com.effectiveMobile.effectivemobile.auxiliaryclasses.UserActions;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.Mockito.mock;
+import org.mockito.Mockito;
 
 class ActionsFabricImplTest {
 
@@ -19,9 +18,9 @@ class ActionsFabricImplTest {
 
     @BeforeEach
     void setUp() {
-        tasksActions = mock(TasksActions.class);
-        userActions = mock(UserActions.class);
-        defaultSettingsActions = mock(DefaultSettingsActions.class);
+        tasksActions = Mockito.mock(TasksActions.class);
+        userActions = Mockito.mock(UserActions.class);
+        defaultSettingsActions = Mockito.mock(DefaultSettingsActions.class);
 
         actionsFabric = new ActionsFabricImpl(tasksActions, userActions, defaultSettingsActions);
     }
@@ -29,18 +28,21 @@ class ActionsFabricImplTest {
     @Test
     @DisplayName("Тест: Проверка создания TasksActions")
     void testCreateTasksActions() {
-        assertNotNull(actionsFabric.createTasksActions(), "TasksActions не должен быть null");
+        TasksActions result = actionsFabric.createTasksActions();
+        Assertions.assertNotNull(result, "TasksActions не должен быть null");
     }
 
     @Test
     @DisplayName("Тест: Проверка создания UserActions")
     void testCreateUserActions() {
-        assertNotNull(actionsFabric.createUserActions(), "UserActions не должен быть null");
+        UserActions result = actionsFabric.createUserActions();
+        Assertions.assertNotNull(result, "UserActions не должен быть null");
     }
 
     @Test
     @DisplayName("Тест: Проверка создания DefaultSettingsActions")
     void testCreateDefaultSettingsActions() {
-        assertNotNull(actionsFabric.createDefaultSettingsActions(), "DefaultSettingsActions не должен быть null");
+        DefaultSettingsActions result = actionsFabric.createDefaultSettingsActions();
+        Assertions.assertNotNull(result, "DefaultSettingsActions не должен быть null");
     }
 }

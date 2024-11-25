@@ -18,6 +18,7 @@ import com.effectiveMobile.effectivemobile.mapper.TaskMapper;
 import com.effectiveMobile.effectivemobile.other.UserRoles;
 import com.effectiveMobile.effectivemobile.repository.AuthorizationRepository;
 import com.effectiveMobile.effectivemobile.repository.TasksRepository;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -35,6 +36,7 @@ import static com.effectiveMobile.effectivemobile.constants.ConstantsClass.ZERO_
 import static com.effectiveMobile.effectivemobile.exeptions.DescriptionUserExeption.*;
 
 @Service
+@Setter
 @Slf4j
 public class TaskServiceImpl implements TaskService {
 

@@ -56,12 +56,18 @@ class DefaultSettingsActionsImplTest {
                     TaskPriorityEnum.LOW
             );
 
-            // Assert
-            Assertions.assertTrue(result.isPresent(), "Ожидается, что значение присутствует");
-            Assertions.assertEquals(TaskPriorityEnum.MEDIUM, result.get(), "Ожидается, что возвращено значение MEDIUM");
+            boolean enumResult = result.isPresent();
+            TaskPriorityEnum tpeExpected = TaskPriorityEnum.MEDIUM;
+            TaskPriorityEnum tpeResult = result.get();
 
+            // Assert
+            Assertions.assertTrue(enumResult, "Ожидается, что значение присутствует");
+            Assertions.assertEquals(tpeExpected, tpeResult, "Ожидается, что возвращено значение MEDIUM");
+
+            int resultSizeMocked = mocked.constructed().size();
             // Верификация, что конструктор был вызван один раз
-            Assertions.assertEquals(1, mocked.constructed().size(), "Ожидается, что был создан один экземпляр DefaultSettingsServiceImpl");
+            Assertions.assertEquals(1, resultSizeMocked, "Ожидается, что был создан один экземпляр " +
+                    "DefaultSettingsServiceImpl");
 
             // Верификация вызова метода getDefaultSettings
             DefaultSettingsServiceImpl mockService = mocked.constructed().get(0);
@@ -93,7 +99,8 @@ class DefaultSettingsActionsImplTest {
             Assertions.assertEquals(TaskStatusEnum.BACKLOG, result.get(), "Ожидается, что возвращено значение BACKLOG");
 
             // Верификация, что конструктор был вызван один раз
-            Assertions.assertEquals(1, mocked.constructed().size(), "Ожидается, что был создан один экземпляр DefaultSettingsServiceImpl");
+            Assertions.assertEquals(1, mocked.constructed().size(), "Ожидается, что был создан один экземпляр " +
+                    "DefaultSettingsServiceImpl");
 
             // Верификация вызова метода getDefaultSettings
             DefaultSettingsServiceImpl mockService = mocked.constructed().get(0);
@@ -124,7 +131,8 @@ class DefaultSettingsActionsImplTest {
             Assertions.assertFalse(result.isPresent(), "Ожидается, что значение отсутствует");
 
             // Верификация, что конструктор был вызван один раз
-            Assertions.assertEquals(1, mocked.constructed().size(), "Ожидается, что был создан один экземпляр DefaultSettingsServiceImpl");
+            Assertions.assertEquals(1, mocked.constructed().size(), "Ожидается, что был создан один экземпляр " +
+                    "DefaultSettingsServiceImpl");
 
             // Верификация вызова метода getDefaultSettings
             DefaultSettingsServiceImpl mockService = mocked.constructed().get(0);
@@ -156,7 +164,8 @@ class DefaultSettingsActionsImplTest {
             Assertions.assertFalse(result.isPresent(), "Ожидается, что значение отсутствует");
 
             // Верификация, что конструктор был вызван один раз
-            Assertions.assertEquals(1, mocked.constructed().size(), "Ожидается, что был создан один экземпляр DefaultSettingsServiceImpl");
+            Assertions.assertEquals(1, mocked.constructed().size(), "Ожидается, что был создан один экземпляр " +
+                    "DefaultSettingsServiceImpl");
 
             // Верификация вызова метода getDefaultSettings
             DefaultSettingsServiceImpl mockService = mocked.constructed().get(0);
@@ -189,7 +198,8 @@ class DefaultSettingsActionsImplTest {
             Assertions.assertFalse(result.isPresent(), "Ожидается, что значение отсутствует");
 
             // Верификация, что конструктор был вызван один раз
-            Assertions.assertEquals(1, mocked.constructed().size(), "Ожидается, что был создан один экземпляр DefaultSettingsServiceImpl");
+            Assertions.assertEquals(1, mocked.constructed().size(), "Ожидается, что был создан один экземпляр " +
+                    "DefaultSettingsServiceImpl");
 
             // Верификация вызова метода getDefaultSettings
             DefaultSettingsServiceImpl mockService = mocked.constructed().get(0);

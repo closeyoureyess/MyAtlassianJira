@@ -90,5 +90,4 @@ public class UserServiceImpl implements UserService {
             throw new UsernameNotFoundException(DescriptionUserExeption.USER_NOT_FOUND.getEnumDescription() + " " + userEmail);
         }
     }
-
 }

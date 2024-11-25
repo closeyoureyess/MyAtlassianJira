@@ -55,7 +55,9 @@ public class DefaultSettingsServiceImpl implements DefaultSettingsService {
             throw new IncorrectTypeParameterException(SELECTED_TASK_STATUS_IS_NULL.getEnumDescription());
         }
 
-        Optional<DefaultSettings> defaultSettingsFromDB = defaultSettingsRepository.findByFieldName(defaultSettingsDto.getFieldName().getFieldName());
+        DefaultSettingsFieldNameEnum fieldName = defaultSettingsDto.getFieldName();
+        String stringFieldName = fieldName.getFieldName();
+        Optional<DefaultSettings> defaultSettingsFromDB = defaultSettingsRepository.findByFieldName(stringFieldName);
         if (defaultSettingsFromDB.isEmpty()) {
             return Optional.empty();
         }

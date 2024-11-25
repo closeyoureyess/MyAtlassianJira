@@ -11,6 +11,7 @@ import com.effectiveMobile.effectivemobile.exeptions.ExecutorNotFoundExeption;
 import com.effectiveMobile.effectivemobile.fabrics.ActionsFabric;
 import com.effectiveMobile.effectivemobile.other.TaskPriorityEnum;
 import com.effectiveMobile.effectivemobile.other.TaskStatusEnum;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,9 +20,6 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import java.lang.reflect.Method;
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 class TaskMapperImplTest {
 
@@ -32,9 +30,9 @@ class TaskMapperImplTest {
 
     @BeforeEach
     void setUp() {
-        mockUserMapper = mock(UserMapper.class);
-        mockNotesMapper = mock(NotesMapper.class);
-        mockActionsFabric = mock(ActionsFabric.class);
+        mockUserMapper = Mockito.mock(UserMapper.class);
+        mockNotesMapper = Mockito.mock(NotesMapper.class);
+        mockActionsFabric = Mockito.mock(ActionsFabric.class);
 
         taskMapper = new TaskMapperImpl();
         taskMapper.setUserMapper(mockUserMapper);
@@ -50,14 +48,14 @@ class TaskMapperImplTest {
         tasksDto.setTaskPriority(TaskPriorityEnum.HIGH);
         tasksDto.setNotesDto(List.of(new NotesDto()));
 
-        when(mockNotesMapper.transferDtoToListNotes(anyList())).thenReturn(List.of());
+        Mockito.when(mockNotesMapper.transferDtoToListNotes(Mockito.anyList())).thenReturn(List.of());
 
         Tasks result = taskMapper.convertDtoToTasks(tasksDto);
 
-        assertNotNull(result, "Результат не должен быть null");
-        assertEquals(tasksDto.getId(), result.getId(), "Идентификаторы должны совпадать");
-        assertEquals(TaskPriorityEnum.HIGH, result.getTaskPriority(), "Приоритет должен быть установлен");
-        verify(mockNotesMapper, times(1)).transferDtoToListNotes(anyList());
+        Assertions.assertNotNull(result, "Результат не должен быть null");
+        Assertions.assertEquals(tasksDto.getId(), result.getId(), "Идентификаторы должны совпадать");
+        Assertions.assertEquals(TaskPriorityEnum.HIGH, result.getTaskPriority(), "Приоритет должен быть установлен");
+        Mockito.verify(mockNotesMapper, Mockito.times(1)).transferDtoToListNotes(Mockito.anyList());
     }
 
     @Test
@@ -68,14 +66,14 @@ class TaskMapperImplTest {
         tasks.setTaskPriority(TaskPriorityEnum.MEDIUM);
         tasks.setNotes(List.of(new Notes()));
 
-        when(mockNotesMapper.transferListNotesToDto(anyList())).thenReturn(List.of());
+        Mockito.when(mockNotesMapper.transferListNotesToDto(Mockito.anyList())).thenReturn(List.of());
 
         TasksDto result = taskMapper.convertTasksToDto(tasks);
 
-        assertNotNull(result, "Результат не должен быть null");
-        assertEquals(tasks.getId(), result.getId(), "Идентификаторы должны совпадать");
-        assertEquals(TaskPriorityEnum.MEDIUM, result.getTaskPriority(), "Приоритет должен быть установлен");
-        verify(mockNotesMapper, times(1)).transferListNotesToDto(anyList());
+        Assertions.assertNotNull(result, "Результат не должен быть null");
+        Assertions.assertEquals(tasks.getId(), result.getId(), "Идентификаторы должны совпадать");
+        Assertions.assertEquals(TaskPriorityEnum.MEDIUM, result.getTaskPriority(), "Приоритет должен быть установлен");
+        Mockito.verify(mockNotesMapper, Mockito.times(1)).transferListNotesToDto(Mockito.anyList());
     }
 
     @Test
@@ -89,8 +87,8 @@ class TaskMapperImplTest {
 
         Tasks result = taskMapper.compareTaskAndDto(tasksDto, tasks);
 
-        assertNotNull(result, "Результат не должен быть null");
-        assertEquals(TaskPriorityEnum.HIGH, result.getTaskPriority(), "Приоритет должен быть обновлен");
+        Assertions.assertNotNull(result, "Результат не должен быть null");
+        Assertions.assertEquals(TaskPriorityEnum.HIGH, result.getTaskPriority(), "Приоритет должен быть обновлен");
     }
 
     @Test
@@ -112,21 +110,21 @@ class TaskMapperImplTest {
         CustomUsers updatedCustomUsers = new CustomUsers();
         updatedCustomUsers.setId(1);
 
-        when(mockUserMapper.convertDtoToUser(customUsersDto)).thenReturn(updatedCustomUsers);
+        Mockito.when(mockUserMapper.convertDtoToUser(customUsersDto)).thenReturn(updatedCustomUsers);
         UserActions userActions = Mockito.mock(UserActions.class);
-        when(mockActionsFabric.createUserActions()).thenReturn(userActions);
+        Mockito.when(mockActionsFabric.createUserActions()).thenReturn(userActions);
 
         // Создаем новый объект Tasks с обновленным автором
         Tasks updatedTasks = new Tasks();
         updatedTasks.setTaskAuthor(updatedCustomUsers);
 
-        when(userActions.checkFindUser(updatedCustomUsers, tasks, 0)).thenReturn(updatedTasks);
+        Mockito.when(userActions.checkFindUser(updatedCustomUsers, tasks, 0)).thenReturn(updatedTasks);
 
         Tasks result = (Tasks) method.invoke(taskMapper, tasksDto, tasks);
 
-        assertEquals(1, result.getTaskAuthor().getId(), "Автор должен быть обновлен");
-        verify(mockUserMapper, times(1)).convertDtoToUser(customUsersDto);
-        verify(userActions, times(1)).checkFindUser(updatedCustomUsers, tasks, 0);
+        Assertions.assertEquals(1, result.getTaskAuthor().getId(), "Автор должен быть обновлен");
+        Mockito.verify(mockUserMapper, Mockito.times(1)).convertDtoToUser(customUsersDto);
+        Mockito.verify(userActions, Mockito.times(1)).checkFindUser(updatedCustomUsers, tasks, 0);
     }
 
     @Test
@@ -142,7 +140,7 @@ class TaskMapperImplTest {
 
         Tasks result = (Tasks) method.invoke(taskMapper, tasksDto, tasks);
 
-        assertEquals(TaskPriorityEnum.HIGH, result.getTaskPriority(), "Приоритет должен быть обновлен");
+        Assertions.assertEquals(TaskPriorityEnum.HIGH, result.getTaskPriority(), "Приоритет должен быть обновлен");
     }
 
     @Test
@@ -158,7 +156,7 @@ class TaskMapperImplTest {
 
         Tasks result = (Tasks) method.invoke(taskMapper, tasksDto, tasks);
 
-        assertEquals("Updated Description", result.getDescription(), "Описание должно быть обновлено");
+        Assertions.assertEquals("Updated Description", result.getDescription(), "Описание должно быть обновлено");
     }
 
     @Test
@@ -174,7 +172,7 @@ class TaskMapperImplTest {
 
         Tasks result = (Tasks) method.invoke(taskMapper, tasksDto, tasks);
 
-        assertEquals("New Header", result.getHeader(), "Заголовок должен быть обновлен");
+        Assertions.assertEquals("New Header", result.getHeader(), "Заголовок должен быть обновлен");
     }
 
     @Test
@@ -191,7 +189,7 @@ class TaskMapperImplTest {
 
         Tasks result = (Tasks) method.invoke(taskMapper, tasksDto, tasks);
 
-        assertEquals(TaskStatusEnum.IN_PROGRESS, result.getTaskStatus(), "Статус должен быть обновлен");
+        Assertions.assertEquals(TaskStatusEnum.IN_PROGRESS, result.getTaskStatus(), "Статус должен быть обновлен");
     }
 
     @Test
@@ -200,9 +198,9 @@ class TaskMapperImplTest {
         TasksDto tasksDto = new TasksDto();
         tasksDto.setTaskExecutor(null);
 
-        when(mockNotesMapper.transferDtoToListNotes(anyList())).thenReturn(List.of());
+        Mockito.when(mockNotesMapper.transferDtoToListNotes(Mockito.anyList())).thenReturn(List.of());
 
-        assertThrows(ExecutorNotFoundExeption.class, () -> {
+        Assertions.assertThrows(ExecutorNotFoundExeption.class, () -> {
             taskMapper.convertDtoToTasks(tasksDto, null);
         }, "Должно быть выброшено исключение ExecutorNotFoundExeption");
     }
@@ -215,14 +213,14 @@ class TaskMapperImplTest {
         tasksDto.setTaskExecutor(new CustomUsersDto());
         tasksDto.setNotesDto(List.of(new NotesDto()));
 
-        when(mockNotesMapper.transferDtoToListNotes(anyList())).thenReturn(List.of());
+        Mockito.when(mockNotesMapper.transferDtoToListNotes(Mockito.anyList())).thenReturn(List.of());
 
         Tasks result = taskMapper.convertDtoToTasks(tasksDto);
 
-        assertNotNull(result, "Результат не должен быть null");
-        assertEquals(tasksDto.getId(), result.getId(), "Идентификаторы должны совпадать");
-        assertEquals(TaskPriorityEnum.MEDIUM, result.getTaskPriority(), "Приоритет должен быть установлен по умолчанию");
-        verify(mockNotesMapper, times(1)).transferDtoToListNotes(anyList());
+        Assertions.assertNotNull(result, "Результат не должен быть null");
+        Assertions.assertEquals(tasksDto.getId(), result.getId(), "Идентификаторы должны совпадать");
+        Assertions.assertEquals(TaskPriorityEnum.MEDIUM, result.getTaskPriority(), "Приоритет должен быть установлен по умолчанию");
+        Mockito.verify(mockNotesMapper, Mockito.times(1)).transferDtoToListNotes(Mockito.anyList());
     }
 
     @Test
@@ -239,9 +237,9 @@ class TaskMapperImplTest {
 
         TasksDto result = taskMapper.convertTasksToDto(tasks);
 
-        assertNotNull(result, "Результат не должен быть null");
-        assertEquals(tasks.getId(), result.getId(), "Идентификаторы должны совпадать");
-        assertEquals(TaskPriorityEnum.MEDIUM, result.getTaskPriority(), "Приоритет должен быть установлен");
+        Assertions.assertNotNull(result, "Результат не должен быть null");
+        Assertions.assertEquals(tasks.getId(), result.getId(), "Идентификаторы должны совпадать");
+        Assertions.assertEquals(TaskPriorityEnum.MEDIUM, result.getTaskPriority(), "Приоритет должен быть установлен");
     }
 
     @Test
@@ -269,15 +267,15 @@ class TaskMapperImplTest {
 
         List<Tasks> tasksList = List.of(task1, task2);
 
-        when(mockUserMapper.convertUserToDto(any(CustomUsers.class))).thenReturn(new CustomUsersDto());
-        when(mockNotesMapper.transferListNotesToDto(anyList())).thenReturn(List.of());
+        Mockito.when(mockUserMapper.convertUserToDto(Mockito.any(CustomUsers.class))).thenReturn(new CustomUsersDto());
+        Mockito.when(mockNotesMapper.transferListNotesToDto(Mockito.anyList())).thenReturn(List.of());
 
         List<TasksDto> result = taskMapper.transferListTasksToDto(tasksList);
 
-        assertNotNull(result, "Результат не должен быть null");
-        assertEquals(2, result.size(), "Размер списка должен быть 2");
-        verify(mockUserMapper, times(4)).convertUserToDto(any(CustomUsers.class));
-        verify(mockNotesMapper, times(2)).transferListNotesToDto(anyList());
+        Assertions.assertNotNull(result, "Результат не должен быть null");
+        Assertions.assertEquals(2, result.size(), "Размер списка должен быть 2");
+        Mockito.verify(mockUserMapper, Mockito.times(4)).convertUserToDto(Mockito.any(CustomUsers.class));
+        Mockito.verify(mockNotesMapper, Mockito.times(2)).transferListNotesToDto(Mockito.anyList());
     }
 
     @Test
@@ -299,38 +297,38 @@ class TaskMapperImplTest {
         CustomUsers updatedCustomUsers = new CustomUsers();
         updatedCustomUsers.setId(1);
 
-        when(mockUserMapper.convertDtoToUser(customUsersDto)).thenReturn(updatedCustomUsers);
+        Mockito.when(mockUserMapper.convertDtoToUser(customUsersDto)).thenReturn(updatedCustomUsers);
         UserActions userActions = Mockito.mock(UserActions.class);
-        when(mockActionsFabric.createUserActions()).thenReturn(userActions);
+        Mockito.when(mockActionsFabric.createUserActions()).thenReturn(userActions);
 
         // Создаем новый объект Tasks с обновленным автором
         Tasks updatedTasks = new Tasks();
         updatedTasks.setTaskAuthor(updatedCustomUsers);
 
-        when(userActions.checkFindUser(updatedCustomUsers, tasks, 0)).thenReturn(updatedTasks);
+        Mockito.when(userActions.checkFindUser(updatedCustomUsers, tasks, 0)).thenReturn(updatedTasks);
 
         // Тест для сценария, когда tasksDto.getTaskAuthor() != null && tasks.getTaskAuthor() != null
         Tasks result = (Tasks) method.invoke(taskMapper, tasksDto, tasks);
-        assertEquals(1, result.getTaskAuthor().getId(), "Автор должен быть обновлен");
+        Assertions.assertEquals(1, result.getTaskAuthor().getId(), "Автор должен быть обновлен");
 
         // Тест для сценария, когда tasksDto.getTaskAuthor() != null && tasks.getTaskAuthor() == null
         tasks.setTaskAuthor(null);
         result = (Tasks) method.invoke(taskMapper, tasksDto, tasks);
-        assertEquals(1, result.getTaskAuthor().getId(), "Автор должен быть обновлен");
+        Assertions.assertEquals(1, result.getTaskAuthor().getId(), "Автор должен быть обновлен");
 
         // Тест для сценария, когда tasksDto.getTaskAuthor() == null && tasks.getTaskAuthor() != null
         tasksDto.setTaskAuthor(null);
         tasks.setTaskAuthor(customUsers);
         result = (Tasks) method.invoke(taskMapper, tasksDto, tasks);
-        assertEquals(2, result.getTaskAuthor().getId(), "Автор не должен быть обновлен");
+        Assertions.assertEquals(2, result.getTaskAuthor().getId(), "Автор не должен быть обновлен");
 
         // Тест для сценария, когда tasksDto.getTaskAuthor() == null && tasks.getTaskAuthor() == null
         tasks.setTaskAuthor(null);
         result = (Tasks) method.invoke(taskMapper, tasksDto, tasks);
-        assertNull(result.getTaskAuthor(), "Автор должен быть null");
+        Assertions.assertNull(result.getTaskAuthor(), "Автор должен быть null");
 
-        verify(mockUserMapper, times(2)).convertDtoToUser(customUsersDto);
-        verify(userActions, times(2)).checkFindUser(updatedCustomUsers, tasks, 0);
+        Mockito.verify(mockUserMapper, Mockito.times(2)).convertDtoToUser(customUsersDto);
+        Mockito.verify(userActions, Mockito.times(2)).checkFindUser(updatedCustomUsers, tasks, 0);
     }
 
     @Test
@@ -352,37 +350,37 @@ class TaskMapperImplTest {
         CustomUsers updatedCustomUsers = new CustomUsers();
         updatedCustomUsers.setId(1);
 
-        when(mockUserMapper.convertDtoToUser(customUsersDto)).thenReturn(updatedCustomUsers);
+        Mockito.when(mockUserMapper.convertDtoToUser(customUsersDto)).thenReturn(updatedCustomUsers);
         UserActions userActions = Mockito.mock(UserActions.class);
-        when(mockActionsFabric.createUserActions()).thenReturn(userActions);
+        Mockito.when(mockActionsFabric.createUserActions()).thenReturn(userActions);
 
         // Создаем новый объект Tasks с обновленным исполнителем
         Tasks updatedTasks = new Tasks();
         updatedTasks.setTaskExecutor(updatedCustomUsers);
 
-        when(userActions.checkFindUser(updatedCustomUsers, tasks, 1)).thenReturn(updatedTasks);
+        Mockito.when(userActions.checkFindUser(updatedCustomUsers, tasks, 1)).thenReturn(updatedTasks);
 
         // Тест для сценария, когда tasksDto.getTaskExecutor() != null && tasks.getTaskExecutor() != null
         Tasks result = (Tasks) method.invoke(taskMapper, tasksDto, tasks);
-        assertEquals(1, result.getTaskExecutor().getId(), "Исполнитель должен быть обновлен");
+        Assertions.assertEquals(1, result.getTaskExecutor().getId(), "Исполнитель должен быть обновлен");
 
         // Тест для сценария, когда tasksDto.getTaskExecutor() != null && tasks.getTaskExecutor() == null
         tasks.setTaskExecutor(null);
         result = (Tasks) method.invoke(taskMapper, tasksDto, tasks);
-        assertEquals(1, result.getTaskExecutor().getId(), "Исполнитель должен быть обновлен");
+        Assertions.assertEquals(1, result.getTaskExecutor().getId(), "Исполнитель должен быть обновлен");
 
         // Тест для сценария, когда tasksDto.getTaskExecutor() == null && tasks.getTaskExecutor() != null
         tasksDto.setTaskExecutor(null);
         tasks.setTaskExecutor(customUsers);
         result = (Tasks) method.invoke(taskMapper, tasksDto, tasks);
-        assertEquals(2, result.getTaskExecutor().getId(), "Исполнитель не должен быть обновлен");
+        Assertions.assertEquals(2, result.getTaskExecutor().getId(), "Исполнитель не должен быть обновлен");
 
         // Тест для сценария, когда tasksDto.getTaskExecutor() == null && tasks.getTaskExecutor() == null
         tasks.setTaskExecutor(null);
         result = (Tasks) method.invoke(taskMapper, tasksDto, tasks);
-        assertNull(result.getTaskExecutor(), "Исполнитель должен быть null");
+        Assertions.assertNull(result.getTaskExecutor(), "Исполнитель должен быть null");
 
-        verify(mockUserMapper, times(2)).convertDtoToUser(customUsersDto);
-        verify(userActions, times(2)).checkFindUser(updatedCustomUsers, tasks, 1);
+        Mockito.verify(mockUserMapper, Mockito.times(2)).convertDtoToUser(customUsersDto);
+        Mockito.verify(userActions, Mockito.times(2)).checkFindUser(updatedCustomUsers, tasks, 1);
     }
 }

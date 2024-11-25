@@ -25,18 +25,23 @@ class ValidationClassImplTest {
         // Act
         Optional<ValidationClassImpl> result = validation.validEmailOrId(input);
 
+        boolean optionalResult = result.isPresent();
         // Assert
         Assertions.assertTrue(
-                result.isPresent(),
+                optionalResult,
                 "Результат должен быть присутствующим Optional"
         );
+
+        int expected = 12345;
+        int validationResult = result.get().getValidationInteger();
         Assertions.assertEquals(
-                Integer.valueOf(12345),
-                result.get().getValidationInteger(),
+                expected,
+                validationResult,
                 "validationInteger должен быть установлен в 12345"
         );
+        String validationStringResult = result.get().getValidationString();
         Assertions.assertNull(
-                result.get().getValidationString(),
+                validationStringResult,
                 "validationString должен оставаться null"
         );
     }
@@ -55,18 +60,23 @@ class ValidationClassImplTest {
         // Act
         Optional<ValidationClassImpl> result = validation.validEmailOrId(input);
 
+        boolean optionalResult =  result.isPresent();
         // Assert
         Assertions.assertTrue(
-                result.isPresent(),
+                optionalResult,
                 "Результат должен быть присутствующим Optional"
         );
+
+        String emalExpected = "user@example.com";
+        String emailResult = result.get().getValidationString();
         Assertions.assertEquals(
-                "user@example.com",
-                result.get().getValidationString(),
+                emalExpected,
+                emailResult,
                 "validationString должен быть установлен в 'user@example.com'"
         );
+        Integer intResult = result.get().getValidationInteger();
         Assertions.assertNull(
-                result.get().getValidationInteger(),
+                intResult,
                 "validationInteger должен оставаться null"
         );
     }

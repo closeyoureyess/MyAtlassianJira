@@ -4,12 +4,10 @@ import com.effectiveMobile.effectivemobile.dto.DefaultSettingsDto;
 import com.effectiveMobile.effectivemobile.entities.DefaultSettings;
 import com.effectiveMobile.effectivemobile.other.TaskPriorityEnum;
 import com.effectiveMobile.effectivemobile.other.TaskStatusEnum;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 class DefaultSettingsMapperImplTest {
 
@@ -25,10 +23,16 @@ class DefaultSettingsMapperImplTest {
     void testConvertDtoToDefaultSettings() {
         DefaultSettingsDto dto = new DefaultSettingsDto(1, null, TaskStatusEnum.BACKLOG, TaskPriorityEnum.HIGH);
         DefaultSettings entity = mapper.convertDtoToDefaultSettings(dto);
+        int idExpected = dto.getId();
+        int result = entity.getId();
+        TaskPriorityEnum tpeExpected = dto.getDefaultTaskPriority();
+        TaskPriorityEnum tpeResult = entity.getDefaultTaskPriority();
+        TaskStatusEnum tseExpected = dto.getDefaultTaskStatus();
+        TaskStatusEnum tseResult = entity.getDefaultTaskStatus();
 
-        assertEquals(dto.getId(), entity.getId());
-        assertEquals(dto.getDefaultTaskPriority(), entity.getDefaultTaskPriority());
-        assertEquals(dto.getDefaultTaskStatus(), entity.getDefaultTaskStatus());
+        Assertions.assertEquals(idExpected, result);
+        Assertions.assertEquals(tpeExpected, tpeResult);
+        Assertions.assertEquals(tseExpected, tseResult);
     }
 
     @Test
@@ -37,20 +41,20 @@ class DefaultSettingsMapperImplTest {
         DefaultSettings entity = new DefaultSettings(1, null, TaskStatusEnum.BACKLOG, TaskPriorityEnum.HIGH);
         DefaultSettingsDto dto = mapper.convertDefaultSettingsToDto(entity);
 
-        assertEquals(entity.getId(), dto.getId());
-        assertEquals(entity.getDefaultTaskPriority(), dto.getDefaultTaskPriority());
-        assertEquals(entity.getDefaultTaskStatus(), dto.getDefaultTaskStatus());
+        Assertions.assertEquals(entity.getId(), dto.getId());
+        Assertions.assertEquals(entity.getDefaultTaskPriority(), dto.getDefaultTaskPriority());
+        Assertions.assertEquals(entity.getDefaultTaskStatus(), dto.getDefaultTaskStatus());
     }
 
     @Test
     @DisplayName("Тест: Сравнение DefaultSettings и DTO")
     void testCompareDefaultSettingsAndDto() {
-        DefaultSettings entity = new DefaultSettings(1, null,  TaskStatusEnum.PENDING, TaskPriorityEnum.LOW);
+        DefaultSettings entity = new DefaultSettings(1, null, TaskStatusEnum.PENDING, TaskPriorityEnum.LOW);
         DefaultSettingsDto dto = new DefaultSettingsDto(1, null, TaskStatusEnum.BACKLOG, null);
 
         DefaultSettings updatedEntity = mapper.compareDefaultSettingsAndDto(dto, entity);
 
-        assertNotEquals(dto.getDefaultTaskPriority(), updatedEntity.getDefaultTaskPriority());
-        assertEquals(entity.getDefaultTaskStatus(), updatedEntity.getDefaultTaskStatus());
+        Assertions.assertNotEquals(dto.getDefaultTaskPriority(), updatedEntity.getDefaultTaskPriority());
+        Assertions.assertEquals(entity.getDefaultTaskStatus(), updatedEntity.getDefaultTaskStatus());
     }
 }

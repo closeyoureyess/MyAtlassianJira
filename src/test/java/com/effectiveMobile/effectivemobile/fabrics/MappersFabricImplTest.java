@@ -4,12 +4,11 @@ import com.effectiveMobile.effectivemobile.mapper.DefaultSettingsMapper;
 import com.effectiveMobile.effectivemobile.mapper.NotesMapper;
 import com.effectiveMobile.effectivemobile.mapper.TaskMapper;
 import com.effectiveMobile.effectivemobile.mapper.UserMapper;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.Mockito.mock;
+import org.mockito.Mockito;
 
 class MappersFabricImplTest {
 
@@ -21,10 +20,10 @@ class MappersFabricImplTest {
 
     @BeforeEach
     void setUp() {
-        notesMapper = mock(NotesMapper.class);
-        taskMapper = mock(TaskMapper.class);
-        userMapper = mock(UserMapper.class);
-        defaultSettingsMapper = mock(DefaultSettingsMapper.class);
+        notesMapper = Mockito.mock(NotesMapper.class);
+        taskMapper = Mockito.mock(TaskMapper.class);
+        userMapper = Mockito.mock(UserMapper.class);
+        defaultSettingsMapper = Mockito.mock(DefaultSettingsMapper.class);
 
         mappersFabric = new MappersFabricImpl(notesMapper, taskMapper, userMapper, defaultSettingsMapper);
     }
@@ -32,24 +31,28 @@ class MappersFabricImplTest {
     @Test
     @DisplayName("Тест: Проверка создания NotesMapper")
     void testCreateNotesMapper() {
-        assertNotNull(mappersFabric.createNotesMapper(), "NotesMapper не должен быть null");
+        NotesMapper result = mappersFabric.createNotesMapper();
+        Assertions.assertNotNull(result, "NotesMapper не должен быть null");
     }
 
     @Test
     @DisplayName("Тест: Проверка создания TaskMapper")
     void testCreateTaskMapper() {
-        assertNotNull(mappersFabric.createTaskMapper(), "TaskMapper не должен быть null");
+        TaskMapper result = mappersFabric.createTaskMapper();
+        Assertions.assertNotNull(result, "TaskMapper не должен быть null");
     }
 
     @Test
     @DisplayName("Тест: Проверка создания UserMapper")
     void testCreateUserMapper() {
-        assertNotNull(mappersFabric.createUserMapper(), "UserMapper не должен быть null");
+        UserMapper result = mappersFabric.createUserMapper();
+        Assertions.assertNotNull(result, "UserMapper не должен быть null");
     }
 
     @Test
     @DisplayName("Тест: Проверка создания DefaultSettingsMapper")
     void testCreateDefaultSettingsMapper() {
-        assertNotNull(mappersFabric.createDefaultSettingsMapper(), "DefaultSettingsMapper не должен быть null");
+        DefaultSettingsMapper result = mappersFabric.createDefaultSettingsMapper();
+        Assertions.assertNotNull(result, "DefaultSettingsMapper не должен быть null");
     }
 }

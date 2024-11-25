@@ -28,8 +28,12 @@ class NotesMapperImplTest {
         NotesDto dto = new NotesDto(1, null, "Test Comment", null);
         Notes entity = notesMapper.convertDtoToNotes(dto);
 
-        Assertions.assertEquals(dto.getId(), entity.getId());
-        Assertions.assertEquals(dto.getComments(), entity.getComments());
+        int expected = dto.getId();
+        int result = entity.getId();
+        Assertions.assertEquals(expected, result);
+        String commExpected = dto.getComments();
+        String commResult = entity.getComments();
+        Assertions.assertEquals(commExpected, commResult);
     }
 
     @Test

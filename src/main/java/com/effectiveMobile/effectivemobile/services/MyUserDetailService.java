@@ -2,8 +2,10 @@ package com.effectiveMobile.effectivemobile.services;
 
 import com.effectiveMobile.effectivemobile.entities.CustomUsers;
 import com.effectiveMobile.effectivemobile.exeptions.DescriptionUserExeption;
+import com.effectiveMobile.effectivemobile.exeptions.UserNotFoundException;
 import com.effectiveMobile.effectivemobile.other.UserRoles;
 import com.effectiveMobile.effectivemobile.repository.AuthorizationRepository;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;
@@ -21,6 +23,7 @@ import static com.effectiveMobile.effectivemobile.constants.ConstantsClass.EMPTY
  *     Сервис для загрузки деталей пользователя для аутентификации.
  * </pre>
  */
+@Setter
 @Service(value = "myUserDetailService")
 @Slf4j
 public class MyUserDetailService implements UserDetailsService {
@@ -36,7 +39,7 @@ public class MyUserDetailService implements UserDetailsService {
      * @throws UsernameNotFoundException если пользователь не найден
      */
     @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String email) throws UserNotFoundException {
         log.info("Метод loadUserByUsername() " + email);
         Optional<CustomUsers> userFromDB = authorizationRepository.findByEmail(email);
         if (userFromDB.isPresent()) {
@@ -47,8 +50,8 @@ public class MyUserDetailService implements UserDetailsService {
                     .roles(getRoles(newCustomUsers))
                     .build();
         } else {
-            throw new UsernameNotFoundException(DescriptionUserExeption.USER_NOT_FOUND.getEnumDescription() +
-                    EMPTY_SPACE + userFromDB.get().getEmail());
+            throw new UserNotFoundException(DescriptionUserExeption.USER_NOT_FOUND.getEnumDescription() +
+                    EMPTY_SPACE + email);
         }
 
     }

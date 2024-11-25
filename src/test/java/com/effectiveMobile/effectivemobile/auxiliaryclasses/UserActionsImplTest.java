@@ -79,11 +79,13 @@ class UserActionsImplTest {
 
         // Act
         Tasks result = userActionsImpl.checkFindUser(inputUser, newTasks, typeOperations);
+        CustomUsers taskExecutorResult = result.getTaskExecutor();
+        CustomUsers taskAuthorResult = result.getTaskAuthor();
 
         // Assert
         Assertions.assertNotNull(result, "Результат не должен быть null");
-        Assertions.assertEquals(customUserByEmail, result.getTaskExecutor(), "taskExecutor должен быть установлен");
-        Assertions.assertNull(result.getTaskAuthor(), "taskAuthor должен оставаться null");
+        Assertions.assertEquals(customUserByEmail, taskExecutorResult, "taskExecutor должен быть установлен");
+        Assertions.assertNull(taskAuthorResult, "taskAuthor должен оставаться null");
         Mockito.verify(authorizationRepository, Mockito.times(1)).findByEmail("user@example.com");
     }
 

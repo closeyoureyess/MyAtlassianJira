@@ -174,8 +174,8 @@ public class HandlerExceptionController {
     /**
      * Обработчик UsernameNotFoundException
      */
-    @ExceptionHandler(UsernameNotFoundException.class)
-    protected ResponseEntity<ApiErrorResponse> handleUsernameNotFoundException(UsernameNotFoundException e, HttpServletRequest request) {
+    @ExceptionHandler(UserNotFoundException.class)
+    protected ResponseEntity<ApiErrorResponse> handleUsernameNotFoundException(UserNotFoundException e, HttpServletRequest request) {
         log.error(GENERATION_ERROR.getEnumDescription() + e.getClass() + LINE_FEED + e.getMessage() + LINE_FEED +
                 e);
 

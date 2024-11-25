@@ -4,13 +4,11 @@ import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class JacksonConfigTest {
 
@@ -23,7 +21,7 @@ class JacksonConfigTest {
         Jackson2ObjectMapperBuilderCustomizer customizer = jacksonConfig.jacksonCustomizer();
 
         // Assert
-        assertNotNull(customizer, "Customizer должен быть создан и не равен null");
+        Assertions.assertNotNull(customizer, "Customizer должен быть создан и не равен null");
     }
 
     @Test
@@ -41,15 +39,15 @@ class JacksonConfigTest {
         FilterProvider filterProvider = objectMapper.getSerializationConfig().getFilterProvider();
 
         // Assert
-        assertNotNull(filterProvider, "FilterProvider должен быть создан");
+        Assertions.assertNotNull(filterProvider, "FilterProvider должен быть создан");
 
         // Проверяем, что фильтры работают на примере сериализации
         TestDto testDto = new TestDto("value1", "value2");
         String json = objectMapper.writeValueAsString(testDto);
 
         // Проверяем, что сериализация происходит без ошибок, и содержимое корректное
-        assertTrue(json.contains("field1"), "Сериализация должна содержать field1");
-        assertTrue(json.contains("field2"), "Сериализация должна содержать field2");
+        Assertions.assertTrue(json.contains("field1"), "Сериализация должна содержать field1");
+        Assertions.assertTrue(json.contains("field2"), "Сериализация должна содержать field2");
     }
 
     @JsonFilter("TasksDtoFilter")

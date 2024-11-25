@@ -19,9 +19,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.times;
-
 /**
  * Тестовый класс для TasksActionsImpl
  */
@@ -66,12 +63,13 @@ class TasksActionsImplTest {
 
         // Act
         TasksDto result = tasksActionsImpl.fillTaskPriorityAndTaskStatusFields(tasksDto);
+        TaskStatusEnum tseExpected = result.getTaskStatus();
 
         // Assert
         Assertions.assertNotNull(result, "Результат не должен быть null");
         Assertions.assertEquals(defaultTaskStatus, result.getTaskStatus(), "taskStatus должен быть установлен в BACKLOG");
         Assertions.assertNull(result.getTaskPriority(), "taskPriority должен оставаться null");
-        Mockito.verify(defaultSettingsActions, times(1))
+        Mockito.verify(defaultSettingsActions, Mockito.times(1))
                 .getDefaultValueFromTasksFields(DefaultSettingsFieldNameEnum.TASK_PRIORITY, TaskStatusEnum.BACKLOG);
     }
 
@@ -95,7 +93,7 @@ class TasksActionsImplTest {
         Assertions.assertNotNull(result, "Результат не должен быть null");
         Assertions.assertEquals(defaultTaskPriority, result.getTaskPriority(), "taskPriority должен быть установлен в MEDIUM");
         Assertions.assertNull(result.getTaskStatus(), "taskStatus должен оставаться null");
-        Mockito.verify(defaultSettingsActions, times(1))
+        Mockito.verify(defaultSettingsActions, Mockito.times(1))
                 .getDefaultValueFromTasksFields(DefaultSettingsFieldNameEnum.TASK_STATUS, TaskPriorityEnum.MEDIUM);
     }
 
@@ -117,7 +115,7 @@ class TasksActionsImplTest {
         // Assert
         Assertions.assertNotNull(result, "Результат не должен быть null");
         Assertions.assertNull(result.getTaskPriority(), "taskPriority должен оставаться null");
-        Mockito.verify(defaultSettingsActions, times(1))
+        Mockito.verify(defaultSettingsActions, Mockito.times(1))
                 .getDefaultValueFromTasksFields(DefaultSettingsFieldNameEnum.TASK_PRIORITY, TaskStatusEnum.BACKLOG);
     }
 
@@ -139,7 +137,7 @@ class TasksActionsImplTest {
         // Assertss
         Assertions.assertNotNull(result, "Результат не должен быть null");
         Assertions.assertNull(result.getTaskStatus(), "taskStatus должен оставаться null");
-        Mockito.verify(defaultSettingsActions, times(1))
+        Mockito.verify(defaultSettingsActions, Mockito.times(1))
                 .getDefaultValueFromTasksFields(DefaultSettingsFieldNameEnum.TASK_STATUS, TaskPriorityEnum.MEDIUM);
     }
 
@@ -182,7 +180,7 @@ class TasksActionsImplTest {
                 .build();
 
         // Act & Assert
-        NotEnoughRulesForEntity exception = assertThrows(NotEnoughRulesForEntity.class, () -> {
+        NotEnoughRulesForEntity exception = Assertions.assertThrows(NotEnoughRulesForEntity.class, () -> {
             tasksActionsImpl.fieldsTasksAllowedForEditing(notAllowedTasksDto);
         }, "Должен быть выброшен NotEnoughRulesForEntity");
 
@@ -201,7 +199,7 @@ class TasksActionsImplTest {
         TasksDto nullTasksDto = null;
 
         // Act & Assert
-        NotEnoughRulesForEntity exception = assertThrows(NotEnoughRulesForEntity.class, () -> {
+        NotEnoughRulesForEntity exception = Assertions.assertThrows(NotEnoughRulesForEntity.class, () -> {
             tasksActionsImpl.fieldsTasksAllowedForEditing(nullTasksDto);
         }, "Должен быть выброшен NotEnoughRulesForEntity");
 
