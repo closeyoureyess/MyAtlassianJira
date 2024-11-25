@@ -8,6 +8,7 @@ import com.effectiveMobile.effectivemobile.exeptions.ExecutorNotFoundExeption;
 import com.effectiveMobile.effectivemobile.fabrics.ActionsFabric;
 import com.effectiveMobile.effectivemobile.other.TaskPriorityEnum;
 import com.effectiveMobile.effectivemobile.repository.AuthorizationRepository;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -18,6 +19,7 @@ import java.util.List;
 
 import static com.effectiveMobile.effectivemobile.exeptions.DescriptionUserExeption.EXECUTOR_NOT_SPECIFIED;
 
+@Setter
 @Component
 @Slf4j
 public class TaskMapperImpl implements TaskMapper {
@@ -268,5 +270,4 @@ public class TaskMapperImpl implements TaskMapper {
         }
         return tasks;
     }
-
 }

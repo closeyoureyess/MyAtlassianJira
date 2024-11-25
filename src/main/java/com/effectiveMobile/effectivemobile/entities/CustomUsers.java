@@ -2,10 +2,7 @@ package com.effectiveMobile.effectivemobile.entities;
 
 import com.effectiveMobile.effectivemobile.other.UserRoles;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.List;
 
@@ -18,6 +15,7 @@ import java.util.List;
 @Table(name = "users_credentials")
 @Getter
 @Setter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class CustomUsers {

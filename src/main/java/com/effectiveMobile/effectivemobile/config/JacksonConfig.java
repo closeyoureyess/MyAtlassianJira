@@ -18,18 +18,9 @@ public class JacksonConfig {
                     .addFilter("TasksDtoFilter", SimpleBeanPropertyFilter.serializeAll())
                     .addFilter("CustomUsersDtoFilter", SimpleBeanPropertyFilter.serializeAll())
                     .addFilter("NotesDtoFilter", SimpleBeanPropertyFilter.serializeAll())
-                    // Устанавливаем, что отсутствие фильтра не должно приводить к ошибкам
-                    /*.addFilter("TasksDtoNotesControllerFilter", SimpleBeanPropertyFilter.filterOutAllExcept("id"))
-                    .addFilter("CustomUsersDtoNotesControllerFilter", SimpleBeanPropertyFilter.filterOutAllExcept("id", "email"))
-                    .addFilter("NotesDtoNotesControllerFilter", SimpleBeanPropertyFilter.filterOutAllExcept("id", "usersDto", "comments",
-                            "task"))
-
-                    .addFilter("TasksDtoTaskControllerFilter", SimpleBeanPropertyFilter.filterOutAllExcept("id"))*/
-                    // Устанавливаем, что отсутствие фильтра не должно приводить к ошибкам
                     .setFailOnUnknownId(false);
 
             builder.filters(filterProvider);
         };
     }
-
 }

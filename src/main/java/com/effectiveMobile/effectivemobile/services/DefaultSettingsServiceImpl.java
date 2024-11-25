@@ -6,6 +6,7 @@ import com.effectiveMobile.effectivemobile.exeptions.IncorrectTypeParameterExcep
 import com.effectiveMobile.effectivemobile.fabrics.MappersFabric;
 import com.effectiveMobile.effectivemobile.other.DefaultSettingsFieldNameEnum;
 import com.effectiveMobile.effectivemobile.repository.DefaultSettingsRepository;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CachePut;
@@ -20,6 +21,7 @@ import static com.effectiveMobile.effectivemobile.exeptions.DescriptionUserExept
 import static com.effectiveMobile.effectivemobile.other.DefaultSettingsFieldNameEnum.TASK_PRIORITY;
 import static com.effectiveMobile.effectivemobile.other.DefaultSettingsFieldNameEnum.TASK_STATUS;
 
+@Setter
 @Service
 @Slf4j
 public class DefaultSettingsServiceImpl implements DefaultSettingsService {

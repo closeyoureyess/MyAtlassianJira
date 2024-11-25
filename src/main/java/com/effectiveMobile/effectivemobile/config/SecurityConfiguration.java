@@ -1,6 +1,7 @@
 package com.effectiveMobile.effectivemobile.config;
 
 import com.effectiveMobile.effectivemobile.other.UserRoles;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -23,6 +24,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
  *     Конфигурационный класс для Spring Security
  * </pre>
  */
+@Setter
+
 @Configuration
 @EnableWebSecurity
 @Slf4j

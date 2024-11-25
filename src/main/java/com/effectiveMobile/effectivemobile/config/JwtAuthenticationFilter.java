@@ -6,6 +6,9 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -23,6 +26,7 @@ import java.io.IOException;
  *     Фильтр для JWT-аутентификации
  * </pre>
  */
+@Setter
 @Configuration
 @Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
