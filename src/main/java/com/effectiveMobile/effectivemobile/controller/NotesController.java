@@ -20,9 +20,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Locale;
-
-import static com.effectiveMobile.effectivemobile.constants.ConstantsClass.*;
+import static com.effectiveMobile.effectivemobile.constants.ConstantsClass.POST_CREATE_NOTES;
 
 /**
  * <pre>

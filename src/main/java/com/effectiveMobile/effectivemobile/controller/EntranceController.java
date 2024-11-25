@@ -1,15 +1,11 @@
 package com.effectiveMobile.effectivemobile.controller;
 
 import com.effectiveMobile.effectivemobile.dto.CustomUsersDto;
-import com.effectiveMobile.effectivemobile.fabrics.ServiceFabric;
 import com.effectiveMobile.effectivemobile.dto.RegistrationUsers;
-import com.effectiveMobile.effectivemobile.other.Views;
 import com.effectiveMobile.effectivemobile.services.UserService;
-import com.fasterxml.jackson.annotation.JsonView;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -44,8 +40,8 @@ public class EntranceController {
     /**
      * Эндпоинт регистрации пользователя
      *
-     * @param customUsersDto
-     * @return {@link ResponseEntity<CustomUsersDto>}
+     * @param customUsersDto - объект с полями для регистрации пользователя
+     * @return {@link ResponseEntity<CustomUsersDto>} - созданный пользователь
      */
     @Operation(summary = "Регистрация пользователя", description = "Позволяет зарегистрировать нового пользователя")
     @ApiResponses(value = {
@@ -65,9 +61,9 @@ public class EntranceController {
     /**
      * Эндпоинт авторизации пользователя
      *
-     * @param registrationUsers
+     * @param registrationUsers - форма авторизации в системе
      * @return {@link ResponseEntity<String>}
-     * @throws UsernameNotFoundException
+     * @throws UsernameNotFoundException - исключение, выбрасываемое, если пользователь не найден
      */
     @Operation(summary = "Авторизация пользователя", description = "Позволяет пользователю авторизоваться в системе")
     @ApiResponses(value = {

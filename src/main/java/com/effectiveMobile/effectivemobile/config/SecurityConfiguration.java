@@ -1,6 +1,5 @@
 package com.effectiveMobile.effectivemobile.config;
 
-import com.effectiveMobile.effectivemobile.fabrics.ServiceFabric;
 import com.effectiveMobile.effectivemobile.other.UserRoles;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,8 +37,9 @@ public class SecurityConfiguration {
     /**
      * Метод, настраивающий цепочку фильтров безопасности приложения
      *
-     * @param httpSecurity
-     * @throws Exception
+     * @param httpSecurity Объект {@link HttpSecurity} для настройки политики безопасности.
+     * @return Объект {@link SecurityFilterChain} с настроенной цепочкой фильтров.
+     * @throws Exception Если произошла ошибка во время настройки безопасности.
      */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
@@ -61,7 +61,7 @@ public class SecurityConfiguration {
     /**
      * Метод, создающий бин {@link UserDetailsService}
      *
-     * @return {@link UserDetailsService}
+     * @return {@link UserDetailsService} - дефолтный интерфейс Spring Security Core
      */
     @Bean
     public UserDetailsService userDetailsService() {
@@ -72,7 +72,7 @@ public class SecurityConfiguration {
     /**
      * Настраивает менеджер аутентификации с использованием указанного провайдера аутентификации.
      *
-     * @return настроенный {@link AuthenticationManager}
+     * @return настроенный {@link AuthenticationManager} - дефолтный интерфейс Spring Security Core
      */
     @Bean
     public AuthenticationManager authenticationManager() {
@@ -83,7 +83,7 @@ public class SecurityConfiguration {
     /**
      * Определяет провайдер аутентификации с использованием DAO и шифрования паролей.
      *
-     * @return настроенный {@link AuthenticationProvider}
+     * @return настроенный {@link AuthenticationProvider} - дефолтный интерфейс Spring Security Core
      */
     @Bean
     public AuthenticationProvider authenticationProvider() {

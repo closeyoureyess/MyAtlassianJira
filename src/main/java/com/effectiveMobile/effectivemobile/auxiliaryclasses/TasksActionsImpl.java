@@ -1,6 +1,5 @@
 package com.effectiveMobile.effectivemobile.auxiliaryclasses;
 
-import com.effectiveMobile.effectivemobile.dto.CustomUsersDto;
 import com.effectiveMobile.effectivemobile.dto.TasksDto;
 import com.effectiveMobile.effectivemobile.exeptions.MainException;
 import com.effectiveMobile.effectivemobile.exeptions.NotEnoughRulesForEntity;
@@ -8,11 +7,8 @@ import com.effectiveMobile.effectivemobile.other.DefaultSettingsFieldNameEnum;
 import com.effectiveMobile.effectivemobile.other.TaskPriorityEnum;
 import com.effectiveMobile.effectivemobile.other.TaskStatusEnum;
 import com.effectiveMobile.effectivemobile.repository.AuthorizationRepository;
-import com.effectiveMobile.effectivemobile.entities.CustomUsers;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;

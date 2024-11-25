@@ -30,9 +30,9 @@ public interface DefaultSettingsMapper {
     /**
      * Метод, сравнивающий поля DefaultSettings из БД с DefaultSettingsDto
      *
-     * @param defaultSettingsDto
-     * @param defaultSettings
-     * @return {@link DefaultSettings}
+     * @param defaultSettingsDto - объект-дто
+     * @param defaultSettings - объект из БД
+     * @return {@link DefaultSettings} - итоговый объект после сравнения, готовый для обновления сущности в БД
      */
     DefaultSettings compareDefaultSettingsAndDto(DefaultSettingsDto defaultSettingsDto, DefaultSettings defaultSettings);
 

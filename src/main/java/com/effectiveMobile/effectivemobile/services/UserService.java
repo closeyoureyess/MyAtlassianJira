@@ -1,7 +1,7 @@
 package com.effectiveMobile.effectivemobile.services;
 
-import com.effectiveMobile.effectivemobile.dto.RegistrationUsers;
 import com.effectiveMobile.effectivemobile.dto.CustomUsersDto;
+import com.effectiveMobile.effectivemobile.dto.RegistrationUsers;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 /**

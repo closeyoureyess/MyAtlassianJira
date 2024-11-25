@@ -1,6 +1,9 @@
 package com.effectiveMobile.effectivemobile.fabrics;
 
-import com.effectiveMobile.effectivemobile.services.*;
+import com.effectiveMobile.effectivemobile.services.DefaultSettingsService;
+import com.effectiveMobile.effectivemobile.services.JwtService;
+import com.effectiveMobile.effectivemobile.services.NotesService;
+import com.effectiveMobile.effectivemobile.services.TaskService;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
 /**

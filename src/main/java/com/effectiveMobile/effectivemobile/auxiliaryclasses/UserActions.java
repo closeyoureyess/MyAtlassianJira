@@ -18,11 +18,11 @@ public interface UserActions {
     /**
      * Метод для указания {@link CustomUsers} автора/исполнителя задачи
      *
-     * @param customUsers
-     * @param newTasks
-     * @param typeOperations
-     * @return {@link Tasks} с проставленным автором/исполнителем задачи
-     * @throws UsernameNotFoundException
+     * @param customUsers Объект {@link CustomUsers}, содержащий данные пользователя.
+     * @param newTasks Объект задачи {@link Tasks}, в котором устанавливается автор или исполнитель.
+     * @param typeOperations Целое число, указывающее тип операции: 0 - автор, 1 - исполнитель.
+     * @return {@link Tasks} с установленным автором или исполнителем.
+     * @throws UsernameNotFoundException Если пользователь не найден в базе данных.
      */
     Tasks checkFindUser(CustomUsers customUsers, Tasks newTasks, Integer typeOperations) throws UsernameNotFoundException;
 
@@ -50,16 +50,17 @@ public interface UserActions {
     /**
      * Метод для поиска пользователя в БД по id или e-mail-адресу
      *
-     * @param customUsers
-     * @return Возвращает найденного в БД пользователя {@link CustomUsers}
-     * @throws UsernameNotFoundException
+     * @param customUsers Объект {@link CustomUsers}, содержащий ID или email для поиска.
+     * @return {@link Optional<CustomUsers>} с найденным пользователем, если он существует.
+     * @throws UsernameNotFoundException Если пользователь с заданным ID или email не найден.
      */
     Optional<CustomUsers> searchUserEmailOrId(CustomUsers customUsers) throws UsernameNotFoundException;
 
     /**
      * Метод, сравнивающий, совпадает ли переданный пользователь с авторизованным
      *
-     * @param customUsersDto
+     * @param customUsersDto DTO объекта пользователя задачи для сравнения.
+     * @return true, если email совпадает, иначе false.
      */
     boolean comparisonEmailTasksFromDBAndEmailCurrentAuthUser(CustomUsersDto customUsersDto);
 

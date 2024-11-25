@@ -110,7 +110,6 @@
 			<artifactId>liquibase-core</artifactId>
 			<version>4.30.0</version>
 		</dependency>
-
 	</dependencies>
 
 	<build>

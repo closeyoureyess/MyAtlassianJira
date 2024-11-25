@@ -2,11 +2,11 @@ package com.effectiveMobile.effectivemobile.auxiliaryclasses;
 
 import com.effectiveMobile.effectivemobile.constants.ConstantsClass;
 import com.effectiveMobile.effectivemobile.dto.CustomUsersDto;
+import com.effectiveMobile.effectivemobile.entities.CustomUsers;
+import com.effectiveMobile.effectivemobile.entities.Tasks;
 import com.effectiveMobile.effectivemobile.exeptions.DescriptionUserExeption;
 import com.effectiveMobile.effectivemobile.exeptions.RoleNotFoundException;
 import com.effectiveMobile.effectivemobile.repository.AuthorizationRepository;
-import com.effectiveMobile.effectivemobile.entities.CustomUsers;
-import com.effectiveMobile.effectivemobile.entities.Tasks;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -78,6 +78,8 @@ public class UserActionsImpl implements UserActions {
                 optionalCustomUsers = authorizationRepository.findByEmail(customUsers.getEmail());
             } else if (customUsers.getEmail() == null && customUsers.getId() != null) {
                 optionalCustomUsers = authorizationRepository.findById(customUsers.getId());
+            } else if (customUsers.getEmail() != null && customUsers.getId() != null) {
+                optionalCustomUsers = authorizationRepository.findById(customUsers.getId());
             }
         }
         return optionalCustomUsers;
@@ -96,13 +98,6 @@ public class UserActionsImpl implements UserActions {
         return false;
     }
 
-    /**
-     *
-     *
-     * @param role
-     * @return Возвращает true, если роль текущего авторизованного пользователя соответствует переданной, если наоборот - false
-     * @throws RoleNotFoundException
-     */
     @Override
     public boolean currentUserAdminOrUserRole(String role) throws RoleNotFoundException {
         Optional<String> roleCurrentAuthorizedUser = getRoleCurrentAuthorizedUser(role);

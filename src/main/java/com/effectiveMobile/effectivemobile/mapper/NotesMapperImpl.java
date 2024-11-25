@@ -2,7 +2,6 @@ package com.effectiveMobile.effectivemobile.mapper;
 
 import com.effectiveMobile.effectivemobile.dto.NotesDto;
 import com.effectiveMobile.effectivemobile.entities.Notes;
-import com.effectiveMobile.effectivemobile.fabrics.MappersFabric;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

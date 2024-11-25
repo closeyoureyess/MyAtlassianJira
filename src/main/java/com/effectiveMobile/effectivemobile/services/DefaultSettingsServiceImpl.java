@@ -2,6 +2,7 @@ package com.effectiveMobile.effectivemobile.services;
 
 import com.effectiveMobile.effectivemobile.dto.DefaultSettingsDto;
 import com.effectiveMobile.effectivemobile.entities.DefaultSettings;
+import com.effectiveMobile.effectivemobile.exeptions.IncorrectTypeParameterException;
 import com.effectiveMobile.effectivemobile.fabrics.MappersFabric;
 import com.effectiveMobile.effectivemobile.other.DefaultSettingsFieldNameEnum;
 import com.effectiveMobile.effectivemobile.repository.DefaultSettingsRepository;
@@ -10,10 +11,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
 import static com.effectiveMobile.effectivemobile.constants.ConstantsClass.EMPTY_SPACE;
+import static com.effectiveMobile.effectivemobile.exeptions.DescriptionUserExeption.*;
+import static com.effectiveMobile.effectivemobile.other.DefaultSettingsFieldNameEnum.TASK_PRIORITY;
+import static com.effectiveMobile.effectivemobile.other.DefaultSettingsFieldNameEnum.TASK_STATUS;
 
 @Service
 @Slf4j
@@ -27,10 +32,28 @@ public class DefaultSettingsServiceImpl implements DefaultSettingsService {
 
     @CachePut(cacheNames = "defaultSettingsCache", key = "#defaultSettingsDto.fieldName")
     @Override
-    public Optional<DefaultSettingsDto> changeDefaultSettings(DefaultSettingsDto defaultSettingsDto) {
+    @Transactional
+    public Optional<DefaultSettingsDto> changeDefaultSettings(DefaultSettingsDto defaultSettingsDto) throws IncorrectTypeParameterException {
         log.info("Метод changeDefaultSettings()" + defaultSettingsDto.getDefaultTaskPriority() + EMPTY_SPACE +
                 defaultSettingsDto.getDefaultTaskStatus());
-        Optional<DefaultSettings> defaultSettingsFromDB = defaultSettingsRepository.findByFieldName(defaultSettingsDto.getFieldName());
+        if (defaultSettingsDto.getDefaultTaskPriority() != null && defaultSettingsDto.getDefaultTaskStatus() != null) {
+            throw new IncorrectTypeParameterException(TOO_MANY_FIELDS_IN_ONE_REQUEST.getEnumDescription());
+        }
+
+        if ( defaultSettingsDto.getFieldName() != null
+                &&
+            (defaultSettingsDto.getDefaultTaskPriority() == null && defaultSettingsDto.getDefaultTaskStatus() == null)
+            ) {
+            throw new IncorrectTypeParameterException(VALUES_EDITABLE_FIELDS_NOT_BE_NULL.getEnumDescription());
+        }
+
+        if (defaultSettingsDto.getFieldName() == TASK_PRIORITY && defaultSettingsDto.getDefaultTaskPriority() == null) {
+            throw new IncorrectTypeParameterException(TASK_PRIORITY_NOT_BE_NULL.getEnumDescription());
+        } else if (defaultSettingsDto.getFieldName() == TASK_STATUS && defaultSettingsDto.getDefaultTaskStatus() == null) {
+            throw new IncorrectTypeParameterException(SELECTED_TASK_STATUS_IS_NULL.getEnumDescription());
+        }
+
+        Optional<DefaultSettings> defaultSettingsFromDB = defaultSettingsRepository.findByFieldName(defaultSettingsDto.getFieldName().getFieldName());
         if (defaultSettingsFromDB.isEmpty()) {
             return Optional.empty();
         }
@@ -52,7 +75,7 @@ public class DefaultSettingsServiceImpl implements DefaultSettingsService {
     @Override
     public Optional<DefaultSettingsDto> getDefaultSettings(DefaultSettingsFieldNameEnum fieldName) {
         log.info("Метод changeDefaultSettings()" + fieldName.getFieldName());
-        Optional<DefaultSettings> defaultSettingsFromDB = defaultSettingsRepository.findByFieldName(fieldName);
+        Optional<DefaultSettings> defaultSettingsFromDB = defaultSettingsRepository.findByFieldName(fieldName.getFieldName());
         if (defaultSettingsFromDB.isEmpty()) {
             return Optional.empty();
         }

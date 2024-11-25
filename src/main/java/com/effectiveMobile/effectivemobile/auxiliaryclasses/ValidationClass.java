@@ -11,8 +11,9 @@ public interface ValidationClass {
 
     /**
      * Метод, проверящий, является ли переданная строка email или id
-     * @param line
-     * @return {@link ValidationClassImpl} с email, либо id
+     *
+     * @param line Строка для проверки, может содержать email или числовой идентификатор.
+     * @return {@link Optional<ValidationClassImpl>} с результатами проверки: email или ID.
      */
     Optional<ValidationClassImpl> validEmailOrId(String line);
 }

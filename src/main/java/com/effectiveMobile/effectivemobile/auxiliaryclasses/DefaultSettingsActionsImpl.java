@@ -4,7 +4,6 @@ import com.effectiveMobile.effectivemobile.dto.DefaultSettingsDto;
 import com.effectiveMobile.effectivemobile.other.DefaultSettingsFieldNameEnum;
 import com.effectiveMobile.effectivemobile.services.DefaultSettingsServiceImpl;
 import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;

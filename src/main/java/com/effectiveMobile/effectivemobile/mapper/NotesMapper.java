@@ -1,10 +1,7 @@
 package com.effectiveMobile.effectivemobile.mapper;
 
 import com.effectiveMobile.effectivemobile.dto.NotesDto;
-import com.effectiveMobile.effectivemobile.dto.TasksDto;
 import com.effectiveMobile.effectivemobile.entities.Notes;
-import com.effectiveMobile.effectivemobile.entities.Tasks;
-import com.effectiveMobile.effectivemobile.exeptions.MainException;
 
 import java.util.List;
 
@@ -18,7 +15,7 @@ public interface NotesMapper {
     /**
      * Метод для конвертации NotesDto в Notes
      *
-     * @param notesDto
+     * @param notesDto - объект-комментарий
      * @return {@link Notes}
      */
     Notes convertDtoToNotes(NotesDto notesDto);
@@ -26,7 +23,7 @@ public interface NotesMapper {
     /**
      * Метод для конвертации Notes в NotesDto
      *
-     * @param notes
+     * @param notes - объект-комментарий
      * @return {@link NotesDto}
      */
     NotesDto convertNotesToDto(Notes notes);
@@ -34,7 +31,7 @@ public interface NotesMapper {
     /**
      * Метод для конвертации списка с Notes в список с NotesDto
      *
-     * @param tasksList
+     * @param tasksList - список с объектами-комментариями
      * @return {@link List<NotesDto>}
      */
     List<NotesDto> transferListNotesToDto(List<Notes> tasksList);
@@ -42,7 +39,7 @@ public interface NotesMapper {
     /**
      * Метод для конвертации списка с NotesDto в список с Notes
      *
-     * @param notesDtoList
+     * @param notesDtoList - список с объектами-комментариями
      * @return {@link List<Notes>}
      */
     List<Notes> transferDtoToListNotes(List<NotesDto> notesDtoList);

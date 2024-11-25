@@ -2,15 +2,15 @@ package com.effectiveMobile.effectivemobile.services;
 
 
 import com.effectiveMobile.effectivemobile.dto.CustomUsersDto;
+import com.effectiveMobile.effectivemobile.dto.RegistrationUsers;
+import com.effectiveMobile.effectivemobile.entities.CustomUsers;
+import com.effectiveMobile.effectivemobile.exeptions.DescriptionUserExeption;
 import com.effectiveMobile.effectivemobile.fabrics.ActionsFabric;
 import com.effectiveMobile.effectivemobile.fabrics.MappersFabric;
 import com.effectiveMobile.effectivemobile.fabrics.ServiceFabric;
+import com.effectiveMobile.effectivemobile.mapper.UserMapper;
 import com.effectiveMobile.effectivemobile.other.UserRoles;
 import com.effectiveMobile.effectivemobile.repository.AuthorizationRepository;
-import com.effectiveMobile.effectivemobile.entities.CustomUsers;
-import com.effectiveMobile.effectivemobile.dto.RegistrationUsers;
-import com.effectiveMobile.effectivemobile.exeptions.DescriptionUserExeption;
-import com.effectiveMobile.effectivemobile.mapper.UserMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;

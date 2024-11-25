@@ -1,6 +1,9 @@
 package com.effectiveMobile.effectivemobile.fabrics;
 
-import com.effectiveMobile.effectivemobile.mapper.*;
+import com.effectiveMobile.effectivemobile.mapper.DefaultSettingsMapper;
+import com.effectiveMobile.effectivemobile.mapper.NotesMapper;
+import com.effectiveMobile.effectivemobile.mapper.TaskMapper;
+import com.effectiveMobile.effectivemobile.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 @Component

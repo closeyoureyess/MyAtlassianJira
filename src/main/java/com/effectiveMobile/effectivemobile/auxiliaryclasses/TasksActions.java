@@ -1,9 +1,7 @@
 package com.effectiveMobile.effectivemobile.auxiliaryclasses;
 
-import com.effectiveMobile.effectivemobile.dto.CustomUsersDto;
 import com.effectiveMobile.effectivemobile.dto.TasksDto;
 import com.effectiveMobile.effectivemobile.entities.Tasks;
-
 import com.effectiveMobile.effectivemobile.exeptions.MainException;
 import com.effectiveMobile.effectivemobile.exeptions.NotEnoughRulesForEntity;
 
@@ -25,8 +23,9 @@ public interface TasksActions {
     /**
      * Метод, проверяющий поля {@link TasksDto}, которые пытается отредактировать пользователь
      *
-     * @param tasksDto
-     * @throws NotEnoughRulesForEntity
+     * @param tasksDto DTO объекта задачи, который нужно проверить
+     * @return true, если редактирование разрешено
+     * @throws NotEnoughRulesForEntity Если редактирование запрещено из-за недостаточных прав
      */
     boolean fieldsTasksAllowedForEditing(TasksDto tasksDto) throws NotEnoughRulesForEntity;
 }

@@ -1,6 +1,5 @@
 package com.effectiveMobile.effectivemobile.auxiliaryclasses;
 
-import com.effectiveMobile.effectivemobile.exeptions.MainException;
 import com.effectiveMobile.effectivemobile.other.DefaultSettingsFieldNameEnum;
 
 import java.util.Optional;

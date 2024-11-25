@@ -1,6 +1,7 @@
 package com.effectiveMobile.effectivemobile.services;
 
 import com.effectiveMobile.effectivemobile.dto.DefaultSettingsDto;
+import com.effectiveMobile.effectivemobile.exeptions.IncorrectTypeParameterException;
 import com.effectiveMobile.effectivemobile.other.DefaultSettingsFieldNameEnum;
 
 import java.util.Optional;
@@ -17,8 +18,9 @@ public interface DefaultSettingsService {
      *
      * @param defaultSettingsDto
      * @return {@link Optional<DefaultSettingsDto>} с отредактированными настройками по умолчанию для полей
+     * @throws IncorrectTypeParameterException - исключение, выбрасываемое при неверном типе параметра
      */
-    Optional<DefaultSettingsDto> changeDefaultSettings(DefaultSettingsDto defaultSettingsDto);
+    Optional<DefaultSettingsDto> changeDefaultSettings(DefaultSettingsDto defaultSettingsDto) throws IncorrectTypeParameterException;
 
     /**
      * Метод, позволяющий получить выставленное значение по умолчанию для определенного поля

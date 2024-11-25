@@ -1,9 +1,9 @@
 package com.effectiveMobile.effectivemobile.services;
 
+import com.effectiveMobile.effectivemobile.entities.CustomUsers;
 import com.effectiveMobile.effectivemobile.exeptions.DescriptionUserExeption;
 import com.effectiveMobile.effectivemobile.other.UserRoles;
 import com.effectiveMobile.effectivemobile.repository.AuthorizationRepository;
-import com.effectiveMobile.effectivemobile.entities.CustomUsers;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;

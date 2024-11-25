@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
+
+    <!-- Вставка тестовых данных в таблицу users_credentials -->
+    <changeSet id="1" author="vsirik">
+        <insert tableName="users_credentials">
+            <column name="email_user" value="example@gmail.com"/>
+            <column name="password_user" value="$2a$10$oayAf.u1xW8kL4lTCHxfQungvVexxabSPMkig6HSYv/lKQEKp84Xi"/>
+            <column name="role_user" value="USER"/>
+        </insert>
+        <insert tableName="users_credentials">
+            <column name="email_user" value="example2@gmail.com"/>
+            <column name="password_user" value="$2a$10$Uf/xWih/ue5mPX6yJxQHOuQ0CQ7bWAhI91VYWjnn5XdzYNaJXdWoa"/>
+            <column name="role_user" value="ADMIN"/>
+        </insert>
+    </changeSet>
+
+    <!-- Вставка тестовых данных в таблицу tasks_entity -->
+    <changeSet id="2" author="vsirik">
+        <insert tableName="tasks_entity">
+            <column name="tasks_executor_id" valueNumeric="1"/>
+            <column name="tasks_author_id" valueNumeric="2"/>
+            <column name="header_tasks" value="Test task header"/>
+            <column name="status_tasks" value="BACKLOG"/>
+            <column name="tasks_description" value="This is a test task description"/>
+            <column name="tasks_priority" value="MEDIUM"/>
+        </insert>
+        <insert tableName="tasks_entity">
+            <column name="tasks_executor_id" valueNumeric="2"/>
+            <column name="tasks_author_id" valueNumeric="2"/>
+            <column name="header_tasks" value="Test Task 2"/>
+            <column name="status_tasks" value="IN_PROGRESS"/>
+            <column name="tasks_description" value="Another test task description"/>
+            <column name="tasks_priority" value="HIGH"/>
+        </insert>
+    </changeSet>
+
+    <!-- Вставка тестовых данных в таблицу notes_comments -->
+    <changeSet id="3" author="vsirik">
+        <insert tableName="notes_comments">
+            <column name="user_id" valueNumeric="2"/>
+            <column name="comments" value="This is a test comment for Task 1"/>
+            <column name="task_id" valueNumeric="1"/>
+        </insert>
+        <insert tableName="notes_comments">
+            <column name="user_id" valueNumeric="1"/>
+            <column name="comments" value="Another comment for Task 2"/>
+            <column name="task_id" valueNumeric="2"/>
+        </insert>
+    </changeSet>
+
+    <!-- Вставка тестовых данных в таблицу default_settings -->
+    <changeSet id="4" author="vsirik">
+        <insert tableName="default_settings">
+            <column name="settings_field_name" value="TASK PRIORITY"/>
+            <column name="default_tasks_priority" value="MEDIUM"/>
+        </insert>
+        <insert tableName="default_settings">
+            <column name="settings_field_name" value="TASK STATUS"/>
+            <column name="default_task_status" value="COMPLETED"/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>

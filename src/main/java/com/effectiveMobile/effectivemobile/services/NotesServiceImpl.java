@@ -1,6 +1,5 @@
 package com.effectiveMobile.effectivemobile.services;
 
-import com.effectiveMobile.effectivemobile.auxiliaryclasses.UserActions;
 import com.effectiveMobile.effectivemobile.dto.NotesDto;
 import com.effectiveMobile.effectivemobile.entities.CustomUsers;
 import com.effectiveMobile.effectivemobile.entities.Notes;
@@ -20,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
-import static com.effectiveMobile.effectivemobile.constants.ConstantsClass.ZERO_FLAG;
 import static com.effectiveMobile.effectivemobile.exeptions.DescriptionUserExeption.*;
 
 @Service
@@ -63,7 +61,7 @@ public class NotesServiceImpl implements NotesService{
         Optional<CustomUsers> optionalAuthorizedUser = actionsFabric.createUserActions().getCurrentUser();
         CustomUsers authorizedUser = optionalAuthorizedUser.get();
         Notes notes = notesMapper.convertDtoToNotes(notesDto);
-        notes.setId(ZERO_FLAG);
+        notes.setId(null);
         notes.setUsers(authorizedUser);
         notes.setTask(tasks);
         notes = notesRepository.save(notes);

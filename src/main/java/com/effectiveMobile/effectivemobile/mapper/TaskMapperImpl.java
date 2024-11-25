@@ -1,15 +1,13 @@
 package com.effectiveMobile.effectivemobile.mapper;
 
-import com.effectiveMobile.effectivemobile.auxiliaryclasses.UserActions;
+import com.effectiveMobile.effectivemobile.constants.ConstantsClass;
+import com.effectiveMobile.effectivemobile.dto.TasksDto;
 import com.effectiveMobile.effectivemobile.entities.CustomUsers;
+import com.effectiveMobile.effectivemobile.entities.Tasks;
+import com.effectiveMobile.effectivemobile.exeptions.ExecutorNotFoundExeption;
 import com.effectiveMobile.effectivemobile.fabrics.ActionsFabric;
 import com.effectiveMobile.effectivemobile.other.TaskPriorityEnum;
 import com.effectiveMobile.effectivemobile.repository.AuthorizationRepository;
-import com.effectiveMobile.effectivemobile.constants.ConstantsClass;
-import com.effectiveMobile.effectivemobile.exeptions.DescriptionUserExeption;
-import com.effectiveMobile.effectivemobile.exeptions.ExecutorNotFoundExeption;
-import com.effectiveMobile.effectivemobile.dto.TasksDto;
-import com.effectiveMobile.effectivemobile.entities.Tasks;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -129,8 +127,9 @@ public class TaskMapperImpl implements TaskMapper {
     /**
      * Метод, сравнивающий Автора из БД и из ДТО
      *
-     * @param tasksDto
-     * @param tasks
+     * @param tasksDto DTO объекта задачи с данными автора.
+     * @param tasks Сущность задачи {@link Tasks} из базы данных.
+     * @return Обновленный объект задачи {@link Tasks} с установленным автором.
      */
     private Tasks compareTaskAndDtoAuthor(TasksDto tasksDto, Tasks tasks) {
         log.info("Метод compareTaskAndDtoAuthor()");
@@ -166,8 +165,9 @@ public class TaskMapperImpl implements TaskMapper {
     /**
      * Метод, сравнивающий Исполнителя из БД и из ДТО
      *
-     * @param tasksDto
-     * @param tasks
+     * @param tasksDto DTO объекта задачи с данными исполнителя.
+     * @param tasks Сущность задачи {@link Tasks} из базы данных.
+     * @return Обновленный объект задачи {@link Tasks} с установленным исполнителем.
      */
     private Tasks compareTasksAndDtoExecutor(TasksDto tasksDto, Tasks tasks) {
         log.info("Метод compareTasksAndDtoExecutor()");
@@ -204,11 +204,12 @@ public class TaskMapperImpl implements TaskMapper {
         return tasks;
     }
 
-    /**
+    /**compareTasksAndDtoDescriptioncompareTasksAndDtoDescription
      * Метод, сравнивающий описание задачи из БД и из ДТО
      *
-     * @param tasksDto
-     * @param tasks
+     * @param tasksDto DTO объекта задачи с описанием.
+     * @param tasks Сущность задачи {@link Tasks} из базы данных.
+     * @return Обновленный объект задачи {@link Tasks} с обновленным описанием.
      */
     private Tasks compareTasksAndDtoDescription(TasksDto tasksDto, Tasks tasks) {
         log.info("Метод compareTasksAndDtoDescription()");
@@ -223,8 +224,9 @@ public class TaskMapperImpl implements TaskMapper {
     /**
      * Метод, сравнивающий приоритет у задачи из БД и из ДТО
      *
-     * @param tasksDto
-     * @param tasks
+     * @param tasksDto DTO объекта задачи с данными приоритета.
+     * @param tasks Сущность задачи {@link Tasks} из базы данных.
+     * @return Обновленный объект задачи {@link Tasks} с обновленным приоритетом.
      */
     private Tasks compareTasksAndDtoPriority(TasksDto tasksDto, Tasks tasks) {
         log.info("Метод compareTasksAndDtoPriority()");
@@ -239,8 +241,9 @@ public class TaskMapperImpl implements TaskMapper {
     /**
      * Метод, сравнивающий заголовок задачи из БД и из ДТО
      *
-     * @param tasksDto
-     * @param tasks
+     * @param tasksDto DTO объекта задачи с заголовком.
+     * @param tasks Сущность задачи {@link Tasks} из базы данных.
+     * @return Обновленный объект задачи {@link Tasks} с обновленным заголовком.
      */
     private Tasks compareTasksAndDtoHeader(TasksDto tasksDto, Tasks tasks) {
         log.info("Метод compareTasksAndDtoHeader()");
@@ -253,8 +256,9 @@ public class TaskMapperImpl implements TaskMapper {
     /**
      * Метод, сравнивающий статус задачи из БД и из ДТО
      *
-     * @param tasksDto
-     * @param tasks
+     * @param tasksDto DTO объекта задачи со статусом.
+     * @param tasks Сущность задачи {@link Tasks} из базы данных.
+     * @return Обновленный объект задачи {@link Tasks} с обновленным статусом.
      */
     private Tasks compareTasksAndDtoStatus(TasksDto tasksDto, Tasks tasks) {
         log.info("Метод compareTasksAndDtoStatus()");

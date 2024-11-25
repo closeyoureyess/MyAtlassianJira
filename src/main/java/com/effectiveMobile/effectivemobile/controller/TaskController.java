@@ -42,9 +42,9 @@ public class TaskController {
     /**
      * Эндпоинд POST для создания задачи
      *
-     * @param tasksDto
-     * @return {@link ResponseEntity<TasksDto>}
-     * @throws MainException
+     * @param tasksDto DTO объект задачи для создания
+     * @return {@link ResponseEntity} с созданной задачей
+     * @throws MainException Если произошла ошибка при создании задачи
      */
     @Operation(summary = "Создание задачи", description = "Позволяет создать задачу", responses = {})
     @ApiResponses(value = {
@@ -67,12 +67,12 @@ public class TaskController {
     }
 
     /**
-     * Эндпоинд GET для получения информации о задачах по автору
+     * Эндпоинд GET для получения информации о задачах по автору.
      *
-     * @param author
-     * @param offset
-     * @param limit
-     * @return {@link ResponseEntity<List<TasksDto>>}
+     * @param author Автор задачи (email)
+     * @param offset Номер страницы для пагинации (0 - по умолчанию)
+     * @param limit Количество сущностей на странице (10 - по умолчанию)
+     * @return {@link ResponseEntity} с задачами по автору
      */
     @Operation(summary = "Получить задачу по автору")
     @ApiResponses(value = {
@@ -104,9 +104,9 @@ public class TaskController {
     /**
      * Эндпоинд GET для получения информации о задачах по исполнителю
      *
-     * @param executorEmail
-     * @param offset
-     * @param limit
+     * @param executorEmail - емейл пользователя, по которому будут найдены задачи, комментарии
+     * @param offset - номер страницы
+     * @param limit - кол-во сущностей на странице
      * @return {@link ResponseEntity<List<TasksDto>>}
      */
     @Operation(summary = "Получить задачу по исполнителю")
@@ -167,7 +167,7 @@ public class TaskController {
     /**
      * Эндпоинд DELETE для удаления задач
      *
-     * @param idTasks
+     * @param idTasks - id задачи для удаления
      * @return {@link ResponseEntity<String>}
      */
     @Operation(summary = "Удалить задачу")

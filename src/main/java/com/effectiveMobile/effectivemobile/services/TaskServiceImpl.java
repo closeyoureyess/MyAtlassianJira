@@ -1,19 +1,22 @@
 package com.effectiveMobile.effectivemobile.services;
 
-import com.effectiveMobile.effectivemobile.auxiliaryclasses.*;
+import com.effectiveMobile.effectivemobile.auxiliaryclasses.UserActions;
+import com.effectiveMobile.effectivemobile.auxiliaryclasses.ValidationClass;
+import com.effectiveMobile.effectivemobile.auxiliaryclasses.ValidationClassImpl;
+import com.effectiveMobile.effectivemobile.constants.ConstantsClass;
 import com.effectiveMobile.effectivemobile.dto.CustomUsersDto;
+import com.effectiveMobile.effectivemobile.dto.TasksDto;
+import com.effectiveMobile.effectivemobile.entities.CustomUsers;
+import com.effectiveMobile.effectivemobile.entities.Tasks;
+import com.effectiveMobile.effectivemobile.exeptions.EntityNotFoundExeption;
 import com.effectiveMobile.effectivemobile.exeptions.MainException;
+import com.effectiveMobile.effectivemobile.exeptions.NotEnoughRulesForEntity;
 import com.effectiveMobile.effectivemobile.exeptions.RoleNotFoundException;
+import com.effectiveMobile.effectivemobile.fabrics.ActionsFabric;
+import com.effectiveMobile.effectivemobile.fabrics.MappersFabric;
 import com.effectiveMobile.effectivemobile.mapper.TaskMapper;
 import com.effectiveMobile.effectivemobile.other.UserRoles;
 import com.effectiveMobile.effectivemobile.repository.AuthorizationRepository;
-import com.effectiveMobile.effectivemobile.entities.CustomUsers;
-import com.effectiveMobile.effectivemobile.constants.ConstantsClass;
-import com.effectiveMobile.effectivemobile.exeptions.NotEnoughRulesForEntity;
-import com.effectiveMobile.effectivemobile.fabrics.ActionsFabric;
-import com.effectiveMobile.effectivemobile.fabrics.MappersFabric;
-import com.effectiveMobile.effectivemobile.dto.TasksDto;
-import com.effectiveMobile.effectivemobile.entities.Tasks;
 import com.effectiveMobile.effectivemobile.repository.TasksRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,9 +62,7 @@ public class TaskServiceImpl implements TaskService {
         Tasks newTasks = taskMapper.convertDtoToTasks(tasksDto);
         newTasks = userActions
                 .checkFindUser(newTasks.getTaskExecutor(), newTasks, ConstantsClass.ONE_FLAG);
-        newTasks = userActions
-                .checkFindUser(newTasks.getTaskAuthor(), newTasks, ZERO_FLAG);
-        newTasks.setId(ZERO_FLAG);
+        newTasks.setId(null);
         newTasks = tasksRepository.save(newTasks); // save to PostgreSQL
         return taskMapper.convertTasksToDto(newTasks);
     }
@@ -76,11 +77,14 @@ public class TaskServiceImpl implements TaskService {
         if (tasksDtoFromJson.getId() != null) {
             optionalTaskDatabase = tasksRepository.findById(taskMapper.convertDtoToTasks(tasksDtoFromJson).getId());
         }
+        if (optionalTaskDatabase.isEmpty()) {
+            throw new EntityNotFoundExeption(TASKS_ENTITY_NOT_FOUND.getEnumDescription());
+        }
         if (optionalTaskDatabase.isPresent()) {
             Tasks tasks = optionalTaskDatabase.get();
             TasksDto newTasksDtoFromDB = taskMapper.convertTasksToDto(tasks);
 
-            boolean resultCheckPrivilege = checkingRightsToEditTask(newTasksDtoFromDB, tasksDtoFromJson);
+            boolean resultCheckPrivilege = checkingRightsToEditTask(newTasksDtoFromDB);
             if (!resultCheckPrivilege) {
                 return Optional.empty();
             }
@@ -118,11 +122,11 @@ public class TaskServiceImpl implements TaskService {
     /**
      * Метод, ищущий задачи и комментарии к ним по автору/исполнителю
      *
-     * @param authorOrExecutor
-     * @param offset
-     * @param limit
-     * @param flag
-     * @return Список с задачами по заданному пользователю
+     * @param authorOrExecutor Email автора или исполнителя задачи
+     * @param offset Номер страницы для пагинации
+     * @param limit Количество задач на одной странице
+     * @param flag Флаг, указывающий, автор или исполнитель (1 - автор, 0 - исполнитель)
+     * @return Список DTO объектов задач
      */
     private List<TasksDto> receiveAllTasksAuthorOrExecutorDataBase(String authorOrExecutor, Integer offset, Integer limit,
                                                                    Integer flag) {
@@ -160,9 +164,9 @@ public class TaskServiceImpl implements TaskService {
     /**
      * Метод, делающий запросы к БД для поиска всех задач по автору/исполнителю
      *
-     * @param pageble
-     * @param userId
-     * @param flag
+     * @param pageble Параметры пагинации
+     * @param userId ID пользователя (автора или исполнителя)
+     * @param flag Флаг, указывающий, автор или исполнитель (1 - автор, 0 - исполнитель)
      * @return {@link Optional<Page<Tasks>>} Optional со страницей с задачами
      */
     private Optional<Page<Tasks>> methodFindAllTasksAuthorOrExecutor(Pageable pageble, Integer userId, Integer flag) {
@@ -178,10 +182,12 @@ public class TaskServiceImpl implements TaskService {
     /**
      * Метод, определяющий, может ли пользователь редактировать задачу или нет
      *
-     * @param tasksDtoFromDB
-     * @throws NotEnoughRulesForEntity
+     * @param tasksDtoFromDB DTO объекта задачи из БД
+     * @return true, если редактирование разрешено
+     * @throws NotEnoughRulesForEntity Если редактирование запрещено из-за недостаточных прав
+     * @throws RoleNotFoundException   Если роль пользователя не найдена
      */
-    private boolean checkingRightsToEditTask(TasksDto tasksDtoFromDB, TasksDto tasksDtoFromJson) throws NotEnoughRulesForEntity, RoleNotFoundException {
+    private boolean checkingRightsToEditTask(TasksDto tasksDtoFromDB) throws NotEnoughRulesForEntity, RoleNotFoundException {
         log.info("Метод isExecutorOfTaskOrNot() " + tasksDtoFromDB.getId());
         UserActions userActions = actionsFabric.createUserActions();
 
@@ -205,52 +211,16 @@ public class TaskServiceImpl implements TaskService {
             throw new NotEnoughRulesForEntity(NOT_ENOUGH_RULES_MUST_BE_ADMIN.getEnumDescription());
         }
         return false;
-        /*String adminRole = UserRoles.ADMIN.getUserRoles();
-        Optional<String> roleCurrentAuthorizedUser = actionsFabric
-                .createUserActions()
-                .getRoleCurrentAuthorizedUser(adminRole);
-        log.info("РООООЛЬ" + roleCurrentAuthorizedUser.map(String::valueOf).orElse("ПУСТО")
-        );
-        if (roleCurrentAuthorizedUser.isEmpty() || !roleCurrentAuthorizedUser.get().equals(adminRole)) {
-            throw new NotEnoughRulesForEntity(NOT_ENOUGH_RULES_MUST_BE_ADMIN.getEnumDescription());
-        }*/
-        /*if (availabilityRules) {
-            fieldsAllowedForEditing(tasksDtoFromDB);
-            return true;
-        } else {
-            log.info("Метод isExecutorOfTaskOrNot() " + tasksDtoFromDB.getId() + " availabilityRules - false");
-            return false;
-        }*/
     }
+
 
     /**
-     * Метод, проверяющий поля {@link TasksDto}, которые пытается отредактировать пользователь
+     * Метод, назначающий текущего авторизованного пользователя автором задачи.
      *
-     * @param tasksDto
-     * @throws NotEnoughRulesForEntity
+     * @param userActions Объект для выполнения операций с пользователем
+     * @param tasksDto DTO объекта задачи
+     * @return {@link TasksDto} с обновлённым автором
      */
-    private boolean fieldsAllowedForEditing(TasksDto tasksDto) throws NotEnoughRulesForEntity {
-        log.info("Метод fieldsAllowedForEditing()");
-        if (tasksDto != null &&
-          (
-            (tasksDto.getNotesDto() == null
-             && tasksDto.getTaskPriority() == null
-             && tasksDto.getTaskAuthor() == null
-             && tasksDto.getTaskExecutor() == null
-             && tasksDto.getDescription() == null
-             && tasksDto.getHeader() == null)
-                &&
-             (tasksDto.getId() != null && tasksDto.getTaskStatus() != null)
-          )
-        ) {
-            log.info("Метод fieldsAllowedForEditing(), редактирование разрешено");
-            return true;
-        } else {
-            log.info("Метод fieldsAllowedForEditing(), выброшен NotEnoughRulesForEntity");
-            throw new NotEnoughRulesForEntity(NOT_ENOUGH_RULES_MUST_BE_EXECUTOR.getEnumDescription());
-        }
-    }
-
     private TasksDto assignAuthorTask(UserActions userActions, TasksDto tasksDto) {
         Optional<CustomUsers> optionalAuthorizedUser = userActions.getCurrentUser();
         CustomUsers authorizedUser = optionalAuthorizedUser.get();

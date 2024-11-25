@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
-import java.util.Objects;
 
 /**
  * <pre>
@@ -37,19 +36,20 @@ public class CustomUsers {
     @Enumerated(value = EnumType.STRING)
     private UserRoles role;
 
-    @OneToMany
-    private List<Tasks> allTasks;
+    @OneToMany(mappedBy = "taskAuthor", fetch = FetchType.LAZY, cascade = {
+            CascadeType.PERSIST,
+            CascadeType.MERGE,
+            CascadeType.REFRESH,
+            CascadeType.DETACH
+    })
+    private List<Tasks> authoredTasks;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        CustomUsers that = (CustomUsers) o;
-        return Objects.equals(id, that.id) && Objects.equals(email, that.email) && Objects.equals(passwordKey, that.passwordKey) && role == that.role && Objects.equals(allTasks, that.allTasks);
-    }
+    @OneToMany(mappedBy = "taskExecutor", fetch = FetchType.LAZY, cascade = {
+            CascadeType.PERSIST,
+            CascadeType.MERGE,
+            CascadeType.REFRESH,
+            CascadeType.DETACH
+    })
+    private List<Tasks> executedTasks;
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, email, passwordKey, role, allTasks);
-    }
 }

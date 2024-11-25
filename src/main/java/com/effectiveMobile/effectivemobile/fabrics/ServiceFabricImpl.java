@@ -1,10 +1,7 @@
 package com.effectiveMobile.effectivemobile.fabrics;
 
-import com.effectiveMobile.effectivemobile.auxiliaryclasses.UserActions;
 import com.effectiveMobile.effectivemobile.services.*;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 

@@ -1,10 +1,7 @@
 package com.effectiveMobile.effectivemobile.config;
 
-import com.effectiveMobile.effectivemobile.fabrics.ActionsFabric;
 import com.effectiveMobile.effectivemobile.fabrics.ServiceFabric;
 import com.effectiveMobile.effectivemobile.services.JwtService;
-import com.effectiveMobile.effectivemobile.services.JwtServiceImpl;
-import com.effectiveMobile.effectivemobile.services.MyUserDetailService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -35,11 +32,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     /**
      * Метод, фильтрующий входящие запросы для проверки наличия и валидности JWT-токена
-     * @param request
-     * @param response
-     * @param filterChain
-     * @throws ServletException
-     * @throws IOException
+     *
+     * @param request Объект {@link HttpServletRequest}, содержащий входящий запрос.
+     * @param response Объект {@link HttpServletResponse}, содержащий исходящий ответ.
+     * @param filterChain Цепочка фильтров {@link FilterChain}, через которую проходит запрос.
+     * @throws ServletException Если происходит ошибка сервлета.
+     * @throws IOException Если происходит ошибка ввода-вывода.
      */
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {

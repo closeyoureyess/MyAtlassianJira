@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
+
+    <!-- Таблица users_credentials -->
+    <changeSet id="1" author="vsirik">
+        <createTable tableName="users_credentials">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="email_user" type="VARCHAR">
+                <constraints nullable="false"/>
+            </column>
+            <column name="password_user" type="VARCHAR">
+                <constraints nullable="false"/>
+            </column>
+            <column name="role_user" type="VARCHAR">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <sql>
+            ALTER TABLE users_credentials
+            ADD CONSTRAINT chk_role_user
+            CHECK (role_user IN ('ADMIN', 'USER'));
+        </sql>
+        <rollback>
+            ALTER TABLE users_credentials DROP CONSTRAINT chk_role_user;
+        </rollback>
+    </changeSet>
+
+    <!-- Таблица tasks_entity -->
+    <changeSet id="2" author="vsirik">
+        <createTable tableName="tasks_entity">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="tasks_executor_id" type="BIGINT">
+            </column>
+            <column name="tasks_author_id" type="BIGINT">
+            </column>
+            <column name="header_tasks" type="VARCHAR">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status_tasks" type="VARCHAR">
+                <constraints nullable="false"/>
+            </column>
+            <column name="tasks_description" type="VARCHAR"/>
+            <column name="tasks_priority" type="VARCHAR">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="tasks_entity"
+                                 baseColumnNames="tasks_executor_id"
+                                 referencedTableName="users_credentials"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_tasks_executor_id"/>
+        <addForeignKeyConstraint baseTableName="tasks_entity"
+                                 baseColumnNames="tasks_author_id"
+                                 referencedTableName="users_credentials"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_tasks_author_id"/>
+        <sql>
+            ALTER TABLE tasks_entity
+            ADD CONSTRAINT chk_status_tasks
+            CHECK (status_tasks IN ('BACKLOG', 'PENDING', 'IN_PROGRESS', 'COMPLETED'));
+
+            ALTER TABLE tasks_entity
+            ADD CONSTRAINT chk_priority_tasks
+            CHECK (tasks_priority IN ('HIGHEST', 'HIGH', 'MEDIUM', 'LOW'));
+        </sql>
+        <rollback>
+            ALTER TABLE tasks_entity DROP CONSTRAINT chk_status_tasks;
+            ALTER TABLE tasks_entity DROP CONSTRAINT chk_priority_tasks;
+            <dropForeignKeyConstraint baseTableName="tasks_entity" constraintName="fk_tasks_executor_id"/>
+            <dropForeignKeyConstraint baseTableName="tasks_entity" constraintName="fk_tasks_author_id"/>
+        </rollback>
+    </changeSet>
+
+    <!-- Таблица notes_comments -->
+    <changeSet id="3" author="vsirik">
+        <createTable tableName="notes_comments">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="user_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="comments" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="task_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="notes_comments"
+                                 baseColumnNames="user_id"
+                                 referencedTableName="users_credentials"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_notes_user_id"/>
+        <addForeignKeyConstraint baseTableName="notes_comments"
+                                 baseColumnNames="task_id"
+                                 referencedTableName="tasks_entity"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_notes_task_id"/>
+        <rollback>
+            <dropForeignKeyConstraint baseTableName="notes_comments" constraintName="fk_notes_user_id"/>
+            <dropForeignKeyConstraint baseTableName="notes_comments" constraintName="fk_notes_task_id"/>
+        </rollback>
+    </changeSet>
+
+    <!-- Таблица default_settings -->
+    <changeSet id="4" author="vsirik">
+        <createTable tableName="default_settings">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="settings_field_name" type="VARCHAR">
+            </column>
+            <column name="default_task_status" type="VARCHAR">
+            </column>
+            <column name="default_tasks_priority" type="VARCHAR">
+            </column>
+        </createTable>
+        <sql>
+            ALTER TABLE default_settings
+            ADD CONSTRAINT chk_settings_field_name
+            CHECK (settings_field_name IN ('TASK PRIORITY', 'TASK STATUS'));
+
+            ALTER TABLE default_settings
+            ADD CONSTRAINT chk_default_task_status
+            CHECK (default_task_status IN ('BACKLOG', 'PENDING', 'IN_PROGRESS', 'COMPLETED'));
+
+            ALTER TABLE default_settings
+            ADD CONSTRAINT chk_default_tasks_priority
+            CHECK (default_tasks_priority IN ('HIGHEST', 'HIGH', 'MEDIUM', 'LOW'));
+        </sql>
+        <rollback>
+            ALTER TABLE default_settings DROP CONSTRAINT chk_settings_field_name;
+            ALTER TABLE default_settings DROP CONSTRAINT chk_default_task_status;
+            ALTER TABLE default_settings DROP CONSTRAINT chk_default_tasks_priority;
+        </rollback>
+    </changeSet>
+</databaseChangeLog>
