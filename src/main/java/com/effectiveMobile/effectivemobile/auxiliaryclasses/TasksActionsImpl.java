@@ -1,7 +1,6 @@
 package com.effectiveMobile.effectivemobile.auxiliaryclasses;
 
 import com.effectiveMobile.effectivemobile.dto.TasksDto;
-import com.effectiveMobile.effectivemobile.exeptions.MainException;
 import com.effectiveMobile.effectivemobile.exeptions.NotEnoughRulesForEntity;
 import com.effectiveMobile.effectivemobile.other.DefaultSettingsFieldNameEnum;
 import com.effectiveMobile.effectivemobile.other.TaskPriorityEnum;
@@ -26,21 +25,21 @@ public class TasksActionsImpl implements TasksActions {
     private DefaultSettingsActions defaultSettingsActions;
 
     @Override
-    public TasksDto fillTaskPriorityAndTaskStatusFields(TasksDto tasksDto) throws MainException {
+    public TasksDto fillTaskPriorityAndTaskStatusFields(TasksDto tasksDto) {
         if (tasksDto.getTaskPriority() == null) {
-            Optional<TaskStatusEnum> optionalTaskStatus = defaultSettingsActions
-                    .getDefaultValueFromTasksFields(DefaultSettingsFieldNameEnum.TASK_PRIORITY, TaskStatusEnum.BACKLOG);
-            if (optionalTaskStatus.isPresent()) {
-                TaskStatusEnum taskStatusEnum = optionalTaskStatus.get();
-                tasksDto.setTaskStatus(taskStatusEnum);
+            Optional<TaskPriorityEnum> optionalTaskPriority = defaultSettingsActions
+                    .getDefaultValueFromTasksFields(DefaultSettingsFieldNameEnum.TASK_PRIORITY, TaskPriorityEnum.MEDIUM);
+            if (optionalTaskPriority.isPresent()) {
+                TaskPriorityEnum taskPriorityEnum = optionalTaskPriority.get();
+                tasksDto.setTaskPriority(taskPriorityEnum);
             }
         }
         if (tasksDto.getTaskStatus() == null) {
-            Optional<TaskPriorityEnum> optionalTaskPriorityEnum = defaultSettingsActions
-                    .getDefaultValueFromTasksFields(DefaultSettingsFieldNameEnum.TASK_STATUS, TaskPriorityEnum.MEDIUM);
-            if (optionalTaskPriorityEnum.isPresent()) {
-                TaskPriorityEnum taskPriorityEnum = optionalTaskPriorityEnum.get();
-                tasksDto.setTaskPriority(taskPriorityEnum);
+            Optional<TaskStatusEnum> optionalTaskStatusEnum = defaultSettingsActions
+                    .getDefaultValueFromTasksFields(DefaultSettingsFieldNameEnum.TASK_STATUS, TaskStatusEnum.BACKLOG);
+            if (optionalTaskStatusEnum.isPresent()) {
+                TaskStatusEnum taskStatusEnum = optionalTaskStatusEnum.get();
+                tasksDto.setTaskStatus(taskStatusEnum);
             }
         }
         return tasksDto;

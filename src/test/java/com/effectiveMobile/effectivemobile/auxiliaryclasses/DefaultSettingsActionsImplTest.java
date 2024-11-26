@@ -48,7 +48,7 @@ class DefaultSettingsActionsImplTest {
                             .thenReturn(Optional.of(taskPrioritySettingsDto));
                 })) {
 
-            DefaultSettingsActionsImpl actions = new DefaultSettingsActionsImpl();
+            DefaultSettingsActionsImpl actions = new DefaultSettingsActionsImpl(null);
 
             // Act
             Optional<TaskPriorityEnum> result = actions.getDefaultValueFromTasksFields(
@@ -86,7 +86,7 @@ class DefaultSettingsActionsImplTest {
                             .thenReturn(Optional.of(taskStatusSettingsDto));
                 })) {
 
-            DefaultSettingsActionsImpl actions = new DefaultSettingsActionsImpl();
+            DefaultSettingsActionsImpl actions = new DefaultSettingsActionsImpl(null);
 
             // Act
             Optional<TaskStatusEnum> result = actions.getDefaultValueFromTasksFields(
@@ -119,7 +119,7 @@ class DefaultSettingsActionsImplTest {
                             .thenReturn(Optional.empty());
                 })) {
 
-            DefaultSettingsActionsImpl actions = new DefaultSettingsActionsImpl();
+            DefaultSettingsActionsImpl actions = new DefaultSettingsActionsImpl(null);
 
             // Act
             Optional<TaskPriorityEnum> result = actions.getDefaultValueFromTasksFields(
@@ -152,7 +152,7 @@ class DefaultSettingsActionsImplTest {
                             .thenReturn(Optional.empty());
                 })) {
 
-            DefaultSettingsActionsImpl actions = new DefaultSettingsActionsImpl();
+            DefaultSettingsActionsImpl actions = new DefaultSettingsActionsImpl(null);
 
             // Act
             Optional<TaskPriorityEnum> result = actions.getDefaultValueFromTasksFields(
@@ -186,7 +186,7 @@ class DefaultSettingsActionsImplTest {
                             .thenReturn(Optional.empty());
                 })) {
 
-            DefaultSettingsActionsImpl actions = new DefaultSettingsActionsImpl();
+            DefaultSettingsActionsImpl actions = new DefaultSettingsActionsImpl(null);
 
             // Act
             Optional<TaskPriorityEnum> result = actions.getDefaultValueFromTasksFields(

@@ -71,8 +71,12 @@ class TaskServiceImplTest {
         TasksDto tasksDto = new TasksDto();
         tasksDto.setHeader("Test Task");
         tasksDto.setTaskExecutor(new CustomUsersDto());
-        tasksDto.setTaskPriority(TaskPriorityEnum.HIGH);
-        tasksDto.setTaskStatus(TaskStatusEnum.IN_PROGRESS);
+        tasksDto.setTaskPriority(null);
+        tasksDto.setTaskStatus(null);
+
+        TasksDto tasksDtoNew = tasksDto;
+        tasksDtoNew.setTaskPriority(TaskPriorityEnum.MEDIUM);
+        tasksDtoNew.setTaskStatus(TaskStatusEnum.BACKLOG);
 
         Tasks tasks = new Tasks();
         tasks.setId(1);
@@ -81,18 +85,21 @@ class TaskServiceImplTest {
         tasks.setTaskPriority(TaskPriorityEnum.HIGH);
         tasks.setTaskStatus(TaskStatusEnum.IN_PROGRESS);
 
+        Mockito.when(mockActionsFabric.createTasksActions()).thenReturn(tasksActions);
+        Mockito.when(tasksActions.fillTaskPriorityAndTaskStatusFields(tasksDto)).thenReturn(tasksDtoNew);
         Mockito.when(mockMappersFabric.createUserMapper()).thenReturn(userMapper);
         Mockito.when(mockActionsFabric.createUserActions()).thenReturn(userActions);
         Mockito.when(userActions.checkFindUser(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(tasks);
         Mockito.when(userActions.getCurrentUser()).thenReturn(Optional.of(new CustomUsers()));
-        Mockito.when(mockTaskMapper.convertDtoToTasks(tasksDto)).thenReturn(tasks);
+        Mockito.when(mockTaskMapper.convertDtoToTasks(tasksDtoNew)).thenReturn(tasks);
+        Mockito.when(userMapper.convertUserToDto(Mockito.any())).thenReturn(new CustomUsersDto());
         Mockito.when(mockTasksRepository.save(tasks)).thenReturn(tasks);
-        Mockito.when(mockTaskMapper.convertTasksToDto(tasks)).thenReturn(tasksDto);
+        Mockito.when(mockTaskMapper.convertTasksToDto(tasks)).thenReturn(tasksDtoNew);
 
         TasksDto result = taskService.createTasks(tasksDto);
 
         Assertions.assertNotNull(result, "Результат не должен быть null");
-        Assertions.assertEquals(tasksDto, result, "Результат должен совпадать с DTO");
+       Assertions.assertEquals(tasksDtoNew, result);
         Mockito.verify(mockTasksRepository,  Mockito.times(1)).save(tasks);
     }
 

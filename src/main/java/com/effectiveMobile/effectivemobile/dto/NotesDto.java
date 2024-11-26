@@ -17,6 +17,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @EqualsAndHashCode
 @Schema(description = "Сущность комментарий")
+@Builder
 @Validated
 @JsonFilter("NotesDtoFilter")
 public class NotesDto implements Serializable {

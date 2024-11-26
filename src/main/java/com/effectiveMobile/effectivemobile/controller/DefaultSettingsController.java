@@ -4,6 +4,10 @@ import com.effectiveMobile.effectivemobile.dto.DefaultSettingsDto;
 import com.effectiveMobile.effectivemobile.exeptions.IncorrectTypeParameterException;
 import com.effectiveMobile.effectivemobile.fabrics.ServiceFabric;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
@@ -43,6 +47,12 @@ public class DefaultSettingsController {
     @Operation(summary = "Отредактировать настройки по умолчанию для задач",
             description = "Позволяет отредактировать настройки по умолчанию для задач")
     @SecurityRequirement(name = "JWT")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Задача успешно создана", content = @Content(examples = @ExampleObject(value = "\"{\\n  \\\"id\\\": 1,\\n  \\\"header\\\": \\\"Тестовая задача\\\",\\n  \\\"taskAuthor\\\": {\\n    \\\"id\\\": 1,\\n    \\\"email\\\": \\\"author@example.com\\\"\\n  },\\n  \\\"taskExecutor\\\": {\\n    \\\"id\\\": 2,\\n    \\\"email\\\": \\\"executor@example.com\\\"\\n  },\\n  \\\"description\\\": \\\"Тестовое описание задачи\\\",\\n  \\\"taskPriority\\\": \\\"MEDIUM\\\",\\n  \\\"taskStatus\\\": \\\"BACKLOG\\\"\\n}\""))),
+            @ApiResponse(responseCode = "403", description = "Не авторизован/Недостаточно прав", content = @Content),
+            @ApiResponse(responseCode = "500", description = "отредактировать настройки не удалось", content = @Content)
+    })
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Пример тела запроса для создания задачи", content = @Content(mediaType = "application/json", examples = @ExampleObject(name = "Создание задачи", value = "\"{\\n  \\\"id\\\": 1,\\n  \\\"header\\\": \\\"Тестовая задача\\\",\\n  \\\"taskExecutor\\\": {\\n  \\\"email\\\": \\\"example2@gmail.com\\\"\\n  },\\n  \\\"description\\\": \\\"Тестовое описание задачи\\\",\\n  \\\"taskPriority\\\": \\\"MEDIUM\\\",\\n  \\\"taskStatus\\\": \\\"BACKLOG\\\"\\n}\"")))
     @PutMapping(value = "/defaultsettings/update-settings")
     public ResponseEntity<DefaultSettingsDto> changeDefaultSettings(@RequestBody DefaultSettingsDto defaultSettingsDto) throws IncorrectTypeParameterException {
         log.info("Создание комментария, POST " + defaultSettingsDto.getDefaultTaskPriority() + EMPTY_SPACE +

@@ -11,7 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -339,7 +338,7 @@ public class HandlerExceptionController {
      */
     @ExceptionHandler(Exception.class)
     protected ResponseEntity<ApiErrorResponse> handleAllExceptions(Exception e, HttpServletRequest request) {
-        log.error("Возникла непредвиденная ошибка" + e.getClass() + LINE_FEED + e.getMessage() + LINE_FEED +
+        log.error("Возникла непредвиденная ошибка " + e.getClass() + LINE_FEED + e.getMessage() + LINE_FEED +
                 e);
 
         ApiErrorResponse apiErrorResponse = buildApiErrorResponse(
@@ -354,7 +353,7 @@ public class HandlerExceptionController {
 
     @ExceptionHandler(RuntimeException.class)
     protected ResponseEntity<ApiErrorResponse> handleAllRunTimeException(RuntimeException e, HttpServletRequest request) {
-        log.error("Возникла непредвиденная ошибка" + e.getClass() + LINE_FEED + e.getMessage() + LINE_FEED +
+        log.error("Возникла непредвиденная ошибка " + e.getClass() + LINE_FEED + e.getMessage() + LINE_FEED +
                 e);
 
         ApiErrorResponse apiErrorResponse = buildApiErrorResponse(

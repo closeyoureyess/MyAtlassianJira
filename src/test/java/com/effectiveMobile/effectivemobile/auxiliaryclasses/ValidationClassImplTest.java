@@ -17,7 +17,7 @@ class ValidationClassImplTest {
      */
     @Test
     @DisplayName("validEmailOrId: Входная строка содержит только числа, возвращает валидный ID")
-    public void testValidEmailOrId_WithValidId() {
+    void testValidEmailOrId_WithValidId() {
         // Arrange
         String input = "12345";
         ValidationClassImpl validation = new ValidationClassImpl();
@@ -52,7 +52,7 @@ class ValidationClassImplTest {
      */
     @Test
     @DisplayName("validEmailOrId: Входная строка содержит валидный email, возвращает валидный email")
-    public void testValidEmailOrId_WithValidEmail() {
+    void testValidEmailOrId_WithValidEmail() {
         // Arrange
         String input = "user@example.com";
         ValidationClassImpl validation = new ValidationClassImpl();
@@ -87,7 +87,7 @@ class ValidationClassImplTest {
      */
     @Test
     @DisplayName("validEmailOrId: Входная строка не валидна, возвращает Optional.empty")
-    public void testValidEmailOrId_WithInvalidInput() {
+    void testValidEmailOrId_WithInvalidInput() {
         // Arrange
         String input = "invalid_input";
         ValidationClassImpl validation = new ValidationClassImpl();
@@ -108,7 +108,7 @@ class ValidationClassImplTest {
      */
     @Test
     @DisplayName("validEmailOrId: Входная строка пустая, возвращает Optional.empty")
-    public void testValidEmailOrId_WithEmptyString() {
+    void testValidEmailOrId_WithEmptyString() {
         // Arrange
         String input = "";
         ValidationClassImpl validation = new ValidationClassImpl();
@@ -129,7 +129,7 @@ class ValidationClassImplTest {
      */
     @Test
     @DisplayName("validEmailOrId: Входная строка содержит числа и буквы, возвращает Optional.empty")
-    public void testValidEmailOrId_WithAlphanumericString() {
+    void testValidEmailOrId_WithAlphanumericString() {
         // Arrange
         String input = "123abc";
         ValidationClassImpl validation = new ValidationClassImpl();

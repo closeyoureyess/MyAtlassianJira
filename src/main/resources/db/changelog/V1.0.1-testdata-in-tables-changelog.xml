@@ -55,12 +55,12 @@
     <!-- Вставка тестовых данных в таблицу default_settings -->
     <changeSet id="4" author="vsirik">
         <insert tableName="default_settings">
-            <column name="settings_field_name" value="TASK PRIORITY"/>
+            <column name="settings_field_name" value="TASK_PRIORITY"/>
             <column name="default_tasks_priority" value="MEDIUM"/>
         </insert>
         <insert tableName="default_settings">
-            <column name="settings_field_name" value="TASK STATUS"/>
-            <column name="default_task_status" value="COMPLETED"/>
+            <column name="settings_field_name" value="TASK_STATUS"/>
+            <column name="default_task_status" value="BACKLOG"/>
         </insert>
     </changeSet>
 

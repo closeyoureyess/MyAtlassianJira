@@ -48,7 +48,7 @@ class DefaultSettingsServiceImplTest {
         entity.setFieldName(DefaultSettingsFieldNameEnum.TASK_PRIORITY);
         entity.setDefaultTaskPriority(TaskPriorityEnum.MEDIUM);
 
-        Mockito.when(mockRepository.findByFieldName("TASK_PRIORITY")).thenReturn(Optional.of(entity));
+        Mockito.when(mockRepository.findByFieldName(DefaultSettingsFieldNameEnum.TASK_PRIORITY)).thenReturn(Optional.empty());
 
         Optional<DefaultSettingsDto> result = defaultSettingsService.changeDefaultSettings(dto);
 
@@ -64,7 +64,7 @@ class DefaultSettingsServiceImplTest {
         entity.setFieldName(DefaultSettingsFieldNameEnum.TASK_PRIORITY);
         entity.setDefaultTaskPriority(TaskPriorityEnum.MEDIUM);
 
-        Mockito.when(mockRepository.findByFieldName("TASK PRIORITY")).thenReturn(Optional.of(entity)); // Симулируем успешный поиск в БД
+        Mockito.when(mockRepository.findByFieldName(DefaultSettingsFieldNameEnum.TASK_PRIORITY)).thenReturn(Optional.of(entity)); // Симулируем успешный поиск в БД
         Mockito.when(mockMapper.compareDefaultSettingsAndDto(dto, entity)).thenReturn(entity); // Симулируем сравнение и обновление сущности
         Mockito.when(mockRepository.save(entity)).thenReturn(entity); // Симулируем сохранение в БД
         Mockito.when(mockMapper.convertDefaultSettingsToDto(entity)).thenReturn(dto); // Симулируем маппинг обратно в DTO
@@ -73,7 +73,7 @@ class DefaultSettingsServiceImplTest {
 
         Assertions.assertTrue(result.isPresent(), "Результат должен быть непустым");
         Assertions.assertEquals(dto, result.get(), "Результат должен совпадать с DTO");
-        Mockito.verify(mockRepository, Mockito.times(1)).findByFieldName("TASK PRIORITY");
+        Mockito.verify(mockRepository, Mockito.times(1)).findByFieldName(DefaultSettingsFieldNameEnum.TASK_PRIORITY);
         Mockito.verify(mockMapper, Mockito.times(1)).compareDefaultSettingsAndDto(dto, entity);
         Mockito.verify(mockRepository, Mockito.times(1)).save(entity);
         Mockito.verify(mockMapper, Mockito.times(1)).convertDefaultSettingsToDto(entity);
@@ -104,14 +104,14 @@ class DefaultSettingsServiceImplTest {
         DefaultSettings entity = new DefaultSettings();
         DefaultSettingsDto dto = new DefaultSettingsDto();
 
-        Mockito.when(mockRepository.findByFieldName("TASK PRIORITY")).thenReturn(Optional.of(entity));
+        Mockito.when(mockRepository.findByFieldName(DefaultSettingsFieldNameEnum.TASK_PRIORITY)).thenReturn(Optional.of(entity));
         Mockito.when(mockMapper.convertDefaultSettingsToDto(entity)).thenReturn(dto);
 
         Optional<DefaultSettingsDto> result = defaultSettingsService.getDefaultSettings(fieldName);
 
         Assertions.assertTrue(result.isPresent(), "Результат должен быть непустым");
         Assertions.assertEquals(dto, result.get(), "Результат должен совпадать с DTO");
-        Mockito.verify(mockRepository, Mockito.times(1)).findByFieldName("TASK PRIORITY");
+        Mockito.verify(mockRepository, Mockito.times(1)).findByFieldName(DefaultSettingsFieldNameEnum.TASK_PRIORITY);
         Mockito.verify(mockMapper, Mockito.times(1)).convertDefaultSettingsToDto(entity);
     }
 
@@ -120,12 +120,12 @@ class DefaultSettingsServiceImplTest {
     void testGetDefaultSettingsNotFound() {
         DefaultSettingsFieldNameEnum fieldName = DefaultSettingsFieldNameEnum.TASK_PRIORITY;
 
-        Mockito.when(mockRepository.findByFieldName("TASK PRIORITY")).thenReturn(Optional.empty());
+        Mockito.when(mockRepository.findByFieldName(fieldName)).thenReturn(Optional.empty());
 
         Optional<DefaultSettingsDto> result = defaultSettingsService.getDefaultSettings(fieldName);
 
         Assertions.assertTrue(result.isEmpty(), "Результат должен быть пустым");
-        Mockito.verify(mockRepository, Mockito.times(1)).findByFieldName("TASK PRIORITY");
+        Mockito.verify(mockRepository, Mockito.times(1)).findByFieldName(fieldName);
         Mockito.verify(mockMapper, Mockito.never()).convertDefaultSettingsToDto(Mockito.any());
     }
 

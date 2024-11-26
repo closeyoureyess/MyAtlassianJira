@@ -8,10 +8,7 @@ import com.effectiveMobile.effectivemobile.dto.CustomUsersDto;
 import com.effectiveMobile.effectivemobile.dto.TasksDto;
 import com.effectiveMobile.effectivemobile.entities.CustomUsers;
 import com.effectiveMobile.effectivemobile.entities.Tasks;
-import com.effectiveMobile.effectivemobile.exeptions.EntityNotFoundExeption;
-import com.effectiveMobile.effectivemobile.exeptions.MainException;
-import com.effectiveMobile.effectivemobile.exeptions.NotEnoughRulesForEntity;
-import com.effectiveMobile.effectivemobile.exeptions.RoleNotFoundException;
+import com.effectiveMobile.effectivemobile.exeptions.*;
 import com.effectiveMobile.effectivemobile.fabrics.ActionsFabric;
 import com.effectiveMobile.effectivemobile.fabrics.MappersFabric;
 import com.effectiveMobile.effectivemobile.mapper.TaskMapper;
@@ -59,7 +56,7 @@ public class TaskServiceImpl implements TaskService {
         UserActions userActions = actionsFabric.createUserActions();
         TaskMapper taskMapper = mappersFabric.createTaskMapper();
 
-        /*tasksDto = actionsFabric.createTasksActions().fillTaskPriorityAndTaskStatusFields(tasksDto);*/
+        tasksDto = actionsFabric.createTasksActions().fillTaskPriorityAndTaskStatusFields(tasksDto);
         tasksDto = assignAuthorTask(userActions, tasksDto);
         Tasks newTasks = taskMapper.convertDtoToTasks(tasksDto);
         newTasks = userActions
@@ -145,6 +142,9 @@ public class TaskServiceImpl implements TaskService {
 
             if (userEmail != null) {
                 Optional<CustomUsers> optionalCustomUsers = authorizationRepository.findByEmail(userEmail);
+                if (optionalCustomUsers.isEmpty()) {
+                    throw new UserNotFoundException(USER_NOT_FOUND.getEnumDescription());
+                }
                 if (optionalCustomUsers.isPresent()) {
                     Optional<Page<Tasks>> pageWithTasks = methodFindAllTasksAuthorOrExecutor(pageble, optionalCustomUsers.get()
                             .getId(), flag);
@@ -158,7 +158,6 @@ public class TaskServiceImpl implements TaskService {
                     listAllTasks = pageWithTasks.get().stream().toList();
                 }
             }
-
         }
         return mappersFabric.createTaskMapper().transferListTasksToDto(listAllTasks);
     }

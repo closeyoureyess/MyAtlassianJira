@@ -18,6 +18,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Validated
 @EqualsAndHashCode
+@Builder
 @Schema(description = "Сущность пользователь")
 @JsonFilter("CustomUsersDtoFilter")
 public class CustomUsersDto implements Serializable {

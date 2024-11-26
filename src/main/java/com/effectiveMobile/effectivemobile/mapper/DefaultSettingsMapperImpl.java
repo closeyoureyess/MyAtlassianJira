@@ -41,7 +41,6 @@ public class DefaultSettingsMapperImpl implements DefaultSettingsMapper {
     public DefaultSettings compareDefaultSettingsAndDto(DefaultSettingsDto defaultSettingsDto, DefaultSettings defaultSettings) {
         log.info("Метод compareDefaultSettingsAndDto()" + defaultSettingsDto.getFieldName() + EMPTY_SPACE
                 + defaultSettingsDto.getDefaultTaskPriority());
-        defaultSettings.setId(defaultSettingsDto.getId());
         if (defaultSettingsDto.getFieldName() != null) {
             defaultSettings.setFieldName(defaultSettingsDto.getFieldName());
         }

@@ -126,7 +126,7 @@
         <sql>
             ALTER TABLE default_settings
             ADD CONSTRAINT chk_settings_field_name
-            CHECK (settings_field_name IN ('TASK PRIORITY', 'TASK STATUS'));
+            CHECK (settings_field_name IN ('TASK_PRIORITY', 'TASK_STATUS'));
 
             ALTER TABLE default_settings
             ADD CONSTRAINT chk_default_task_status

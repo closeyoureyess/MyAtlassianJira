@@ -13,11 +13,14 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -34,6 +37,7 @@ import static com.effectiveMobile.effectivemobile.constants.ConstantsClass.*;
 @RestController
 @RequestMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 @Slf4j
+@Validated
 public class TaskController {
 
     @Autowired
@@ -57,7 +61,8 @@ public class TaskController {
     @FilterResponse(filterName = POST_CREATE_TASKS)
     @SecurityRequirement(name = "JWT")
     @PostMapping(value = "/task/create")
-    public ResponseEntity<TasksDto> createTask(@RequestBody TasksDto tasksDto) throws MainException {
+    public ResponseEntity<TasksDto> createTask(@Valid @RequestBody @NotNull(message = "TasksDto не может быть null")
+                                               TasksDto tasksDto) throws MainException {
         log.info("Создание задачи, POST " + tasksDto.getHeader());
         TasksDto localTasksDto = serviceFabric.createTaskService().createTasks(tasksDto);
         if (localTasksDto != null) {
@@ -71,7 +76,7 @@ public class TaskController {
      *
      * @param author Автор задачи (email)
      * @param offset Номер страницы для пагинации (0 - по умолчанию)
-     * @param limit Количество сущностей на странице (10 - по умолчанию)
+     * @param limit  Количество сущностей на странице (10 - по умолчанию)
      * @return {@link ResponseEntity} с задачами по автору
      */
     @Operation(summary = "Получить задачу по автору")
@@ -105,8 +110,8 @@ public class TaskController {
      * Эндпоинд GET для получения информации о задачах по исполнителю
      *
      * @param executorEmail - емейл пользователя, по которому будут найдены задачи, комментарии
-     * @param offset - номер страницы
-     * @param limit - кол-во сущностей на странице
+     * @param offset        - номер страницы
+     * @param limit         - кол-во сущностей на странице
      * @return {@link ResponseEntity<List<TasksDto>>}
      */
     @Operation(summary = "Получить задачу по исполнителю")
@@ -117,7 +122,7 @@ public class TaskController {
     })
     @FilterResponse(filterName = GET_TASKEXECUTOR_TASKS)
     @SecurityRequirement(name = "JWT")
-    @GetMapping("/task/gen-info/executor/{executorEmail}")
+    @GetMapping(value = "/task/gen-info/executor/{executorEmail}", consumes = MediaType.ALL_VALUE)
     public ResponseEntity<List<TasksDto>> getTaskExecutor(
             @PathVariable("executorEmail") @Parameter(description = "Исполнитель задачи") String executorEmail,
             @RequestParam(value = "offset", defaultValue = "0") @Min(0) @Parameter(description = "Номер страницы", example = "0")
@@ -153,8 +158,8 @@ public class TaskController {
     @FilterResponse(filterName = PUT_EDIT_TASKS)
     @SecurityRequirement(name = "JWT")
     @PutMapping("/task/update-tasks")
-    public ResponseEntity<TasksDto> editTasks(@RequestBody @Parameter(description = "Объект TasksDto с полями, требующими редактирования")
-                                              TasksDto tasksDto) throws MainException {
+    public ResponseEntity<TasksDto> editTasks(@Valid @RequestBody @Parameter(description = "Объект TasksDto с полями, требующими редактирования")
+                                              @NotNull(message = "TasksDto не может быть null") TasksDto tasksDto) throws MainException {
         Optional<TasksDto> newTasksDto = serviceFabric
                 .createTaskService()
                 .changeTasks(tasksDto);
@@ -176,7 +181,7 @@ public class TaskController {
             @ApiResponse(responseCode = "403", description = "Не авторизован/Недостаточно прав"),
     })
     @SecurityRequirement(name = "JWT")
-    @DeleteMapping("/task/delete/{id}")
+    @DeleteMapping(value = "/task/delete/{id}", consumes = MediaType.ALL_VALUE, produces = MediaType.TEXT_PLAIN_VALUE)
     public ResponseEntity<String> deleteTasks(@PathVariable("id") @Parameter(description = "ID задачи") Integer idTasks) {
         log.info("Удаление задачи по id, метод DELETE" + idTasks);
         boolean resultDeleteTasks = serviceFabric

@@ -3,6 +3,7 @@ package com.effectiveMobile.effectivemobile.dto;
 import com.effectiveMobile.effectivemobile.other.DefaultSettingsFieldNameEnum;
 import com.effectiveMobile.effectivemobile.other.TaskPriorityEnum;
 import com.effectiveMobile.effectivemobile.other.TaskStatusEnum;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Max;
@@ -21,6 +22,7 @@ import java.io.Serializable;
 @Builder
 @Schema(description = "Сущность настроек по умолчанию")
 @Validated
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class DefaultSettingsDto implements Serializable {
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)

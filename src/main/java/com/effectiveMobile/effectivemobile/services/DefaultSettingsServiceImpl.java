@@ -57,7 +57,7 @@ public class DefaultSettingsServiceImpl implements DefaultSettingsService {
 
         DefaultSettingsFieldNameEnum fieldName = defaultSettingsDto.getFieldName();
         String stringFieldName = fieldName.getFieldName();
-        Optional<DefaultSettings> defaultSettingsFromDB = defaultSettingsRepository.findByFieldName(stringFieldName);
+        Optional<DefaultSettings> defaultSettingsFromDB = defaultSettingsRepository.findByFieldName(fieldName);
         if (defaultSettingsFromDB.isEmpty()) {
             return Optional.empty();
         }
@@ -78,8 +78,8 @@ public class DefaultSettingsServiceImpl implements DefaultSettingsService {
     @Cacheable(cacheNames = "defaultSettingsCache", key = "#fieldName")
     @Override
     public Optional<DefaultSettingsDto> getDefaultSettings(DefaultSettingsFieldNameEnum fieldName) {
-        log.info("Метод changeDefaultSettings()" + fieldName.getFieldName());
-        Optional<DefaultSettings> defaultSettingsFromDB = defaultSettingsRepository.findByFieldName(fieldName.getFieldName());
+        log.info("Метод changeDefaultSettings() " + fieldName.getFieldName());
+        Optional<DefaultSettings> defaultSettingsFromDB = defaultSettingsRepository.findByFieldName(fieldName);
         if (defaultSettingsFromDB.isEmpty()) {
             return Optional.empty();
         }

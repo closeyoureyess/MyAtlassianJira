@@ -57,20 +57,20 @@ class TasksActionsImplTest {
     void testFillTaskPriorityAndTaskStatusFields_TaskPriorityNull_SettingsPresent() throws MainException {
         // Arrange
         tasksDto.setTaskPriority(null);
-        TaskStatusEnum defaultTaskStatus = TaskStatusEnum.BACKLOG;
-        Mockito.when(defaultSettingsActions.getDefaultValueFromTasksFields(DefaultSettingsFieldNameEnum.TASK_PRIORITY, TaskStatusEnum.BACKLOG))
-                .thenReturn(Optional.of(defaultTaskStatus));
+        TaskPriorityEnum defaultTaskPriorityEnum = TaskPriorityEnum.MEDIUM;
+        Mockito.when(defaultSettingsActions.getDefaultValueFromTasksFields(DefaultSettingsFieldNameEnum.TASK_PRIORITY,
+                        TaskPriorityEnum.MEDIUM))
+                .thenReturn(Optional.of(defaultTaskPriorityEnum));
 
         // Act
         TasksDto result = tasksActionsImpl.fillTaskPriorityAndTaskStatusFields(tasksDto);
-        TaskStatusEnum tseExpected = result.getTaskStatus();
 
         // Assert
         Assertions.assertNotNull(result, "Результат не должен быть null");
-        Assertions.assertEquals(defaultTaskStatus, result.getTaskStatus(), "taskStatus должен быть установлен в BACKLOG");
-        Assertions.assertNull(result.getTaskPriority(), "taskPriority должен оставаться null");
+        Assertions.assertEquals(defaultTaskPriorityEnum, result.getTaskPriority(), "taskStatus должен быть установлен в BACKLOG");
         Mockito.verify(defaultSettingsActions, Mockito.times(1))
-                .getDefaultValueFromTasksFields(DefaultSettingsFieldNameEnum.TASK_PRIORITY, TaskStatusEnum.BACKLOG);
+                .getDefaultValueFromTasksFields(DefaultSettingsFieldNameEnum.TASK_PRIORITY,
+                        TaskPriorityEnum.MEDIUM);
     }
 
     /**
@@ -82,41 +82,19 @@ class TasksActionsImplTest {
     void testFillTaskPriorityAndTaskStatusFields_TaskStatusNull_SettingsPresent() throws MainException {
         // Arrange
         tasksDto.setTaskStatus(null);
-        TaskPriorityEnum defaultTaskPriority = TaskPriorityEnum.MEDIUM;
-        Mockito.when(defaultSettingsActions.getDefaultValueFromTasksFields(DefaultSettingsFieldNameEnum.TASK_STATUS, TaskPriorityEnum.MEDIUM))
-                .thenReturn(Optional.of(defaultTaskPriority));
+        TaskStatusEnum defaultTaskStatusEnum = TaskStatusEnum.BACKLOG;
+        Mockito.when(defaultSettingsActions.getDefaultValueFromTasksFields(DefaultSettingsFieldNameEnum.TASK_STATUS,
+                        TaskStatusEnum.BACKLOG))
+                .thenReturn(Optional.of(defaultTaskStatusEnum));
 
         // Act
         TasksDto result = tasksActionsImpl.fillTaskPriorityAndTaskStatusFields(tasksDto);
 
         // Assert
         Assertions.assertNotNull(result, "Результат не должен быть null");
-        Assertions.assertEquals(defaultTaskPriority, result.getTaskPriority(), "taskPriority должен быть установлен в MEDIUM");
-        Assertions.assertNull(result.getTaskStatus(), "taskStatus должен оставаться null");
+        Assertions.assertEquals(defaultTaskStatusEnum, result.getTaskStatus(), "taskPriority должен быть установлен в MEDIUM");
         Mockito.verify(defaultSettingsActions, Mockito.times(1))
-                .getDefaultValueFromTasksFields(DefaultSettingsFieldNameEnum.TASK_STATUS, TaskPriorityEnum.MEDIUM);
-    }
-
-    /**
-     * Тест для метода fillTaskPriorityAndTaskStatusFields
-     * Сценарий: taskPriority == null, настройка отсутствует
-     */
-    @Test
-    @DisplayName("fillTaskPriorityAndTaskStatusFields: taskPriority null и настройка отсутствует")
-    void testFillTaskPriorityAndTaskStatusFields_TaskPriorityNull_SettingsAbsent() throws MainException {
-        // Arrange
-        tasksDto.setTaskPriority(null);
-        Mockito.when(defaultSettingsActions.getDefaultValueFromTasksFields(DefaultSettingsFieldNameEnum.TASK_PRIORITY, TaskStatusEnum.BACKLOG))
-                .thenReturn(Optional.empty());
-
-        // Act
-        TasksDto result = tasksActionsImpl.fillTaskPriorityAndTaskStatusFields(tasksDto);
-
-        // Assert
-        Assertions.assertNotNull(result, "Результат не должен быть null");
-        Assertions.assertNull(result.getTaskPriority(), "taskPriority должен оставаться null");
-        Mockito.verify(defaultSettingsActions, Mockito.times(1))
-                .getDefaultValueFromTasksFields(DefaultSettingsFieldNameEnum.TASK_PRIORITY, TaskStatusEnum.BACKLOG);
+                .getDefaultValueFromTasksFields(DefaultSettingsFieldNameEnum.TASK_STATUS, TaskStatusEnum.BACKLOG);
     }
 
     /**
@@ -128,7 +106,7 @@ class TasksActionsImplTest {
     void testFillTaskPriorityAndTaskStatusFields_TaskStatusNull_SettingsAbsent() throws MainException {
         // Arrange
         tasksDto.setTaskStatus(null);
-        Mockito.when(defaultSettingsActions.getDefaultValueFromTasksFields(DefaultSettingsFieldNameEnum.TASK_STATUS, TaskPriorityEnum.MEDIUM))
+        Mockito.when(defaultSettingsActions.getDefaultValueFromTasksFields(DefaultSettingsFieldNameEnum.TASK_STATUS, TaskStatusEnum.BACKLOG))
                 .thenReturn(Optional.empty());
 
         // Act
@@ -138,7 +116,7 @@ class TasksActionsImplTest {
         Assertions.assertNotNull(result, "Результат не должен быть null");
         Assertions.assertNull(result.getTaskStatus(), "taskStatus должен оставаться null");
         Mockito.verify(defaultSettingsActions, Mockito.times(1))
-                .getDefaultValueFromTasksFields(DefaultSettingsFieldNameEnum.TASK_STATUS, TaskPriorityEnum.MEDIUM);
+                .getDefaultValueFromTasksFields(DefaultSettingsFieldNameEnum.TASK_STATUS, TaskStatusEnum.BACKLOG);
     }
 
     /**

@@ -2,8 +2,8 @@ package com.effectiveMobile.effectivemobile.other;
 
 public enum DefaultSettingsFieldNameEnum {
 
-    TASK_PRIORITY("TASK PRIORITY"),
-    TASK_STATUS("TASK STATUS");
+    TASK_PRIORITY("TASK_PRIORITY"),
+    TASK_STATUS("TASK_STATUS");
 
     private String fieldName;
 
