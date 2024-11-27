@@ -55,12 +55,26 @@ public class TaskServiceImpl implements TaskService {
         log.info("Метод createTasks() " + tasksDto.getHeader());
         UserActions userActions = actionsFabric.createUserActions();
         TaskMapper taskMapper = mappersFabric.createTaskMapper();
+        CustomUsersDto authorWithHidePassword = null;
+        CustomUsersDto executorWithHidePassword = null;
+        if (tasksDto.getTaskAuthor() != null) {
+            authorWithHidePassword = userActions.hiddenPassword(tasksDto.getTaskAuthor());
+        }
+        if (tasksDto.getTaskAuthor() != null) {
+            executorWithHidePassword = userActions.hiddenPassword(tasksDto.getTaskExecutor());
+        }
+
+        if (authorWithHidePassword != null) {
+            tasksDto.setTaskAuthor(authorWithHidePassword);
+        }
+        if (executorWithHidePassword != null) {
+            tasksDto.setTaskExecutor(executorWithHidePassword);
+        }
 
         tasksDto = actionsFabric.createTasksActions().fillTaskPriorityAndTaskStatusFields(tasksDto);
         tasksDto = assignAuthorTask(userActions, tasksDto);
         Tasks newTasks = taskMapper.convertDtoToTasks(tasksDto);
-        newTasks = userActions
-                .checkFindUser(newTasks.getTaskExecutor(), newTasks, ConstantsClass.ONE_FLAG);
+        newTasks = userActions.checkFindUser(newTasks.getTaskExecutor(), newTasks, ConstantsClass.ONE_FLAG);
         newTasks.setId(null);
         newTasks = tasksRepository.save(newTasks); // save to PostgreSQL
         return taskMapper.convertTasksToDto(newTasks);
@@ -72,7 +86,21 @@ public class TaskServiceImpl implements TaskService {
         log.info("Метод changeTasks() " + tasksDtoFromJson.getId());
         Optional<Tasks> optionalTaskDatabase = Optional.empty();
         TaskMapper taskMapper = mappersFabric.createTaskMapper();
-
+        UserActions userActions = actionsFabric.createUserActions();
+        CustomUsersDto authorWithHidePassword = null;
+        CustomUsersDto executorWithHidePassword = null;
+        if (tasksDtoFromJson.getTaskAuthor() != null) {
+            authorWithHidePassword = userActions.hiddenPassword(tasksDtoFromJson.getTaskAuthor());
+        }
+        if (tasksDtoFromJson.getTaskExecutor() != null) {
+            executorWithHidePassword = userActions.hiddenPassword(tasksDtoFromJson.getTaskExecutor());
+        }
+        if (authorWithHidePassword != null) {
+            tasksDtoFromJson.setTaskAuthor(authorWithHidePassword);
+        }
+        if (executorWithHidePassword != null) {
+            tasksDtoFromJson.setTaskExecutor(executorWithHidePassword);
+        }
         if (tasksDtoFromJson.getId() != null) {
             optionalTaskDatabase = tasksRepository.findById(taskMapper.convertDtoToTasks(tasksDtoFromJson).getId());
         }
@@ -122,9 +150,9 @@ public class TaskServiceImpl implements TaskService {
      * Метод, ищущий задачи и комментарии к ним по автору/исполнителю
      *
      * @param authorOrExecutor Email автора или исполнителя задачи
-     * @param offset Номер страницы для пагинации
-     * @param limit Количество задач на одной странице
-     * @param flag Флаг, указывающий, автор или исполнитель (1 - автор, 0 - исполнитель)
+     * @param offset           Номер страницы для пагинации
+     * @param limit            Количество задач на одной странице
+     * @param flag             Флаг, указывающий, автор или исполнитель (1 - автор, 0 - исполнитель)
      * @return Список DTO объектов задач
      */
     private List<TasksDto> receiveAllTasksAuthorOrExecutorDataBase(String authorOrExecutor, Integer offset, Integer limit,
@@ -166,8 +194,8 @@ public class TaskServiceImpl implements TaskService {
      * Метод, делающий запросы к БД для поиска всех задач по автору/исполнителю
      *
      * @param pageble Параметры пагинации
-     * @param userId ID пользователя (автора или исполнителя)
-     * @param flag Флаг, указывающий, автор или исполнитель (1 - автор, 0 - исполнитель)
+     * @param userId  ID пользователя (автора или исполнителя)
+     * @param flag    Флаг, указывающий, автор или исполнитель (1 - автор, 0 - исполнитель)
      * @return {@link Optional<Page<Tasks>>} Optional со страницей с задачами
      */
     private Optional<Page<Tasks>> methodFindAllTasksAuthorOrExecutor(Pageable pageble, Integer userId, Integer flag) {
@@ -219,7 +247,7 @@ public class TaskServiceImpl implements TaskService {
      * Метод, назначающий текущего авторизованного пользователя автором задачи.
      *
      * @param userActions Объект для выполнения операций с пользователем
-     * @param tasksDto DTO объекта задачи
+     * @param tasksDto    DTO объекта задачи
      * @return {@link TasksDto} с обновлённым автором
      */
     private TasksDto assignAuthorTask(UserActions userActions, TasksDto tasksDto) {

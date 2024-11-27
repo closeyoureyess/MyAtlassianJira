@@ -5,6 +5,7 @@ import com.effectiveMobile.effectivemobile.constants.ConstantsClass;
 import com.effectiveMobile.effectivemobile.dto.TasksDto;
 import com.effectiveMobile.effectivemobile.exeptions.MainException;
 import com.effectiveMobile.effectivemobile.fabrics.ServiceFabric;
+import com.effectiveMobile.effectivemobile.services.TaskService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -64,7 +65,8 @@ public class TaskController {
     public ResponseEntity<TasksDto> createTask(@Valid @RequestBody @NotNull(message = "TasksDto не может быть null")
                                                TasksDto tasksDto) throws MainException {
         log.info("Создание задачи, POST " + tasksDto.getHeader());
-        TasksDto localTasksDto = serviceFabric.createTaskService().createTasks(tasksDto);
+        TaskService taskService = serviceFabric.createTaskService();
+        TasksDto localTasksDto = taskService.createTasks(tasksDto);
         if (localTasksDto != null) {
             return ResponseEntity.ok(localTasksDto);
         }
@@ -149,7 +151,7 @@ public class TaskController {
      */
     @Operation(summary = "Отредактировать задачу", description = "Отредактировать задачу, в т.ч добавить комментарий")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Задача успешно отредактирована", content = @Content(examples = @ExampleObject(value = "\"{\\n  \\\"id\\\": 1,\\n  \\\"header\\\": \\\"Тестовая задача\\\",\\n  \\\"taskAuthor\\\": {\\n    \\\"id\\\": 1,\\n    \\\"email\\\": \\\"example@gmail.com\\\"\\n  },\\n  \\\"taskExecutor\\\": {\\n    \\\"id\\\": 1,\\n    \\\"email\\\": \\\"example@gmail.com\\\"\\n  },\\n  \\\"description\\\": \\\"Тестовое описание задачи\\\",\\n  \\\"taskPriority\\\": \\\"MEDIUM\\\",\\n  \\\"taskStatus\\\": \\\"BACKLOG\\\",\\n  \\\"notesDto\\\": [\\n    {\\n      \\\"id\\\": 1,\\n      \\\"header\\\": \\\"Тестовая задача\\\",\\n      \\\"taskAuthor\\\": {\\n        \\\"id\\\": 1,\\n        \\\"email\\\": \\\"example@gmail.com\\\"\\n      }\\n    }\\n  ]\\n}\""))),
+            @ApiResponse(responseCode = "200", description = "Задача успешно отредактирована", content = @Content(examples = @ExampleObject(value = "{\n  \"header\": \"Тестовая задача\",\n  \"taskAuthor\": {\n    \"id\": 1,\n    \"email\": \"author@example.com\"\n  },\n  \"taskExecutor\": {\n    \"id\": 2,\n    \"email\": \"executor@example.com\"\n  },\n  \"description\": \"Тестовое описание задачи\",\n  \"taskPriority\": \"MEDIUM\",\n  \"taskStatus\": \"BACKLOG\",\n  \"notesDto\": [\n    {\n      \"id\": 1,\n      \"notesAuthor\": {\n        \"id\": 3,\n        \"email\": \"commenter@example.com\"\n      },\n      \"comments\": \"Обсуждение\"\n    }\n  ]\n}"))),
             @ApiResponse(responseCode = "403", description = "Для редактирования недостаточно прав на сущность/Не авторизован/Недостаточно прав", content = @Content),
             @ApiResponse(responseCode = "400", description = "Не удалось отредактировать задачу", content = @Content),
             @ApiResponse(responseCode = "404", description = "У задачи отсутствует исполнитель", content = @Content)

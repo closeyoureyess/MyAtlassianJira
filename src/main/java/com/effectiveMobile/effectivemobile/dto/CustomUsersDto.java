@@ -2,10 +2,10 @@ package com.effectiveMobile.effectivemobile.dto;
 
 import com.effectiveMobile.effectivemobile.other.UserRoles;
 import com.fasterxml.jackson.annotation.JsonFilter;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.springframework.validation.annotation.Validated;
 
@@ -24,18 +24,17 @@ import java.io.Serializable;
 public class CustomUsersDto implements Serializable {
 
     @Schema(description = "Уникальный идентификатор пользователя", example = "1")
-    @Size(min = 3, message = "Длина строки не должна быть меньше трех символов")
-    @Size(max = 3500, message = "Длина строки не должна превышать 3500 символов.")
+    @Min(value = 1, message = "Идентификатор настройки не должен быть меньше единицы")
+    @Max(value = 2147483647, message = "Идентификатор задачи не должен быть больше 2147483647")
     private Integer id;
 
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Schema(description = "Пароль пользователя", example = "12345")
     private String passwordKey;
 
     @Schema(description = "E-mail пользователя", example = "example@gmail.com")
     private String email;
 
-    @NotBlank(message = "Роль не может быть пустой")
+    @NotNull(message = "Роль не может быть пустой")
     @Schema(description = "Роль пользователя", example = "USER")
     private UserRoles role;
 

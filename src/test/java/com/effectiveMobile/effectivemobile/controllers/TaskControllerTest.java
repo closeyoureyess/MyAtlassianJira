@@ -6,7 +6,6 @@ import com.effectiveMobile.effectivemobile.dto.RegistrationUsers;
 import com.effectiveMobile.effectivemobile.dto.TasksDto;
 import com.effectiveMobile.effectivemobile.other.TaskPriorityEnum;
 import com.effectiveMobile.effectivemobile.other.TaskStatusEnum;
-import com.effectiveMobile.effectivemobile.services.JwtService;
 import com.effectiveMobile.effectivemobile.services.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.*;
@@ -31,9 +30,6 @@ class TaskControllerTest {
 
     @Autowired
     private UserService userService;
-
-    @Autowired
-    private JwtService jwtService;
 
     private String jwtToken;
 

@@ -110,4 +110,11 @@ public class UserActionsImpl implements UserActions {
         }
         return true;
     }
+
+    @Override
+    public CustomUsersDto hiddenPassword(CustomUsersDto customUsersDto) {
+        if (customUsersDto.getPasswordKey() != null)
+            customUsersDto.setPasswordKey("###");
+        return customUsersDto;
+    }
 }

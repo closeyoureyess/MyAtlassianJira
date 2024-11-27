@@ -185,6 +185,10 @@ class TaskServiceImplTest {
     @Test
     @DisplayName("Тест: Выброс исключения при изменении задачи, если задача не найдена")
     void testChangeTasksTaskNotFound() throws ExecutorNotFoundExeption {
+        CustomUsersDto customUsersDto = new CustomUsersDto();
+        customUsersDto.setId(1);
+        customUsersDto.setEmail("executor@example.com");
+
         TasksDto tasksDto = new TasksDto();
         tasksDto.setId(1);
         tasksDto.setHeader("Updated Task");
@@ -192,6 +196,9 @@ class TaskServiceImplTest {
         tasksDto.setTaskPriority(TaskPriorityEnum.MEDIUM);
         tasksDto.setTaskStatus(TaskStatusEnum.BACKLOG);
 
+        Mockito.when(mockActionsFabric.createUserActions()).thenReturn(userActions);
+        Mockito.when(userActions.hiddenPassword(Mockito.any())).thenReturn(customUsersDto);
+        Mockito.when(mockTaskMapper.convertDtoToTasks(tasksDto)).thenReturn(new Tasks());
         Mockito.when(mockTaskMapper.convertDtoToTasks(tasksDto)).thenReturn(new Tasks());
         Mockito. when(mockTasksRepository.findById(1)).thenReturn(Optional.empty());
 

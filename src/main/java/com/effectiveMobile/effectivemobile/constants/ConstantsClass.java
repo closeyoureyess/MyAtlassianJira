@@ -19,6 +19,7 @@ public class ConstantsClass {
     public static final String REGEX_EMAIL = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
     public static final String PREFIX_ROLE = "ROLE_";
     public static final String USUAL_ID_FIELD_NAME = "id";
+    public static final String USER_ROLE_FIELD_NAME = "role";
     public static final String NOTES_AUTHOR_FIELD_NAME = "notesAuthor";
     public static final String NOTES_COMMENTS_FIELD_NAME= "comments";
     public static final String TASK_HEADER_FIELD_NAME = "header";

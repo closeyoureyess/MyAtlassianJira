@@ -3,6 +3,7 @@ package com.effectiveMobile.effectivemobile.controller.internalcontrollers;
 import com.effectiveMobile.effectivemobile.exeptions.*;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.exception.SQLGrammarException;
@@ -11,13 +12,17 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.method.annotation.HandlerMethodValidationException;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.effectiveMobile.effectivemobile.constants.ConstantsClass.LINE_FEED;
@@ -48,6 +53,24 @@ public class HandlerExceptionController {
         );
 
         return new ResponseEntity<>(apiErrorResponse, HttpStatus.NOT_FOUND);
+    }
+
+    /**
+     * Обработчик ExecutorNotFoundException
+     */
+    @ExceptionHandler(BadCredentialsException.class)
+    protected ResponseEntity<ApiErrorResponse> handleExecutorNotFoundExeption(BadCredentialsException e, HttpServletRequest request) {
+        log.error(GENERATION_ERROR.getEnumDescription() + e.getClass() + LINE_FEED + e.getMessage() + LINE_FEED +
+                e);
+
+        ApiErrorResponse apiErrorResponse = buildApiErrorResponse(
+                HttpStatus.UNAUTHORIZED,
+                e.getMessage(),
+                request.getRequestURI(),
+                null
+        );
+
+        return new ResponseEntity<>(apiErrorResponse, HttpStatus.UNAUTHORIZED);
     }
 
     /**
@@ -131,12 +154,15 @@ public class HandlerExceptionController {
         log.error(GENERATION_ERROR.getEnumDescription() + e.getClass() + LINE_FEED + e.getMessage() + LINE_FEED +
                 e);
 
-        List<Violation> violations = e.getConstraintViolations().stream()
+        Set<ConstraintViolation<?>> violationsSet = e.getConstraintViolations();
+        List<Violation> violations = (violationsSet != null)
+                ? violationsSet.stream()
                 .map(violation -> new Violation(
                         violation.getPropertyPath().toString(),
                         violation.getMessage()
                 ))
-                .collect(Collectors.toList());
+                .collect(Collectors.toList())
+                : Collections.emptyList();
 
         ApiErrorResponse apiErrorResponse = buildApiErrorResponse(
                 HttpStatus.BAD_REQUEST,

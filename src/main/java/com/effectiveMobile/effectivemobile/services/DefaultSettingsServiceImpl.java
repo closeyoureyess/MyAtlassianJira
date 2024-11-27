@@ -56,7 +56,6 @@ public class DefaultSettingsServiceImpl implements DefaultSettingsService {
         }
 
         DefaultSettingsFieldNameEnum fieldName = defaultSettingsDto.getFieldName();
-        String stringFieldName = fieldName.getFieldName();
         Optional<DefaultSettings> defaultSettingsFromDB = defaultSettingsRepository.findByFieldName(fieldName);
         if (defaultSettingsFromDB.isEmpty()) {
             return Optional.empty();

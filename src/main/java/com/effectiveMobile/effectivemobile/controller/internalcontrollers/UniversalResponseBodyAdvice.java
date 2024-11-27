@@ -1,8 +1,10 @@
 package com.effectiveMobile.effectivemobile.controller.internalcontrollers;
 
 import com.effectiveMobile.effectivemobile.annotations.FilterResponse;
+import com.effectiveMobile.effectivemobile.controller.EntranceController;
 import com.effectiveMobile.effectivemobile.controller.NotesController;
 import com.effectiveMobile.effectivemobile.controller.TaskController;
+import com.effectiveMobile.effectivemobile.dto.CustomUsersDto;
 import com.effectiveMobile.effectivemobile.dto.NotesDto;
 import com.effectiveMobile.effectivemobile.dto.TasksDto;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
@@ -28,7 +30,7 @@ import java.util.List;
 
 import static com.effectiveMobile.effectivemobile.constants.ConstantsClass.*;
 
-@ControllerAdvice(assignableTypes = {NotesController.class, TaskController.class})
+@ControllerAdvice(assignableTypes = {NotesController.class, TaskController.class, EntranceController.class})
 @Slf4j
 public class UniversalResponseBodyAdvice implements ResponseBodyAdvice<Object> {
 
@@ -77,7 +79,8 @@ public class UniversalResponseBodyAdvice implements ResponseBodyAdvice<Object> {
      * Проверяет, явлется ли классом c тем возвращаемым Dto, который обрабатывается.
      */
     private boolean isSupportedDto(Class<?> clazz) {
-        return NotesDto.class.isAssignableFrom(clazz) || TasksDto.class.isAssignableFrom(clazz);
+        return NotesDto.class.isAssignableFrom(clazz) || TasksDto.class.isAssignableFrom(clazz) ||
+                CustomUsersDto.class.isAssignableFrom(clazz);
     }
 
     /**
@@ -98,7 +101,8 @@ public class UniversalResponseBodyAdvice implements ResponseBodyAdvice<Object> {
             return false;
         }
 
-        return NotesDto.class.isAssignableFrom(elementClass) || TasksDto.class.isAssignableFrom(elementClass);
+        return NotesDto.class.isAssignableFrom(elementClass) || TasksDto.class.isAssignableFrom(elementClass) ||
+                CustomUsersDto.class.isAssignableFrom(elementClass);
     }
 
     private boolean resolvableTypeGetGenericBlock(ResolvableType innerType) {
@@ -107,7 +111,7 @@ public class UniversalResponseBodyAdvice implements ResponseBodyAdvice<Object> {
             Class<?> elementClass = elementType.resolve();
             if (elementClass != null &&
                     (NotesDto.class.isAssignableFrom(elementClass) ||
-                            TasksDto.class.isAssignableFrom(elementClass))) {
+                            TasksDto.class.isAssignableFrom(elementClass) || CustomUsersDto.class.isAssignableFrom(elementClass))) {
                 return true;
             }
         }
@@ -125,8 +129,8 @@ public class UniversalResponseBodyAdvice implements ResponseBodyAdvice<Object> {
         String tasksDtoFilter = "TasksDtoFilter";
 
         // Проверяем, является ли тело ответа экземпляром NotesDto
-        if (!(body instanceof NotesDto) && !(body instanceof TasksDto) && !(body instanceof List<?>)) {
-            log.info("Тело ответа не является экземпляром NotesDto/TasksDto/List, метод beforeBodyWrite() " +
+        if (!(body instanceof NotesDto) && !(body instanceof TasksDto) && !(body instanceof List<?>) && !(body instanceof CustomUsersDto)) {
+            log.info("Тело ответа не является экземпляром NotesDto/TasksDto/List/CustomUsersDto, метод beforeBodyWrite() " +
                     "класса UniversalResponseBodyAdvice");
             return body;
         }
@@ -241,6 +245,15 @@ public class UniversalResponseBodyAdvice implements ResponseBodyAdvice<Object> {
                         .addFilter(customUsersDtoFilter, customDtoFilter)
                         .addFilter(notesDtoFilter, notesFilter)
                         .addFilter(tasksDtoFilter, taskFilter);
+                yield filters;
+            }
+            case POST_CREATE_USER -> {
+                log.info("Значение: " + POST_CREATE_USER + " Эндпоинт Post Task /entrance/registration, метод createUser(), " +
+                        "метод beforeBodyWrite() класса UniversalResponseBodyAdvice");
+                customDtoFilter = SimpleBeanPropertyFilter.filterOutAllExcept(USUAL_ID_FIELD_NAME, USER_EMAIL_FIELD_NAME,
+                        USER_ROLE_FIELD_NAME);
+                filters = new SimpleFilterProvider()
+                        .addFilter(customUsersDtoFilter, customDtoFilter);
                 yield filters;
             }
             default -> null;

@@ -72,4 +72,6 @@ public interface UserActions {
      * @throws RoleNotFoundException
      */
     boolean currentUserAdminOrUserRole(String roleToMatch) throws RoleNotFoundException;
+
+    CustomUsersDto hiddenPassword(CustomUsersDto customUsersDto);
 }
