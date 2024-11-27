@@ -83,7 +83,7 @@ public class TaskController {
      */
     @Operation(summary = "Получить задачу по автору")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Возвращены задачи с комментариями по автору"),
+            @ApiResponse(responseCode = "200", description = "Возвращены задачи с комментариями по автору", content = @Content(examples = @ExampleObject(value = "\"[{\\\"id\\\":1,\\\"header\\\":\\\"Test task header\\\",\\\"taskAuthor\\\":{\\\"id\\\":2,\\\"email\\\":\\\"example2@gmail.com\\\"},\\\"taskExecutor\\\":{\\\"id\\\":1,\\\"email\\\":\\\"example@gmail.com\\\"},\\\"description\\\":\\\"This is a test task description\\\",\\\"taskPriority\\\":\\\"MEDIUM\\\",\\\"taskStatus\\\":\\\"BACKLOG\\\",\\\"notesDto\\\":[{\\\"id\\\":1,\\\"notesAuthor\\\":{\\\"id\\\":2,\\\"email\\\":\\\"example2@gmail.com\\\"},\\\"comments\\\":\\\"This is a test comment for Task 1\\\"}]},{\\\"id\\\":2,\\\"header\\\":\\\"Test Task 2\\\",\\\"taskAuthor\\\":{\\\"id\\\":2,\\\"email\\\":\\\"example2@gmail.com\\\"},\\\"taskExecutor\\\":{\\\"id\\\":2,\\\"email\\\":\\\"example2@gmail.com\\\"},\\\"description\\\":\\\"Another test task description\\\",\\\"taskPriority\\\":\\\"HIGH\\\",\\\"taskStatus\\\":\\\"IN_PROGRESS\\\",\\\"notesDto\\\":[{\\\"id\\\":2,\\\"notesAuthor\\\":{\\\"id\\\":1,\\\"email\\\":\\\"example@gmail.com\\\"},\\\"comments\\\":\\\"Another comment for Task 2\\\"}]}]\""))),
             @ApiResponse(responseCode = "400", description = "Не удалось получить информацию о задачах", content = @Content),
             @ApiResponse(responseCode = "403", description = "Не авторизован/Недостаточно прав", content = @Content),
     })
@@ -108,6 +108,8 @@ public class TaskController {
         return ResponseEntity.badRequest().build();
     }
 
+    // [{\"id\":2,\"header\":\"Test Task 2\",\"taskAuthor\":{\"id\":2,\"email\":\"example2@gmail.com\"},\"taskExecutor\":{\"id\":2,\"email\":\"example2@gmail.com\"},\"description\":\"Another test task description\",\"taskPriority\":\"HIGH\",\"taskStatus\":\"IN_PROGRESS\",\"notesDto\":[{\"id\":2,\"notesAuthor\":{\"id\":1,\"email\":\"example@gmail.com\"},\"comments\":\"Another comment for Task 2\"}]}]
+
     /**
      * Эндпоинд GET для получения информации о задачах по исполнителю
      *
@@ -118,7 +120,7 @@ public class TaskController {
      */
     @Operation(summary = "Получить задачу по исполнителю")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Возвращены задачи с комментариями по исполнителю"),
+            @ApiResponse(responseCode = "200", description = "Возвращены задачи с комментариями по исполнителю", content = @Content(examples = @ExampleObject(value = "\"[{\\\"id\\\":2,\\\"header\\\":\\\"Test Task 2\\\",\\\"taskAuthor\\\":{\\\"id\\\":2,\\\"email\\\":\\\"example2@gmail.com\\\"},\\\"taskExecutor\\\":{\\\"id\\\":2,\\\"email\\\":\\\"example2@gmail.com\\\"},\\\"description\\\":\\\"Another test task description\\\",\\\"taskPriority\\\":\\\"HIGH\\\",\\\"taskStatus\\\":\\\"IN_PROGRESS\\\",\\\"notesDto\\\":[{\\\"id\\\":2,\\\"notesAuthor\\\":{\\\"id\\\":1,\\\"email\\\":\\\"example@gmail.com\\\"},\\\"comments\\\":\\\"Another comment for Task 2\\\"}]}]\""))),
             @ApiResponse(responseCode = "400", description = "Не удалось получить информацию о задачах", content = @Content),
             @ApiResponse(responseCode = "403", description = "Не авторизован/Недостаточно прав", content = @Content),
     })
