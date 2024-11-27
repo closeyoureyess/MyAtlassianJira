@@ -31,7 +31,7 @@ import java.lang.reflect.UndeclaredThrowableException;
 import java.util.List;
 import java.util.Optional;
 
-import static com.effectiveMobile.effectivemobile.exeptions.DescriptionUserExeption.NOT_ENOUGH_RULES_MUST_BE_ADMIN;
+import static com.effectiveMobile.effectivemobile.exeptions.DescriptionUserExeption.NOT_ENOUGH_RULES_TASK_MUST_BE_ADMIN;
 
 class TaskServiceImplTest {
 
@@ -381,7 +381,7 @@ class TaskServiceImplTest {
         Mockito.when(tasksActions.fieldsTasksAllowedForEditing(tasksDtoFromDB)).thenReturn(true);
 
         // Используем ReflectionTestUtils для вызова приватного метода с правильными параметрами
-        boolean result = ReflectionTestUtils.invokeMethod(taskService, "checkingRightsToEditTask", tasksDtoFromDB);
+        boolean result = ReflectionTestUtils.invokeMethod(taskService, "checkingRightsToEditTask", tasksDtoFromDB, tasksDtoFromDB);
 
         Assertions.assertTrue(result, "Результат должен быть true");
     }
@@ -404,13 +404,13 @@ class TaskServiceImplTest {
 
         // Ожидание выброса UndeclaredThrowableException и проверка причины
         UndeclaredThrowableException exception = Assertions.assertThrows(UndeclaredThrowableException.class, () -> {
-            ReflectionTestUtils.invokeMethod(taskService, "checkingRightsToEditTask", tasksDtoFromDB);
+            ReflectionTestUtils.invokeMethod(taskService, "checkingRightsToEditTask", tasksDtoFromDB, tasksDtoFromDB);
         });
 
         // Проверка, что причина исключения - NotEnoughRulesForEntity
         Throwable cause = exception.getCause();
         Assertions.assertInstanceOf(NotEnoughRulesForEntity.class, cause, "Причина должна быть NotEnoughRulesForEntity");
-        Assertions.assertEquals(NOT_ENOUGH_RULES_MUST_BE_ADMIN.getEnumDescription(), cause.getMessage(),
+        Assertions.assertEquals(NOT_ENOUGH_RULES_TASK_MUST_BE_ADMIN.getEnumDescription(), cause.getMessage(),
                 "Сообщение исключения должно совпадать");
     }
 }

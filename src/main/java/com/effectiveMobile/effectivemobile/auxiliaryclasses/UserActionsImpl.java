@@ -17,9 +17,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
-import static com.effectiveMobile.effectivemobile.constants.ConstantsClass.PREFIX_ROLE;
-import static com.effectiveMobile.effectivemobile.exeptions.DescriptionUserExeption.INNER_ERROR;
-
 @Component
 @Slf4j
 public class UserActionsImpl implements UserActions {
@@ -97,13 +94,9 @@ public class UserActionsImpl implements UserActions {
     }
 
     @Override
-    public boolean currentUserAdminOrUserRole(String role) throws RoleNotFoundException {
+    public boolean currentUserAdminOrUserRole(String role) {
         Optional<String> roleCurrentAuthorizedUser = getRoleCurrentAuthorizedUser(role);
         if (roleCurrentAuthorizedUser.isEmpty()) {
-            log.error("Метод currentUserAdminOrUserRole() " + role + ", роль не найдена!");
-            throw new RoleNotFoundException(INNER_ERROR.getEnumDescription());
-        }
-        if (!roleCurrentAuthorizedUser.get().equals(PREFIX_ROLE + role)) {
             return false;
         }
         return true;

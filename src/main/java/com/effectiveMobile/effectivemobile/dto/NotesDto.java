@@ -25,7 +25,7 @@ public class NotesDto implements Serializable {
     @Schema(description = "Уникальный идентификатор комментария", example = "1")
     @Min(value = 1, message = "Идентификатор комментария не должен быть меньше единицы")
     @Max(value = 2147483647, message = "Идентификатор комментария не должен быть больше 2147483647")
-    private int id;
+    private Integer id;
 
     private CustomUsersDto notesAuthor;
 

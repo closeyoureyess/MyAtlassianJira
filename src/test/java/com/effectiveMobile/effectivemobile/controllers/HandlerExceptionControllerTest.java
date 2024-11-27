@@ -1,6 +1,5 @@
 package com.effectiveMobile.effectivemobile.controllers;
 
-import com.effectiveMobile.effectivemobile.dto.CustomUsersDto;
 import com.effectiveMobile.effectivemobile.dto.RegistrationUsers;
 import com.effectiveMobile.effectivemobile.services.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;

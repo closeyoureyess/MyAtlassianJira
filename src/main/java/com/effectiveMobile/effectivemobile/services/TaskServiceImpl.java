@@ -111,7 +111,7 @@ public class TaskServiceImpl implements TaskService {
             Tasks tasks = optionalTaskDatabase.get();
             TasksDto newTasksDtoFromDB = taskMapper.convertTasksToDto(tasks);
 
-            boolean resultCheckPrivilege = checkingRightsToEditTask(newTasksDtoFromDB);
+            boolean resultCheckPrivilege = checkingRightsToEditTask(newTasksDtoFromDB, tasksDtoFromJson);
             if (!resultCheckPrivilege) {
                 return Optional.empty();
             }
@@ -216,7 +216,8 @@ public class TaskServiceImpl implements TaskService {
      * @throws NotEnoughRulesForEntity Если редактирование запрещено из-за недостаточных прав
      * @throws RoleNotFoundException   Если роль пользователя не найдена
      */
-    private boolean checkingRightsToEditTask(TasksDto tasksDtoFromDB) throws NotEnoughRulesForEntity, RoleNotFoundException {
+    private boolean checkingRightsToEditTask(TasksDto tasksDtoFromDB, TasksDto tasksDtoFromJson) throws NotEnoughRulesForEntity,
+            RoleNotFoundException {
         log.info("Метод isExecutorOfTaskOrNot() " + tasksDtoFromDB.getId());
         UserActions userActions = actionsFabric.createUserActions();
 
@@ -232,12 +233,12 @@ public class TaskServiceImpl implements TaskService {
                 log.error("Метод isExecutorOfTaskOrNot(), выброшен NotEnoughRulesForEntity");
                 return actionsFabric
                         .createTasksActions()
-                        .fieldsTasksAllowedForEditing(tasksDtoFromDB);
+                        .fieldsTasksAllowedForEditing(tasksDtoFromJson);
             }
         }
         if (!resultEmailsEqual) { // Не является администратором, емейлы исп-ля и авторизованного польз-ля не равны
             log.error("Метод isExecutorOfTaskOrNot(), выброшен NotEnoughRulesForEntity");
-            throw new NotEnoughRulesForEntity(NOT_ENOUGH_RULES_MUST_BE_ADMIN.getEnumDescription());
+            throw new NotEnoughRulesForEntity(NOT_ENOUGH_RULES_TASK_MUST_BE_ADMIN.getEnumDescription());
         }
         return false;
     }

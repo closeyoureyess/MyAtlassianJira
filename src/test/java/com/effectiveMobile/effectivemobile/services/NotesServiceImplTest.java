@@ -1,17 +1,17 @@
 package com.effectiveMobile.effectivemobile.services;
 
 import com.effectiveMobile.effectivemobile.auxiliaryclasses.UserActions;
+import com.effectiveMobile.effectivemobile.dto.CustomUsersDto;
 import com.effectiveMobile.effectivemobile.dto.NotesDto;
 import com.effectiveMobile.effectivemobile.dto.TasksDto;
 import com.effectiveMobile.effectivemobile.entities.CustomUsers;
 import com.effectiveMobile.effectivemobile.entities.Notes;
 import com.effectiveMobile.effectivemobile.entities.Tasks;
-import com.effectiveMobile.effectivemobile.exeptions.EntityNotBeNull;
-import com.effectiveMobile.effectivemobile.exeptions.EntityNotFoundExeption;
-import com.effectiveMobile.effectivemobile.exeptions.FieldNotBeNull;
+import com.effectiveMobile.effectivemobile.exeptions.*;
 import com.effectiveMobile.effectivemobile.fabrics.ActionsFabric;
 import com.effectiveMobile.effectivemobile.fabrics.MappersFabric;
 import com.effectiveMobile.effectivemobile.mapper.NotesMapper;
+import com.effectiveMobile.effectivemobile.mapper.UserMapper;
 import com.effectiveMobile.effectivemobile.repository.NotesRepository;
 import com.effectiveMobile.effectivemobile.repository.TasksRepository;
 import org.junit.jupiter.api.Assertions;
@@ -31,6 +31,7 @@ class NotesServiceImplTest {
     private TasksRepository mockTasksRepository;
     private NotesMapper mockNotesMapper;
     private UserActions userActions;
+    private UserMapper userMapper;
 
     @BeforeEach
     void setUp() {
@@ -40,6 +41,7 @@ class NotesServiceImplTest {
         mockTasksRepository = Mockito.mock(TasksRepository.class);
         mockNotesMapper = Mockito.mock(NotesMapper.class);
         userActions = Mockito.mock(UserActions.class);
+        userMapper = Mockito.mock(UserMapper.class);
 
         notesService = new NotesServiceImpl();
         notesService.setMappersFabric(mockMappersFabric);
@@ -52,13 +54,67 @@ class NotesServiceImplTest {
 
     @Test
     @DisplayName("Тест: Успешное создание заметки")
-    void testCreateNotesSuccess() throws EntityNotFoundExeption, EntityNotBeNull, FieldNotBeNull {
+    void testCreateNotesSuccess() throws EntityNotFoundExeption, EntityNotBeNull, FieldNotBeNull, NotEnoughRulesForEntity, RoleNotFoundException {
         NotesDto notesDto = new NotesDto();
-        notesDto.setTask(new TasksDto());
+        notesDto.setTask(new TasksDto(1, null, null, null, null, null, null, null));
+        notesDto.getTask().setId(1);
+
+        CustomUsers user = new CustomUsers();
+        user.setId(1);
+        CustomUsersDto user2 = new CustomUsersDto();
+        user2.setId(1);
+
+        Tasks task = new Tasks();
+        task.setId(1);
+        task.setTaskExecutor(user);
+
+        Notes notes = new Notes();
+        notes.setId(1);
+        notes.setUsers(user);
+        notes.setTask(task);
+
+        // Мокаем репозиторий и фабрику
+        Mockito.when(mockTasksRepository.findById(1)).thenReturn(Optional.of(task));
+        Mockito.when(mockActionsFabric.createUserActions()).thenReturn(userActions);
+        Mockito.when(userActions.getCurrentUser()).thenReturn(Optional.of(user));
+        Mockito.when(mockNotesMapper.convertDtoToNotes(notesDto)).thenReturn(notes);
+        Mockito.when(mockNotesRepository.save(notes)).thenReturn(notes);
+        Mockito.when(mockNotesMapper.convertNotesToDto(notes)).thenReturn(notesDto);
+
+        // Подготавливаем моки для мапперов
+        UserMapper userMapper = Mockito.mock(UserMapper.class);
+        Mockito.when(mockMappersFabric.createUserMapper()).thenReturn(userMapper);
+        Mockito.when(userMapper.convertUserToDto(Mockito.any())).thenReturn(user2); // Настроили, чтобы метод возвращал user2
+
+        // Мокаем, чтобы метод сравнения почт вернул true
+        Mockito.when(userActions.comparisonEmailTasksFromDBAndEmailCurrentAuthUser(Mockito.any())).thenReturn(true);
+
+        // Тестируем создание заметки
+        NotesDto result = notesService.createNotes(notesDto);
+
+        // Проверяем результат
+        Assertions.assertNotNull(result, "Результат не должен быть null");
+        Assertions.assertEquals(notesDto, result, "Результат должен совпадать с DTO");
+
+        // Проверки на количество вызовов методов
+        Mockito.verify(mockTasksRepository, Mockito.times(1)).findById(1);
+        Mockito.verify(mockActionsFabric.createUserActions(), Mockito.times(1)).getCurrentUser();
+        Mockito.verify(mockNotesMapper, Mockito.times(1)).convertDtoToNotes(notesDto);
+        Mockito.verify(mockNotesRepository, Mockito.times(1)).save(notes);
+        Mockito.verify(mockNotesMapper, Mockito.times(1)).convertNotesToDto(notes);
+    }
+
+    @Test
+    @DisplayName("Тест: Выбрасывается эксепшен")
+    void testCreateNotesExeption() {
+        NotesDto notesDto = new NotesDto();
+        notesDto.setTask(new TasksDto(1, null, null, null, null, null, null, null));
         notesDto.getTask().setId(1);
 
         Tasks task = new Tasks();
         task.setId(1);
+
+        Tasks tasks2 = Mockito.mock(Tasks.class);
 
         CustomUsers user = new CustomUsers();
         user.setId(1);
@@ -68,6 +124,8 @@ class NotesServiceImplTest {
         notes.setUsers(user);
         notes.setTask(task);
 
+        Mockito.when(tasks2.getTaskExecutor()).thenReturn(user);
+        Mockito.when(mockTasksRepository.findById(1)).thenReturn(Optional.of(task));
         Mockito.when(mockTasksRepository.findById(1)).thenReturn(Optional.of(task));
         Mockito.when(mockActionsFabric.createUserActions()).thenReturn(userActions);
         Mockito.when(userActions.getCurrentUser()).thenReturn(Optional.of(user));
@@ -75,15 +133,7 @@ class NotesServiceImplTest {
         Mockito.when(mockNotesRepository.save(notes)).thenReturn(notes);
         Mockito.when(mockNotesMapper.convertNotesToDto(notes)).thenReturn(notesDto);
 
-        NotesDto result = notesService.createNotes(notesDto);
-
-        Assertions.assertNotNull(result, "Результат не должен быть null");
-        Assertions.assertEquals(notesDto, result, "Результат должен совпадать с DTO");
-        Mockito.verify(mockTasksRepository, Mockito.times(1)).findById(1);
-        Mockito.verify(mockActionsFabric.createUserActions(), Mockito.times(1)).getCurrentUser();
-        Mockito.verify(mockNotesMapper, Mockito.times(1)).convertDtoToNotes(notesDto);
-        Mockito.verify(mockNotesRepository, Mockito.times(1)).save(notes);
-        Mockito.verify(mockNotesMapper, Mockito.times(1)).convertNotesToDto(notes);
+        Assertions.assertThrows(NotEnoughRulesForEntity.class, () -> notesService.createNotes(notesDto));
     }
 
     @Test

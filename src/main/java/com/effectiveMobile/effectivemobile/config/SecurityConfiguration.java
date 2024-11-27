@@ -55,7 +55,7 @@ public class SecurityConfiguration {
                     registry.requestMatchers("/task/update-tasks", "/notes/**")
                             .hasAnyRole(UserRoles.ADMIN.getUserRoles(), UserRoles.USER.getUserRoles());
                     registry.requestMatchers("/task/**",
-                                    "/defaultsettins/**").hasRole(UserRoles.ADMIN.getUserRoles());
+                                    "/defaultsettings/**").hasRole(UserRoles.ADMIN.getUserRoles());
                     registry.anyRequest().authenticated(); // Любой запрос должен быть аутентифицирован
                 })
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
