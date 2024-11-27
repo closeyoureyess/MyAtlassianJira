@@ -52,9 +52,10 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(registry -> {
                     registry.requestMatchers("/entrance/**",
                             "/swagger-ui/**", "/v3/api-docs/**").permitAll();
-                    registry.requestMatchers("/task/create", "/task/update-tasks",
-                            "/defaultsettins/**", "/notes/create").hasRole(UserRoles.ADMIN.getUserRoles());
-                    registry.requestMatchers("/task/update-tasks", "/notes/create").hasRole(UserRoles.USER.getUserRoles());
+                    registry.requestMatchers("/task/update-tasks", "/notes/**")
+                            .hasAnyRole(UserRoles.ADMIN.getUserRoles(), UserRoles.USER.getUserRoles());
+                    registry.requestMatchers("/task/**",
+                                    "/defaultsettins/**").hasRole(UserRoles.ADMIN.getUserRoles());
                     registry.anyRequest().authenticated(); // Любой запрос должен быть аутентифицирован
                 })
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)

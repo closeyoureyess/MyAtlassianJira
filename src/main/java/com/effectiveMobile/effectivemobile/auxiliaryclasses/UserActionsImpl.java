@@ -89,8 +89,6 @@ public class UserActionsImpl implements UserActions {
     public boolean comparisonEmailTasksFromDBAndEmailCurrentAuthUser(CustomUsersDto customUsersDto) {
         log.info("Метод isPrivilegeTasks()");
         Authentication loggedInUser = SecurityContextHolder.getContext().getAuthentication();
-        /*Optional<CustomUsers> customUsers = authorizationRepository.findByEmail(loggedInUser.getName());
-        String emailCurrentUser = customUsers.get().getEmail();*/
         String emailCurrentUser = loggedInUser.getName();
         if (customUsersDto.getEmail().equals(emailCurrentUser)) {
             return true;

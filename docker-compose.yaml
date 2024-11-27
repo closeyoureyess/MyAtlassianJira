@@ -7,9 +7,9 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: root
-      POSTGRES_DB: mynewdatabase
+      POSTGRES_USER: ${BASEPROJECT_DATABASE_USERNAME}
+      POSTGRES_PASSWORD: ${BASEPROJECT_DATABASE_PASSWORD}
+      POSTGRES_DB: ${BASEPROJECT_DATABASE_NAME}
     healthcheck:
       test: pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB
       interval: 10s
@@ -19,7 +19,7 @@ services:
   effectivemobile:
     image: effectivemobile:latest
     build:
-      context: ..
+      context: .
       args:
         DOCKER_BUILDKIT: 1
     restart: "no"

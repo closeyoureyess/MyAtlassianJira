@@ -108,8 +108,6 @@ public class TaskController {
         return ResponseEntity.badRequest().build();
     }
 
-    // [{\"id\":2,\"header\":\"Test Task 2\",\"taskAuthor\":{\"id\":2,\"email\":\"example2@gmail.com\"},\"taskExecutor\":{\"id\":2,\"email\":\"example2@gmail.com\"},\"description\":\"Another test task description\",\"taskPriority\":\"HIGH\",\"taskStatus\":\"IN_PROGRESS\",\"notesDto\":[{\"id\":2,\"notesAuthor\":{\"id\":1,\"email\":\"example@gmail.com\"},\"comments\":\"Another comment for Task 2\"}]}]
-
     /**
      * Эндпоинд GET для получения информации о задачах по исполнителю
      *
