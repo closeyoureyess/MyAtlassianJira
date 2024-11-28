@@ -90,4 +90,5 @@
 Если необходимы описанные методы в простой JSON-имплементации, можно перейти по пути  [http://localhost:8080/swagger-ui/v3/api-docs/](http://localhost:8080/v3/api-docs)
 # P.S
 При работе приложения, в консоли может периодически появляться ошибка  `java.lang.IllegalArgumentException: Invalid character found in method name` - она ни на что не влияет и появляется, как я понял, из-за того, что используется http-соединение, а не https
+
 Пожалуйста, не снижайте за нее оценку)
