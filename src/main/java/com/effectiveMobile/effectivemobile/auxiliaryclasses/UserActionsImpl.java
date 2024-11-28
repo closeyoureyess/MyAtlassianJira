@@ -5,7 +5,6 @@ import com.effectiveMobile.effectivemobile.dto.CustomUsersDto;
 import com.effectiveMobile.effectivemobile.entities.CustomUsers;
 import com.effectiveMobile.effectivemobile.entities.Tasks;
 import com.effectiveMobile.effectivemobile.exeptions.DescriptionUserExeption;
-import com.effectiveMobile.effectivemobile.exeptions.RoleNotFoundException;
 import com.effectiveMobile.effectivemobile.repository.AuthorizationRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
