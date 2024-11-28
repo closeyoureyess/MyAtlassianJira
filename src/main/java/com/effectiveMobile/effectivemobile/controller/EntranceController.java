@@ -81,7 +81,9 @@ public class EntranceController {
             @ApiResponse(responseCode = "404", description = "Пользователь не найден", content = @Content)
     })
     @PostMapping(value = "/entrance/authorization", produces = MediaType.TEXT_PLAIN_VALUE)
-    public ResponseEntity<String> authorizationUser(@RequestBody @Parameter(description = "Форма авторизации") RegistrationUsers registrationUsers)
+    public ResponseEntity<String> authorizationUser(@Valid@RequestBody @Parameter(description = "Форма авторизации")
+                                                        @NotNull(message = "Форма авторизации не может быть пустой")
+                                                        RegistrationUsers registrationUsers)
             throws UsernameNotFoundException {
         log.info("Метод авторизации, POST " + registrationUsers.getEmail());
         String jwtToken = userService

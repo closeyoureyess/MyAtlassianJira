@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -52,7 +53,8 @@ public class NotesController {
     @FilterResponse(filterName = POST_CREATE_NOTES)
     @SecurityRequirement(name = "JWT")
     @PostMapping(value = "/notes/create")
-    public ResponseEntity<NotesDto> createNotes(@RequestBody @Valid NotesDto notesDto) throws MainException {
+    public ResponseEntity<NotesDto> createNotes(@Valid @RequestBody @NotNull(message = "Комментарий не может быть null")
+                                                    NotesDto notesDto) throws MainException {
         log.info("Создание комментария, POST " + notesDto.getComments());
         NotesDto localNotesDto = serviceFabric.createNotesService().createNotes(notesDto);
         if (localNotesDto != null) {

@@ -86,7 +86,7 @@ class NotesControllerTest {
         // Создаем комментарий для несуществующей задачи (например, с ID 9999)
         NotesDto notesDto = new NotesDto();
         notesDto.setComments("Комментарий для несуществующей задачи");
-        notesDto.setTask(new TasksDto(9999, null, null, null, null,
+        notesDto.setTask(new TasksDto(234324324, null, null, null, null,
                 null, null, null)); // Несуществующая задача
 
         mockMvc.perform(MockMvcRequestBuilders.post("/notes/create")

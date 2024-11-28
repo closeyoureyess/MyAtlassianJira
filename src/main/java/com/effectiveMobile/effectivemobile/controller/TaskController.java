@@ -16,6 +16,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,11 +92,13 @@ public class TaskController {
     @SecurityRequirement(name = "JWT")
     @GetMapping(value = "/task/gen-info/author/{author}", consumes = MediaType.ALL_VALUE)
     public ResponseEntity<List<TasksDto>> getTaskAuthor(
-            @PathVariable("author") @Parameter(description = "Автор задачи", example = "example@gmail.com") String author,
+            @PathVariable("author") @Parameter(description = "Автор задачи", example = "example@gmail.com")
+            @NotBlank(message = "Автор не может быть пустым") String author,
             @RequestParam(value = "offset", defaultValue = "0") @Min(0) @Parameter(description = "Номер страницы", example = "0")
+            @NotNull(message = "Страница не может быть пустой")
             Integer offset,
             @RequestParam(value = "limit", defaultValue = "10") @Min(10) @Parameter(description = "Количество сущностей на странице",
-                    example = "10") Integer limit
+                    example = "10") @NotNull(message = "Кол-во сущностей не может быть пустым") Integer limit
     ) {
         log.info("Получение задачи по автору, метод GET " + author);
         Optional<List<TasksDto>> optionalAuthorsTasksDtoList = serviceFabric
@@ -126,11 +129,11 @@ public class TaskController {
     @SecurityRequirement(name = "JWT")
     @GetMapping(value = "/task/gen-info/executor/{executorEmail}", consumes = MediaType.ALL_VALUE)
     public ResponseEntity<List<TasksDto>> getTaskExecutor(
-            @PathVariable("executorEmail") @Parameter(description = "Исполнитель задачи") String executorEmail,
-            @RequestParam(value = "offset", defaultValue = "0") @Min(0) @Parameter(description = "Номер страницы", example = "0")
+            @PathVariable("executorEmail") @Parameter(description = "Исполнитель задачи") @NotBlank(message = "Исполнитель не может быть пустым") String executorEmail,
+            @RequestParam(value = "offset", defaultValue = "0") @Min(0) @Parameter(description = "Номер страницы", example = "0") @NotNull(message = "Страница не может быть пустой")
             Integer offset,
             @RequestParam(value = "limit", defaultValue = "10") @Min(10) @Parameter(description = "Количество сущностей на странице",
-                    example = "10") Integer limit
+                    example = "10") @NotNull(message = "Кол-во сущностей не может быть пустым") Integer limit
     ) {
         log.info("Получение задачи по исполнителю, метод GET " + executorEmail);
         Optional<List<TasksDto>> optionalExecutorTasksDtoList = serviceFabric
@@ -184,7 +187,8 @@ public class TaskController {
     })
     @SecurityRequirement(name = "JWT")
     @DeleteMapping(value = "/task/delete/{id}", consumes = MediaType.ALL_VALUE, produces = MediaType.TEXT_PLAIN_VALUE)
-    public ResponseEntity<String> deleteTasks(@PathVariable("id") @Parameter(description = "ID задачи") Integer idTasks) {
+    public ResponseEntity<String> deleteTasks(@PathVariable("id") @Parameter(description = "ID задачи") @NotNull(message = "ID задачи не может быть null")
+                                                  Integer idTasks) {
         log.info("Удаление задачи по id, метод DELETE" + idTasks);
         boolean resultDeleteTasks = serviceFabric
                 .createTaskService()
