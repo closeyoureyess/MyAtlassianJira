@@ -1,4 +1,4 @@
-![Скриншот 28-11-2024 180737](https://github.com/user-attachments/assets/61089b74-c39f-44b2-b8b1-bf9914d8e8a2)# Таск-трекинговая система для Effective Mobile
+# Таск-трекинговая система для Effective Mobile
 
 Привет, меня зовут Вадим Сирик, моё резюме на hh.ru можно увидеть <a id="myhref" href="https://krasnoyarsk.hh.ru/resume/adb17ed8ff0c974da80039ed1f6d4e6a464253">здесь</a>. 
 
@@ -10,7 +10,6 @@
 1. Перейти на <a id="myhref" href="https://github.com/closeyoureyess/MyAtlassianJira">страницу проекта</a> 
 2. Кликнуть на зелёную кнопку с названием *Code*
 3. В выпадающем списке, выбрать *Download zip*
-![Скриншот 28-11-2024 180737](https://github.com/user-attachments/assets/94f75c65-4b21-448b-bf6c-7c6c39c8ac9e)
 
 ### Шаг 1: после того, как проект скачан на ПК
 
