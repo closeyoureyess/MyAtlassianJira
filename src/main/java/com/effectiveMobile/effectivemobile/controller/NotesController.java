@@ -42,7 +42,7 @@ public class NotesController {
 
     @Operation(summary = "Создание комментария", description = "Позволяет создать комментарий и привязать его к задаче")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Комментарий успешно создан", content = @Content(examples = @ExampleObject(value = "\"{\\n  \\\"id\\\": 1,\\n  \\\"usersDto\\\": {\\n    \\\"id\\\": 2,\\n    \\\"email\\\": \\\"example2@gmail.com\\\"\\n  },\\n  \\\"comments\\\": \\\"Обсуждение\\\",\\n  \\\"task\\\": {\\n    \\\"id\\\": 1\\n  }\\n}\""))),
+            @ApiResponse(responseCode = "200", description = "Комментарий успешно создан", content = @Content(examples = @ExampleObject(value = "\"{\\n  \\\"notesAuthor\\\": {\\n    \\\"id\\\": 2,\\n    \\\"email\\\": \\\"example2@gmail.com\\\"\\n  },\\n  \\\"comments\\\": \\\"Обсуждение\\\",\\n  \\\"task\\\": {\\n    \\\"id\\\": 1\\n  }\\n}\""))),
             @ApiResponse(responseCode = "400", description = "Передаваемый идентификатор задачи является null/Передаваемый объект Tasks является null", content = @Content),
             @ApiResponse(responseCode = "403", description = "Не авторизован/Недостаточно прав", content = @Content),
             @ApiResponse(responseCode = "404", description = "Задача по заданному идентификатору не найдена", content = @Content)

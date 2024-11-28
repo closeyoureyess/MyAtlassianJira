@@ -59,7 +59,7 @@ public class TaskController {
             @ApiResponse(responseCode = "403", description = "Не авторизован/Недостаточно прав", content = @Content),
             @ApiResponse(responseCode = "404", description = "У задачи отсутствует исполнитель", content = @Content)
     })
-    @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Пример тела запроса для создания задачи", content = @Content(mediaType = "application/json", examples = @ExampleObject(name = "Создание задачи", value = "\"{\\n  \\\"id\\\": 1,\\n  \\\"header\\\": \\\"Тестовая задача\\\",\\n  \\\"taskExecutor\\\": {\\n  \\\"email\\\": \\\"example2@gmail.com\\\"\\n  },\\n  \\\"description\\\": \\\"Тестовое описание задачи\\\",\\n  \\\"taskPriority\\\": \\\"MEDIUM\\\",\\n  \\\"taskStatus\\\": \\\"BACKLOG\\\"\\n}\"")))
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Пример тела запроса для создания задачи", content = @Content(mediaType = "application/json", examples = @ExampleObject(name = "Создание задачи", value = "\"{\\n  \\\"header\\\": \\\"Тестовая задача\\\",\\n  \\\"taskExecutor\\\": {\\n  \\\"email\\\": \\\"example2@gmail.com\\\"\\n  },\\n  \\\"description\\\": \\\"Тестовое описание задачи\\\",\\n  \\\"taskPriority\\\": \\\"MEDIUM\\\",\\n  \\\"taskStatus\\\": \\\"BACKLOG\\\"\\n}\"")))
     @FilterResponse(filterName = POST_CREATE_TASKS)
     @SecurityRequirement(name = "JWT")
     @PostMapping(value = "/task/create")
