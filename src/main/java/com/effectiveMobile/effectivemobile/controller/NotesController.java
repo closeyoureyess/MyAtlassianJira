@@ -49,7 +49,7 @@ public class NotesController {
     })
     @io.swagger.v3.oas.annotations.parameters.RequestBody(
             description = "Пример тела запроса для создания комментария",
-            content = @Content(mediaType = "application/json", examples = @ExampleObject(name = "Создание комментария", value = "\"{\\n  \\\"id\\\": 1,\\n \\\"comments\\\": \\\"Обсуждение\\\",\\n  \\\"task\\\": {\\n    \\\"id\\\": 1\\n  }\\n}\"")))
+            content = @Content(mediaType = "application/json", examples = @ExampleObject(name = "Создание комментария", value = "\"{\\n  \\\"comments\\\": \\\"Обсуждение\\\",\\n  \\\"task\\\": {\\n    \\\"id\\\": 1\\n  }\\n}\"")))
     @FilterResponse(filterName = POST_CREATE_NOTES)
     @SecurityRequirement(name = "JWT")
     @PostMapping(value = "/notes/create")
