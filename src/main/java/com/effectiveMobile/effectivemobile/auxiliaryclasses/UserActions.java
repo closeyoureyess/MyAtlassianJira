@@ -73,5 +73,12 @@ public interface UserActions {
      */
     boolean currentUserAdminOrUserRole(String roleToMatch) throws RoleNotFoundException;
 
+    /**
+     * Метод, скрывающий пароль, если пользователь передал дто в сервисные классы, не касающиеся авторизации/регистрации
+     * с заполненным паролем
+     *
+     * @param customUsersDto
+     * @return {@link CustomUsersDto} со скрытым паролем
+     */
     CustomUsersDto hiddenPassword(CustomUsersDto customUsersDto);
 }

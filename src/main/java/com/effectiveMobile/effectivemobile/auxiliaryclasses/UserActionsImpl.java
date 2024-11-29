@@ -92,6 +92,11 @@ public class UserActionsImpl implements UserActions {
         return false;
     }
 
+    /**
+     * Метод, проверяющий, является ли пользователь администратором или пользователем, в зависимости от переданной роли
+     *
+     * @param role
+     */
     @Override
     public boolean currentUserAdminOrUserRole(String role) {
         Optional<String> roleCurrentAuthorizedUser = getRoleCurrentAuthorizedUser(role);
