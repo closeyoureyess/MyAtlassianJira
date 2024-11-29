@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.springframework.validation.annotation.Validated;
 
@@ -29,9 +30,13 @@ public class CustomUsersDto implements Serializable {
     private Integer id;
 
     @Schema(description = "Пароль пользователя", example = "12345")
+    @Size(min = 1, message = "Длина пароля не должна быть меньше 1 символа")
+    @Size(max = 120, message = "Длина пароля не должна больше 120 символов")
     private String passwordKey;
 
     @Schema(description = "E-mail пользователя", example = "example@gmail.com")
+    @Size(min = 3, message = "Длина e-mail не должна быть меньше 3 символов")
+    @Size(max = 500, message = "Длина e-mail не должна быть больше 500 символов")
     private String email;
 
     @NotNull(message = "Роль не может быть пустой")
