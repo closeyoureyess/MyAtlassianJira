@@ -1,4 +1,4 @@
-# Таск-трекинговая система для Effective Mobile
+# Таск-трекинговая система для NDA
 
 Привет, меня зовут Вадим Сирик, моё резюме на hh.ru можно увидеть <a id="myhref" href="https://krasnoyarsk.hh.ru/resume/90862415ff0f63d0740039ed1f70717365574e?hhtmFrom=resume_list">здесь</a>. 
 
